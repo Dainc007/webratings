@@ -20,6 +20,12 @@ final class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
+    protected static ?string $navigationLabel = 'Produkty';
+    protected static ?string $pluralLabel = 'Produkty';
+    protected static ?string $label = 'Produkty';
+    protected static ?string $navigationGroup = 'Produkty';
+    protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form

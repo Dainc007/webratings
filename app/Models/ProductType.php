@@ -16,11 +16,11 @@ final class ProductType extends Model
 
     protected $fillable = ['name'];
 
-    protected function name(): Attribute
+    private function name(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
-            set: fn (string $value) => strtolower($value),
+            get: fn (string $value): string => ucfirst($value),
+            set: fn (string $value) => mb_strtolower($value),
         );
     }
 }

@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Filament\Imports\AirPurifierImporter;
 use App\Filament\Resources\AirPurifierResource\Pages;
 use App\Models\AirPurifier;
+use App\Models\CustomField;
 use App\Models\TableColumnPreference;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
@@ -23,13 +24,14 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 final class AirPurifierResource extends Resource
 {
     protected static ?string $model = AirPurifier::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
     protected static ?string $navigationLabel = 'Oczyszczacze Powietrza';
 
@@ -38,11 +40,25 @@ final class AirPurifierResource extends Resource
     protected static ?string $label = 'Oczyszczacze Powietrza';
 
     protected static ?string $navigationGroup = 'Produkty';
-
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
+        $customFields = CustomField::where('table_name', 'air_purifiers')->get();
+        $customFieldSchema = [];
+        foreach ($customFields as $customField) {
+            if($customField->column_type === 'boolean') {
+                $field = Toggle::make($customField->column_name);
+            } else {
+                $field = TextInput::make($customField->column_name);
+            }
+
+            if($customField->column_type === 'integer') {
+                $field->numeric();
+            }
+            $customFieldSchema[] = $field->label($customField->display_name);
+        }
+
         return $form
             ->schema([
                 Tabs::make('Air Purifier Form')
@@ -401,6 +417,11 @@ final class AirPurifierResource extends Resource
                                     ->label('Record Updated At')
                                     ->disabled(),
                             ]),
+
+                        Tabs\Tab::make('Custom Fields')
+                            ->schema(
+                                $customFieldSchema
+                            ),
                     ])
                     ->persistTabInQueryString()
                     ->columnSpanFull(),
@@ -415,11 +436,6 @@ final class AirPurifierResource extends Resource
         //                    ->money('PLN')
         //                    ->sortable()
         //                    ->searchable(),
-
-        TableColumnPreference::where('table_name', 'air_purifiers')
-            ->where('is_visible', true)
-            ->orderBy('sort_order')
-            ->pluck('column_name');
 
         $availableColumns = [
             TextColumn::make('id')->label('id')->hidden(),
@@ -443,6 +459,29 @@ final class AirPurifierResource extends Resource
                         ->send();
                 }),
         ];
+
+        $test = TableColumnPreference::where('table_name', 'air_purifiers')
+            ->where('is_visible', true)
+            ->orderBy('sort_order')
+            ->get();
+//            ->pluck('column_name');
+
+        $customFields = CustomField::where('table_name', 'air_purifiers')->get();
+        foreach ($customFields as $customField) {
+            if($customField->column_type === 'boolean') {
+                $field = ToggleColumn::make($customField->column_name);
+            } else {
+                $field = TextColumn::make($customField->column_name);
+            }
+
+            if($customField->column_type === 'integer') {
+                $field->numeric();
+            }
+
+            $field->sortable()->searchable()->label($customField->display_name);
+
+            $availableColumns[] = $field;
+        }
 
         return $table
             ->recordUrl(null)

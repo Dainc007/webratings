@@ -31,6 +31,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         $isProduction = $this->app->isProduction();
 
+        Model::unguard();
         Model::shouldBeStrict($isProduction);
         DB::prohibitDestructiveCommands($isProduction);
         URL::forceScheme('https');

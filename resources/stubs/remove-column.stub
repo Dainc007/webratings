@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('{{ table }}', function (Blueprint $table) {
-            $table->dropColumn('{{ column_name }}');
-        });
+        if (Schema::hasColumn('{{ table }}', '{{ column_name }}')) {
+            Schema::table('{{ table }}', function (Blueprint $table) {
+                $table->dropColumn('{{ column_name }}');
+            });
+        }
     }
 
     /**

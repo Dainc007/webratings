@@ -24,14 +24,15 @@ class CustomFieldResource extends Resource
 {
     protected static ?string $model = CustomField::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Produkty';
     protected static ?string $navigationLabel = 'Dodatkowe Pola';
+    protected static ?string $navigationIcon = 'heroicon-o-cog'; // lub inna ikona
 
     protected static ?string $pluralLabel = 'Dodatkowe Pola';
 
     protected static ?string $label = 'Dodatkowe Pola';
+    protected static ?string $navigationGroup = 'Produkty';
 
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -56,8 +57,14 @@ class CustomFieldResource extends Resource
                     ->required(),
 
                 TextInput::make('column_name')
-                    ->columnSpanFull()
-                    ->label('Nazwa Kolumny')
+                    ->label('Kolumna')
+                    ->hintIconTooltip('np. nazwa w języku angielskim z małych liter pod jaką zapiszemy dane w bazie.')
+                    ->required()
+                    ->maxLength(255)
+                    ->alphaDash(),
+
+                TextInput::make('display_name')
+                    ->label('Wyświetlaj jako')
                     ->required()
                     ->maxLength(255)
                     ->alphaDash(),
@@ -68,9 +75,8 @@ class CustomFieldResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('column_name')->label('Nazwa Kolumny'),
+                Tables\Columns\TextColumn::make('display_name')->label('Nazwa Kolumny'),
                 Tables\Columns\TextColumn::make('table_name')->label('Nazwa Tabeli'),
-                Tables\Columns\TextColumn::make('column_name')->label('Nazwa Kolumny'),
             ])
             ->filters([
                 //

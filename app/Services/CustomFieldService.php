@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\TableColumnPreference;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
@@ -32,6 +33,14 @@ class CustomFieldService
         // Run migration
         Artisan::call('migrate');
 
+        TableColumnPreference::firstOrCreate([
+            'table_name' => $tableName,
+            'column_name' => $columnName,
+        ], [
+            'sort_order' => 0,
+            'is_visible' => true,
+        ]);
+
         return true;
     }
 
@@ -56,6 +65,8 @@ class CustomFieldService
 
         // Run migration
         Artisan::call('migrate');
+
+        TableColumnPreference::where(['table_name' => $tableName, 'column_name' => $columnName])->delete();
 
         return true;
     }

@@ -41,7 +41,8 @@ final class TableColumnPreferenceResource extends Resource
                     ->label('Kolejność')
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_visible')
-                    ->label('Pokazuj w Tabeli'),
+                    ->sortable()
+                    ->label('Pokazuj w Tabeli')
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')

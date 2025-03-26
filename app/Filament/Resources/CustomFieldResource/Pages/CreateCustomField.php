@@ -12,9 +12,9 @@ final class CreateCustomField extends CreateRecord
 {
     protected static string $resource = CustomFieldResource::class;
 
-    private function afterCreate(): void
+    protected function afterCreate(): void
     {
-        $record = $this->record;
+        $record = $this->getRecord();
         $customFieldService = app(CustomFieldService::class);
 
         $customFieldService->createField(

@@ -59,8 +59,7 @@ final class CustomFieldResource extends Resource
                 TextInput::make('display_name')
                     ->label('Wyświetlaj jako')
                     ->required()
-                    ->maxLength(255)
-                    ->alphaDash(),
+                    ->maxLength(255),
             ]);
     }
 

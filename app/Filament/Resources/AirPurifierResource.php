@@ -172,30 +172,30 @@ final class AirPurifierResource extends Resource
                                         'ultrasonic' => 'Ultrasonic',
                                         'evaporative' => 'Evaporative',
                                     ])
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                    ->visible(fn(callable $get) => $get('has_humidification')),
 
                                 Toggle::make('humidification_switch')
                                     ->label('Humidification Switch')
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                    ->visible(fn(callable $get) => $get('has_humidification')),
 
                                 TextInput::make('humidification_efficiency')
                                     ->label('Humidification Efficiency (ml/h)')
                                     ->numeric()
                                     ->minValue(0)
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                    ->visible(fn(callable $get) => $get('has_humidification')),
 
                                 TextInput::make('humidification_area')
                                     ->label('Humidification Area (m²)')
                                     ->numeric()
                                     ->minValue(0)
                                     ->nullable()
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                    ->visible(fn(callable $get) => $get('has_humidification')),
 
                                 TextInput::make('water_tank_capacity')
                                     ->label('Water Tank Capacity (ml)')
                                     ->numeric()
                                     ->minValue(0)
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                    ->visible(fn(callable $get) => $get('has_humidification')),
 
                                 Toggle::make('hygrometer')
                                     ->label('Has Hygrometer'),
@@ -214,12 +214,12 @@ final class AirPurifierResource extends Resource
                                         TextInput::make('evaporative_filter_life')
                                             ->label('Filter Life (months)')
                                             ->numeric()
-                                            ->visible(fn (callable $get) => $get('evaporative_filter')),
+                                            ->visible(fn(callable $get) => $get('evaporative_filter')),
 
                                         TextInput::make('evaporative_filter_price')
                                             ->label('Filter Price (PLN)')
                                             ->numeric()
-                                            ->visible(fn (callable $get) => $get('evaporative_filter')),
+                                            ->visible(fn(callable $get) => $get('evaporative_filter')),
                                     ])->collapsible(),
 
                                 Section::make('HEPA Filter')
@@ -229,24 +229,24 @@ final class AirPurifierResource extends Resource
 
                                         TextInput::make('hepa_filter_class')
                                             ->label('HEPA Filter Class')
-                                            ->visible(fn (callable $get) => $get('hepa_filter')),
+                                            ->visible(fn(callable $get) => $get('hepa_filter')),
 
                                         TextInput::make('effectiveness_hepa_filter')
                                             ->label('HEPA Filter Effectiveness (%)')
                                             ->numeric()
                                             ->minValue(0)
                                             ->maxValue(100)
-                                            ->visible(fn (callable $get) => $get('hepa_filter')),
+                                            ->visible(fn(callable $get) => $get('hepa_filter')),
 
                                         TextInput::make('hepa_filter_service_life')
                                             ->label('Filter Life (months)')
                                             ->numeric()
-                                            ->visible(fn (callable $get) => $get('hepa_filter')),
+                                            ->visible(fn(callable $get) => $get('hepa_filter')),
 
                                         TextInput::make('hepa_filter_price')
                                             ->label('Filter Price (PLN)')
                                             ->numeric()
-                                            ->visible(fn (callable $get) => $get('hepa_filter')),
+                                            ->visible(fn(callable $get) => $get('hepa_filter')),
                                     ])->collapsible(),
 
                                 Section::make('Carbon Filter')
@@ -257,12 +257,12 @@ final class AirPurifierResource extends Resource
                                         TextInput::make('carbon_filter_service_life')
                                             ->label('Filter Life (months)')
                                             ->numeric()
-                                            ->visible(fn (callable $get) => $get('carbon_filter')),
+                                            ->visible(fn(callable $get) => $get('carbon_filter')),
 
                                         TextInput::make('carbon_filter_price')
                                             ->label('Filter Price (PLN)')
                                             ->numeric()
-                                            ->visible(fn (callable $get) => $get('carbon_filter')),
+                                            ->visible(fn(callable $get) => $get('carbon_filter')),
                                     ])->collapsible(),
 
                                 Toggle::make('mesh_filter')
@@ -281,11 +281,11 @@ final class AirPurifierResource extends Resource
 
                                         TextInput::make('ionizer_type')
                                             ->label('Ionizer Type')
-                                            ->visible(fn (callable $get) => $get('ionization')),
+                                            ->visible(fn(callable $get) => $get('ionization')),
 
                                         Toggle::make('ionizer_switch')
                                             ->label('Ionizer Switch')
-                                            ->visible(fn (callable $get) => $get('ionization')),
+                                            ->visible(fn(callable $get) => $get('ionization')),
                                     ])->collapsible(),
 
                                 Section::make('Other Features')
@@ -431,41 +431,41 @@ final class AirPurifierResource extends Resource
 
     public static function table(Table $table): Table
     {
-
-        //                TextColumn::make('price')
-        //                    ->label('Cena')
-        //                    ->money('PLN')
-        //                    ->sortable()
-        //                    ->searchable(),
-
         $availableColumns = [
             TextColumn::make('id')->label('id')->hidden(),
-            TextColumn::make('model')->label('Model')
-                ->sortable()
-                ->searchable(),
-            TextColumn::make('brand_name')->label('Marka')
-                ->sortable()
-                ->searchable(),
-            TextInputColumn::make('price')
-                ->label('Cena')
-                ->sortable()
-                ->searchable()
-                ->alignCenter()
-                ->width('50px')
-                ->extraInputAttributes(['step' => '0.01'])
-                ->afterStateUpdated(function ($record, $state): void {
-                    Notification::make()
-                        ->title('Cena została zaktualizowana')
-                        ->success()
-                        ->send();
-                }),
         ];
 
-        TableColumnPreference::where('table_name', 'air_purifiers')
+        $columns = TableColumnPreference::where('table_name', 'air_purifiers')
             ->where('is_visible', true)
             ->orderBy('sort_order')
             ->get();
-        //            ->pluck('column_name');
+
+        foreach ($columns as $column) {
+            $field = TextColumn::make($column['column_name'])->label(
+                __($column['table_name'] . '.' . $column['column_name'])
+            );
+            $field->sortable()->searchable()->alignCenter();
+
+            if ($column['column_name'] === 'price') {
+                $field = TextInputColumn::make($column['column_name'])
+                    ->label(
+                        __($column['table_name'] . '.' . $column['column_name'])
+                    )
+                    ->sortable()
+                    ->searchable()
+                    ->alignCenter()
+                    ->width('50px')
+                    ->extraInputAttributes(['step' => '0.01'])
+                    ->afterStateUpdated(function ($record, $state): void {
+                        Notification::make()
+                            ->title('Cena została zaktualizowana')
+                            ->success()
+                            ->send();
+                    });
+            }
+
+            $availableColumns[] = $field;
+        }
 
         $customFields = CustomField::where('table_name', 'air_purifiers')->get();
         foreach ($customFields as $customField) {
@@ -487,7 +487,7 @@ final class AirPurifierResource extends Resource
         return $table
             ->recordUrl(null)
             ->heading(
-                fn (): string => 'Łącznie Produktów: '.AirPurifier::count()
+                fn(): string => 'Łącznie Produktów: ' . AirPurifier::count()
             )
             ->columns($availableColumns)
             ->filters([
@@ -503,7 +503,7 @@ final class AirPurifierResource extends Resource
                 Tables\Actions\Action::make('column_settings')
                     ->label('')->label('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn() => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'air_purifiers',
@@ -516,7 +516,6 @@ final class AirPurifierResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-
     }
 
     public static function getRelations(): array

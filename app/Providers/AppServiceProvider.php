@@ -33,7 +33,7 @@ final class AppServiceProvider extends ServiceProvider
 
         Model::unguard();
         Model::shouldBeStrict($isProduction);
-        DB::prohibitDestructiveCommands($isProduction);
+//        DB::prohibitDestructiveCommands($isProduction);
         URL::forceScheme('https');
 
         date_default_timezone_set(config('app.timezone'));

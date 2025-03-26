@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
-class CustomField extends Model
+final class CustomField extends Model
 {
     protected $table = 'custom_fields';
 
@@ -13,6 +14,6 @@ class CustomField extends Model
         'table_name',
         'column_name',
         'column_type',
-        'display_name'
+        'display_name',
     ];
 }

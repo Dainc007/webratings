@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\TableColumnPreference;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
-class CustomFieldService
+final class CustomFieldService
 {
     public function createField(string $tableName, string $columnName, string $columnType): true
     {
         // Generate timestamp for migration filename
         $timestamp = date('Y_m_d_His');
         $migrationName = "add_{$columnName}_to_{$tableName}_table";
-        $migrationFileName = $timestamp . '_' . $migrationName . '.php';
-        $migrationPath = database_path('migrations/' . $migrationFileName);
+        $migrationFileName = $timestamp.'_'.$migrationName.'.php';
+        $migrationPath = database_path('migrations/'.$migrationFileName);
 
         // Read stub file
         $stubPath = resource_path('stubs/add-column.stub');
@@ -49,8 +51,8 @@ class CustomFieldService
         // Generate timestamp for migration filename
         $timestamp = date('Y_m_d_His');
         $migrationName = "remove_{$columnName}_from_{$tableName}_table";
-        $migrationFileName = $timestamp . '_' . $migrationName . '.php';
-        $migrationPath = database_path('migrations/' . $migrationFileName);
+        $migrationFileName = $timestamp.'_'.$migrationName.'.php';
+        $migrationPath = database_path('migrations/'.$migrationFileName);
 
         // Read stub file
         $stubPath = resource_path('stubs/remove-column.stub');

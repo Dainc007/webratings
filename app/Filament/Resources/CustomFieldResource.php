@@ -1,35 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomFieldResource\Pages;
-use App\Filament\Resources\CustomFieldResource\RelationManagers;
-use App\Models\AirPurifier;
 use App\Models\CustomField;
-use App\Services\CustomFieldService;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\DB;
 
-class CustomFieldResource extends Resource
+final class CustomFieldResource extends Resource
 {
     protected static ?string $model = CustomField::class;
 
     protected static ?string $navigationLabel = 'Dodatkowe Pola';
+
     protected static ?string $navigationIcon = 'heroicon-o-cog'; // lub inna ikona
 
     protected static ?string $pluralLabel = 'Dodatkowe Pola';
 
     protected static ?string $label = 'Dodatkowe Pola';
+
     protected static ?string $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 2;
@@ -44,8 +39,6 @@ class CustomFieldResource extends Resource
                         'air_purifiers' => 'Oczyszczacz Powietrza',
                     ])
                     ->required(),
-
-
 
                 Select::make('column_type')
                     ->label('Typ')

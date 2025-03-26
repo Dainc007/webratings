@@ -40,6 +40,7 @@ final class AirPurifierResource extends Resource
     protected static ?string $label = 'Oczyszczacze Powietrza';
 
     protected static ?string $navigationGroup = 'Produkty';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
@@ -47,13 +48,13 @@ final class AirPurifierResource extends Resource
         $customFields = CustomField::where('table_name', 'air_purifiers')->get();
         $customFieldSchema = [];
         foreach ($customFields as $customField) {
-            if($customField->column_type === 'boolean') {
+            if ($customField->column_type === 'boolean') {
                 $field = Toggle::make($customField->column_name);
             } else {
                 $field = TextInput::make($customField->column_name);
             }
 
-            if($customField->column_type === 'integer') {
+            if ($customField->column_type === 'integer') {
                 $field->numeric();
             }
             $customFieldSchema[] = $field->label($customField->display_name);
@@ -460,21 +461,21 @@ final class AirPurifierResource extends Resource
                 }),
         ];
 
-        $test = TableColumnPreference::where('table_name', 'air_purifiers')
+        TableColumnPreference::where('table_name', 'air_purifiers')
             ->where('is_visible', true)
             ->orderBy('sort_order')
             ->get();
-//            ->pluck('column_name');
+        //            ->pluck('column_name');
 
         $customFields = CustomField::where('table_name', 'air_purifiers')->get();
         foreach ($customFields as $customField) {
-            if($customField->column_type === 'boolean') {
+            if ($customField->column_type === 'boolean') {
                 $field = ToggleColumn::make($customField->column_name);
             } else {
                 $field = TextColumn::make($customField->column_name);
             }
 
-            if($customField->column_type === 'integer') {
+            if ($customField->column_type === 'integer') {
                 $field->numeric();
             }
 

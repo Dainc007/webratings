@@ -1,18 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\CustomFieldResource\Pages;
 
 use App\Filament\Resources\CustomFieldResource;
 use App\Services\CustomFieldService;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 
-class CreateCustomField extends CreateRecord
+final class CreateCustomField extends CreateRecord
 {
     protected static string $resource = CustomFieldResource::class;
 
-    protected function afterCreate(): void
+    private function afterCreate(): void
     {
         $record = $this->record;
         $customFieldService = app(CustomFieldService::class);

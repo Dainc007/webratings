@@ -185,7 +185,7 @@ final class AirPurifierImporter extends Importer
     {
         return AirPurifier::firstOrNew([
             // Update existing records, matching them by `$this->data['column_name']`
-            'email' => $this->data['remote_id'],
+            'id' => $this->data['remote_id'],
         ]);
     }
 }

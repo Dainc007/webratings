@@ -34,21 +34,14 @@ final class TableColumnPreferenceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('column_name')
-                    ->label('Nazwa kolumny')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Kolejność')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('column_name'),
+                Tables\Columns\TextColumn::make('sort_order'),
                 Tables\Columns\ToggleColumn::make('is_visible')
-                    ->sortable()
-                    ->label('Pokazuj w Tabeli')
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
                 Tables\Filters\SelectFilter::make('table_name')
-                    ->label('Typ Produktu')
                     ->options(function () {
                         return TableColumnPreference::distinct()
                             ->pluck('table_name')

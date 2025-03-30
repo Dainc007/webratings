@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
+use Filament\Infolists\Components\Entry;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -49,5 +55,35 @@ final class AppServiceProvider extends ServiceProvider
         });
 
         Vite::prefetch(concurrency: 3)->useAggressivePrefetching();
+
+        $this->setDefaultFilamentSettings();
+    }
+
+    protected function setDefaultFilamentSettings(): void
+    {
+        Column::configureUsing(function (Column $column): void {
+            $column
+                ->alignCenter()
+                ->sortable()
+                ->toggleable()
+                ->translateLabel();
+        });
+        Filter::configureUsing(function (Filter $filter): void {
+            $filter->translateLabel();
+        });
+        Field::configureUsing(function (Field $field): void {
+            $field->translateLabel();
+        });
+        Entry::configureUsing(function (Entry $entry): void {
+            $entry->translateLabel();
+        });
+
+        Action::configureUsing(function (Action $action): void {
+            $action->translateLabel();
+        });
+
+        Component::configureUsing(function (Component $component): void {
+            $component->translateLabel();
+        });
     }
 }

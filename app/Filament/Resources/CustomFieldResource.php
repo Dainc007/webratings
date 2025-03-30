@@ -34,14 +34,12 @@ final class CustomFieldResource extends Resource
         return $form
             ->schema([
                 Select::make('table_name')
-                    ->label('Produkt')
                     ->options([
                         'air_purifiers' => 'Oczyszczacz Powietrza',
                     ])
                     ->required(),
 
                 Select::make('column_type')
-                    ->label('Typ')
                     ->options([
                         'string' => 'Krótkie pole tekstowe (do 255 znaków)',
                         'integer' => 'Liczba',
@@ -50,14 +48,12 @@ final class CustomFieldResource extends Resource
                     ->required(),
 
                 TextInput::make('column_name')
-                    ->label('Kolumna')
                     ->hintIconTooltip('np. nazwa w języku angielskim z małych liter pod jaką zapiszemy dane w bazie.')
                     ->required()
                     ->maxLength(255)
                     ->alphaDash(),
 
                 TextInput::make('display_name')
-                    ->label('Wyświetlaj jako')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -67,8 +63,8 @@ final class CustomFieldResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('display_name')->label('Nazwa Kolumny'),
-                Tables\Columns\TextColumn::make('table_name')->label('Nazwa Tabeli'),
+                Tables\Columns\TextColumn::make('display_name'),
+                Tables\Columns\TextColumn::make('table_name'),
             ])
             ->filters([
                 //

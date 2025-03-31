@@ -42,11 +42,15 @@ final class TableColumnPreferenceResource extends Resource
             ->reorderable('sort_order')
             ->filters([
                 Tables\Filters\SelectFilter::make('table_name')
+                    ->label("Tabela")
+                    ->selectablePlaceholder(false)
+                    ->default('air_purifiers')
                     ->options(function () {
                         return TableColumnPreference::distinct()
                             ->pluck('table_name')
                             ->mapWithKeys(function ($tableName) {
-                                return [$tableName => __("tables.names.{$tableName}")];
+                                $label = __($tableName);
+                                return [$tableName => $label];
                             })
                             ->toArray();
                     }),

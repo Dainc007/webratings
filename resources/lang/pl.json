@@ -94,7 +94,7 @@
     "Table name": "Typ tabeli",
     "String": "Krótkie pole tekstowe (do 255 znaków)",
     "Integer": "Liczba",
-    "Boolean": "Prawda/Fałsz",
+    "Boolean": "TAK/NIE",
     "Required": "Pole :attribute jest wymagane.",
     "Unique": "Wartość :attribute jest już zajęta.",
     "Numeric": ":attribute musi być liczbą.",

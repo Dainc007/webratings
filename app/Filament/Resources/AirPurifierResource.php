@@ -26,6 +26,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Schema;
 
 final class AirPurifierResource extends Resource
 {
@@ -67,10 +68,11 @@ final class AirPurifierResource extends Resource
                         Tabs\Tab::make('Basic Information')
                             ->schema([
                                 Select::make('status')
+                                    ->selectablePlaceholder(false)
                                     ->options([
-                                        'draft' => 'Draft',
-                                        'pending' => 'Pending',
-                                        'published' => 'Published',
+                                        'draft' => 'Szkic',
+                                        'published' => 'Opublikowany',
+                                        'archived' => "Zarchiwizowany"
                                     ])
                                     ->required(),
 
@@ -87,7 +89,7 @@ final class AirPurifierResource extends Resource
                                     ->required()
                                     ->prefix('PLN'),
 
-                                DateTimePicker::make('price_date'),
+                                DateTimePicker::make('price_date')->default(now()),
 
                                 Toggle::make('is_promo'),
 
@@ -96,18 +98,26 @@ final class AirPurifierResource extends Resource
                                         TextInput::make('partner_link_url')
                                             ->maxLength(255),
 
-                                        TagsInput::make('partner_link_rel_2')
-                                            ->placeholder('Add relation')
-                                            ->separator(',')
-                                            ->helperText('e.g., nofollow, noopener'),
+                                        Select::make('ceneo_link_rel_2')
+                                            ->multiple()
+                                            ->options([
+                                                'nofollow' => 'nofollow',
+                                                'dofollow' => 'dofollow',
+                                                'sponsored' => 'sponsored',
+                                                'noopener' => 'noopener',
+                                                ]),
 
                                         TextInput::make('ceneo_url')
                                             ->maxLength(255),
 
-                                        TagsInput::make('ceneo_link_rel_2')
-                                            ->placeholder('Add relation')
-                                            ->separator(',')
-                                            ->helperText('e.g., nofollow, noopener'),
+                                        Select::make('partner_link_rel_2')
+                                            ->multiple()
+                                            ->options([
+                                                'nofollow' => 'nofollow',
+                                                'dofollow' => 'dofollow',
+                                                'sponsored' => 'sponsored',
+                                                'noopener' => 'noopener',
+                                            ]),
 
                                         TextInput::make('review_link')
                                             ->maxLength(255),
@@ -317,9 +327,6 @@ final class AirPurifierResource extends Resource
                                     ->placeholder('Add device type')
                                     ->separator(','),
 
-                                TextInput::make('type')
-                                    ->numeric(),
-
                                 Toggle::make('main_ranking'),
 
                                 Toggle::make('ranking_hidden'),
@@ -357,7 +364,7 @@ final class AirPurifierResource extends Resource
                                     ->disabled(),
                             ]),
 
-                        Tabs\Tab::make('Custom Fields')
+                        Tabs\Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
                             ),
@@ -379,11 +386,10 @@ final class AirPurifierResource extends Resource
             ->get();
 
         foreach ($columns as $column) {
-            $columnName = $column['table_name'] . '_' . $column['column_name'];
-            $field = TextColumn::make($columnName)->searchable();
+            $field = TextColumn::make($column['column_name']);
 
             if ($column['column_name'] === 'price') {
-                $field = TextInputColumn::make($columnName)->searchable()
+                $field = TextInputColumn::make($column['column_name'])
                     ->width('50px')
                     ->extraInputAttributes(['step' => '0.01'])
                     ->afterStateUpdated(function ($record, $state): void {
@@ -393,6 +399,11 @@ final class AirPurifierResource extends Resource
                             ->send();
                     });
             }
+
+            $field->when(
+                Schema::hasColumn('air_purifiers', $column['column_name']),
+                fn () => $field->searchable()
+            );
 
             $availableColumns[] = $field;
         }
@@ -416,20 +427,15 @@ final class AirPurifierResource extends Resource
 
         return $table
             ->recordUrl(null)
-            ->heading(
-                fn(): string => 'Łącznie Produktów: ' . AirPurifier::count()
-            )
             ->columns($availableColumns)
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->headerActions([
                 Tables\Actions\ImportAction::make('Import Products')
                     ->importer(AirPurifierImporter::class),
-                Tables\Actions\Action::make('column_settings')
+                Tables\Actions\Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn() => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [

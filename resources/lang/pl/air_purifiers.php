@@ -59,7 +59,7 @@ return [
     'light_sensor' => 'Czujnik światła',
     'hepa_filter_class' => 'Klasa filtra HEPA',
     'effectiveness_hepa_filter' => 'Skuteczność filtra HEPA',
-    'price_date' => 'Data ceny',
+    'price_date' => 'Data wprowadzenia ceny',
     'ranking_hidden' => 'Ranking ukryty',
     'filter_costs' => 'Koszty filtrów',
     'functions_and_equipment' => 'Funkcje i wyposażenie',
@@ -103,7 +103,7 @@ return [
         'model' => 'Model',
         'brand_name' => 'Nazwa marki',
         'price' => 'Cena (PLN)',
-        'price_date' => 'Data ceny',
+        'price_date' => 'Data wprowadzenia ceny',
         'is_promo' => 'Produkt promocyjny',
 
         // Links Section

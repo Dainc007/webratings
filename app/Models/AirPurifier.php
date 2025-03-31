@@ -11,6 +11,10 @@ final class AirPurifier extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'colors' => 'array',
+    ];
+
     protected $fillable = [
         'status',
         'sort',

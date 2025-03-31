@@ -43,7 +43,7 @@ final class CustomFieldResource extends Resource
                     ->options([
                         'string' => 'Krótkie pole tekstowe (do 255 znaków)',
                         'integer' => 'Liczba',
-                        'boolean' => 'Prawda/Fałsz',
+                        'boolean' => 'TAK/NIE',
                     ])
                     ->required(),
 

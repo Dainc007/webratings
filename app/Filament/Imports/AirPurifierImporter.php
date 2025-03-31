@@ -24,9 +24,14 @@ final class AirPurifierImporter extends Importer
             ImportColumn::make('brand_name'),
             ImportColumn::make('price'),
             ImportColumn::make('partner_link_url'),
-            ImportColumn::make('partner_link_rel_2'),
+            ImportColumn::make('partner_link_rel_2')->castStateUsing(function ($state) {
+                return json_encode(array_map('trim', explode(',', $state)));
+            }),
             ImportColumn::make('ceneo_url'),
-            ImportColumn::make('ceneo_link_rel_2'),
+            ImportColumn::make('ceneo_link_rel_2')
+                ->castStateUsing(function ($state) {
+                    return json_encode(array_map('trim', explode(',', $state)));
+                }),
             ImportColumn::make('max_performance'),
             ImportColumn::make('max_area'),
             ImportColumn::make('max_area_ro'),

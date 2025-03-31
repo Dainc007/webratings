@@ -422,6 +422,11 @@ final class AirPurifierResource extends Resource
 
             $field->searchable();
 
+            $field->when(
+                Schema::hasColumn('air_purifiers', $customField->column_name),
+                fn () => $field->searchable()
+            );
+
             $availableColumns[] = $field;
         }
 

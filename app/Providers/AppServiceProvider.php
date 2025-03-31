@@ -65,7 +65,6 @@ final class AppServiceProvider extends ServiceProvider
             $column
                 ->alignCenter()
                 ->sortable()
-                ->toggleable()
                 ->translateLabel();
         });
         Filter::configureUsing(function (Filter $filter): void {

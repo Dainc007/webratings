@@ -33,7 +33,9 @@ final class CustomFieldService
         File::put($migrationPath, $stub);
 
         // Run migration
-        Artisan::call('migrate');
+        Artisan::call('migrate', [
+            '--force' => true,
+        ]);
 
         TableColumnPreference::firstOrCreate([
             'table_name' => $tableName,
@@ -66,7 +68,9 @@ final class CustomFieldService
         File::put($migrationPath, $stub);
 
         // Run migration
-        Artisan::call('migrate');
+        Artisan::call('migrate', [
+            '--force' => true,
+        ]);
 
         TableColumnPreference::where(['table_name' => $tableName, 'column_name' => $columnName])->delete();
 

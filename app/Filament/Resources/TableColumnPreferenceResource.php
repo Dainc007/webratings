@@ -34,7 +34,7 @@ final class TableColumnPreferenceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('column_name'),
+                Tables\Columns\TextColumn::make('column_name')->searchable(),
                 Tables\Columns\TextColumn::make('sort_order'),
                 Tables\Columns\ToggleColumn::make('is_visible')
             ])

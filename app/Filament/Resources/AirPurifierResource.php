@@ -427,6 +427,9 @@ final class AirPurifierResource extends Resource
                 fn () => $field->searchable()
             );
 
+            $label = $customField->display_name ?? __($customField->column_name);
+            $field->label($label);
+
             $availableColumns[] = $field;
         }
 

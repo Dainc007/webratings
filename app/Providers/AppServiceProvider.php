@@ -39,6 +39,7 @@ final class AppServiceProvider extends ServiceProvider
 
         Model::unguard();
         Model::shouldBeStrict($isProduction);
+        Model::automaticallyEagerLoadRelationships();
 //        DB::prohibitDestructiveCommands($isProduction);
         URL::forceScheme('https');
 

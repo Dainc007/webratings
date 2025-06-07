@@ -22,7 +22,7 @@ return RectorConfig::configure()
         deadCode: true,
         codeQuality: true,
         typeDeclarations: true,
-        privatization: true,
+        privatization: false,
         earlyReturn: true,
         strictBooleans: true
     );

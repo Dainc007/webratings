@@ -10,6 +10,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::resources([
+Route::apiResources([
     'airPurifiers' => AirPurifierController::class,
 ]);

@@ -17,12 +17,8 @@ class AirPurifierResource extends JsonResource
         return [
             'id' => $this->id ?? '',
             'model' => $this->model ?? '',
-            'brand' => $this->brand ?? '',
+            'brand_name' => $this->brand ?? '',
             'price' => $this->price ?? '',
-            'image' => $this->image ?? '',
-            'description' => $this->description ?? '',
-            'created_at' => $this->created_at ?? '',
-            'updated_at' => $this->updated_at ?? '',
         ];
     }
 }

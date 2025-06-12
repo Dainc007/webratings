@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SearchAirPurifierRequest;
 use App\Http\Resources\AirPurifierResource;
 use App\Models\AirPurifier;
 use Illuminate\Http\Request;
@@ -12,25 +13,32 @@ class AirPurifierController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(SearchAirPurifierRequest $request)
     {
-        $airPurifiers = AirPurifier::query();
+        $query = AirPurifier::query();
 
-        if($request->has('all')) {
-            $airPurifiers->all();
+        if ($request->filled('display')) {
+            $columns = explode(',', $request->get('display'));
+            $query->select($columns);
         }
 
-        if($request->has('paginate')) {
-            $airPurifiers->paginate();
-        }
+        switch (true) {
+            case $request->filled('id'):
+                $ids = explode(',', $request->get('id'));
+                $airPurifiers = $request->filled('display')
+                    ? $query->whereIn('id', $ids)->get()
+                    : AirPurifier::find($ids);
+                return AirPurifierResource::collection($airPurifiers);
 
-        if($request->has('max')) {
-            $airPurifiers->limit($request->get('max'));
-        }
+            case $request->boolean('paginate'):
+                return AirPurifierResource::collection($query->paginate());
 
-        return AirPurifierResource::collection(
-            (AirPurifier::paginate())
-        );
+            case $request->filled('max'):
+                return AirPurifierResource::collection($query->limit($request->integer('max'))->get());
+
+            default:
+                return AirPurifierResource::collection($query->get());
+        }
     }
 
     /**

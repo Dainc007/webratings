@@ -15,7 +15,8 @@ class AirPurifierResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-          'id' => $this->id
+            'id' => $this->id,
+            'model' => $this->model
         ];
     }
 }

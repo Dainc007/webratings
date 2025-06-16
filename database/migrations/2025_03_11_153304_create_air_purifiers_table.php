@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('air_purifiers', function (Blueprint $table) {
             $table->id();
-            $table->integer('remote_id')->nullable();
+            $table->integer('remote_id')->nullable()->unique();
             $table->string('status')->nullable();
             $table->timestamp('date_created')->nullable();
             $table->timestamp('date_updated')->nullable();

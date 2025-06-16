@@ -20,7 +20,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', 'daily'),
 
     /*
     |--------------------------------------------------------------------------
@@ -53,6 +53,14 @@ return [
     */
 
     'channels' => [
+
+        'translations' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/translations.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAILY_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
 
         'stack' => [
             'driver' => 'stack',

@@ -45,9 +45,9 @@ final class AppServiceProvider extends ServiceProvider
 
         date_default_timezone_set(config('app.timezone'));
 
-        if (! $isProduction) {
+        if (!$isProduction) {
             Lang::handleMissingKeysUsing(function ($key, $replace, $locale, $fallback): void {
-                Log::error("Missing translation key: {$key} in locale: {$locale}");
+                Log::channel('translations')->info("Missing translation key: {$key} in locale: {$locale}");
             });
         }
 

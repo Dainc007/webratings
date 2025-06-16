@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('air_humidifiers', function (Blueprint $table) {
             $table->id();
-            $table->integer('remote_id')->nullable()->unique();;
-            $table->string('status')->default('active');
-            $table->integer('sort')->default(0);
+            $table->integer('remote_id')->nullable()->unique();
+            $table->string('status')->nullable();
+            $table->integer('sort')->nullable();
             $table->unsignedBigInteger('user_created')->nullable();
             $table->timestamp('date_created')->nullable();
             $table->unsignedBigInteger('user_updated')->nullable();
             $table->timestamp('date_updated')->nullable();
 
             // Basic product information
-            $table->string('brand_name');
-            $table->string('model');
+            $table->string('brand_name')->nullable();
+            $table->string('model')->nullable();
             $table->string('type')->nullable();
             $table->decimal('price', 10, 2)->nullable();
             $table->decimal('price_before', 10, 2)->nullable();
@@ -48,98 +48,66 @@ return new class extends Migration
             $table->integer('tested_efficiency')->nullable(); // ml/h
             $table->integer('max_area')->nullable(); // m²
             $table->integer('tested_max_area')->nullable(); // m²
-
-            // Water tank specifications
-            $table->decimal('water_tank_capacity', 5, 2)->nullable(); // liters
-            $table->integer('water_tank_min_time')->nullable(); // hours
+            $table->integer('water_tank_capacity')->nullable();
+            $table->integer('water_tank_min_time')->nullable();
             $table->string('water_tank_fill_type')->nullable();
-
-            // Hygrostat settings
-            $table->boolean('hygrostat')->default(false);
-            $table->integer('hygrostat_min')->nullable(); // %
-            $table->integer('hygrostat_max')->nullable(); // %
-            $table->integer('hygrostat_step')->nullable(); // %
-
-            // Fan specifications
+            $table->boolean('hygrostat')->nullable();
+            $table->integer('hygrostat_min')->nullable();
+            $table->integer('hygrostat_max')->nullable();
+            $table->integer('hygrostat_step')->nullable();
             $table->integer('fan_modes_count')->nullable();
-            $table->integer('min_fan_volume')->nullable(); // dB
-            $table->integer('max_fan_volume')->nullable(); // dB
-            $table->boolean('night_mode')->default(false);
-
-            // Evaporative filter
-            $table->boolean('evaporative_filter')->default(false);
-            $table->integer('evaporative_filter_life')->nullable(); // months
-            $table->decimal('evaporative_filter_price', 8, 2)->nullable();
-
-            // Silver ion
-            $table->boolean('silver_ion')->default(false);
-            $table->integer('silver_ion_life')->nullable(); // months
-            $table->decimal('silver_ion_price', 8, 2)->nullable();
-
-            // Ceramic filter
-            $table->boolean('ceramic_filter')->default(false);
-            $table->integer('ceramic_filter_life')->nullable(); // months
-            $table->decimal('ceramic_filter_price', 8, 2)->nullable();
-
-            // Additional features
-            $table->boolean('uv_lamp')->default(false);
-            $table->boolean('ionization')->default(false);
-
-            // Control features
-            $table->boolean('mobile_app')->default(false);
-            $table->text('mobile_features')->nullable();
-            $table->text('control_other')->nullable();
-            $table->boolean('remote_control')->default(false);
-            $table->text('functions')->nullable();
-
-            // Power specifications
-            $table->integer('min_rated_power_consumption')->nullable(); // watts
-            $table->integer('max_rated_power_consumption')->nullable(); // watts
-            $table->string('rated_voltage')->nullable(); // e.g., "230V"
-
-            // Physical dimensions
-            $table->decimal('width', 8, 2)->nullable(); // cm
-            $table->decimal('height', 8, 2)->nullable(); // cm
-            $table->decimal('depth', 8, 2)->nullable(); // cm
-            $table->decimal('weight', 8, 2)->nullable(); // kg
-            $table->string('colors')->nullable();
-
-            // Ranking and scoring
+            $table->integer('min_fan_volume')->nullable();
+            $table->integer('max_fan_volume')->nullable();
+            $table->boolean('night_mode')->nullable();
+            $table->boolean('evaporative_filter')->nullable();
+            $table->integer('evaporative_filter_life')->nullable();
+            $table->decimal('evaporative_filter_price', 10, 2)->nullable();
+            $table->boolean('silver_ion')->nullable();
+            $table->integer('silver_ion_life')->nullable();
+            $table->decimal('silver_ion_price', 10, 2)->nullable();
+            $table->boolean('ceramic_filter')->nullable();
+            $table->integer('ceramic_filter_life')->nullable();
+            $table->decimal('ceramic_filter_price', 10, 2)->nullable();
+            $table->boolean('uv_lamp')->nullable();
+            $table->boolean('ionization')->nullable();
+            $table->boolean('mobile_app')->nullable();
+            $table->json('mobile_features')->nullable();
+            $table->json('control_other')->nullable();
+            $table->boolean('remote_control')->nullable();
+            $table->json('functions')->nullable();
+            $table->integer('min_rated_power_consumption')->nullable();
+            $table->integer('max_rated_power_consumption')->nullable();
+            $table->string('rated_voltage')->nullable();
+            $table->decimal('width', 8, 2)->nullable();
+            $table->decimal('height', 8, 2)->nullable();
+            $table->decimal('depth', 8, 2)->nullable();
+            $table->decimal('weight', 8, 2)->nullable();
+            $table->json('colors')->nullable();
             $table->integer('capability_points')->nullable();
             $table->integer('capability')->nullable();
             $table->integer('profitability_points')->nullable();
             $table->integer('ranking')->nullable();
             $table->integer('profitability')->nullable();
             $table->text('review_link')->nullable();
-            $table->boolean('ranking_hidden')->default(false);
-
-            // Additional specifications
+            $table->boolean('ranking_hidden')->nullable();
             $table->decimal('Filter_cots_humi', 8, 2)->nullable();
-            $table->boolean('disks')->default(false);
+            $table->boolean('disks')->nullable();
             $table->integer('main_ranking')->nullable();
-
-            // Usage categories (boolean flags)
-            $table->boolean('for_plant')->default(false);
-            $table->boolean('for_desk')->default(false);
-            $table->boolean('alergic')->default(false);
-            $table->boolean('astmatic')->default(false);
-            $table->boolean('small')->default(false);
-            $table->boolean('for_kids')->default(false);
-            $table->boolean('big_area')->default(false);
-
-            // Additional area specifications
-            $table->integer('humidification_area')->nullable(); // m²
-            $table->integer('max_area_ro')->nullable(); // m²
+            $table->boolean('for_plant')->nullable();
+            $table->boolean('for_desk')->nullable();
+            $table->boolean('alergic')->nullable();
+            $table->boolean('astmatic')->nullable();
+            $table->boolean('small')->nullable();
+            $table->boolean('for_kids')->nullable();
+            $table->boolean('big_area')->nullable();
+            $table->integer('humidification_area')->nullable();
+            $table->integer('max_area_ro')->nullable();
             $table->integer('max_performance')->nullable();
-
-            // Filter specifications
             $table->string('hepa_filter_class')->nullable();
-            $table->boolean('mesh_filter')->default(false);
-            $table->boolean('carbon_filter')->default(false);
+            $table->boolean('mesh_filter')->nullable();
+            $table->boolean('carbon_filter')->nullable();
             $table->string('type_of_device')->nullable();
-
-            // Promotional and media
-            $table->boolean('is_promo')->default(false);
+            $table->boolean('is_promo')->nullable();
             $table->json('gallery')->nullable();
 
             $table->timestamps();

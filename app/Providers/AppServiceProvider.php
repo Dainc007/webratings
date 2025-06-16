@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\Imports\ImportColumn;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Infolists\Components\Entry;
@@ -64,6 +65,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         Column::configureUsing(function (Column $column): void {
             $column
+                ->toggleable()
                 ->alignCenter()
                 ->sortable()
                 ->translateLabel();
@@ -84,6 +86,10 @@ final class AppServiceProvider extends ServiceProvider
 
         Component::configureUsing(function (Component $component): void {
             $component->translateLabel();
+        });
+
+        ImportColumn::configureUsing(function (ImportColumn $importColumn): void {
+            $importColumn->requiredMapping();
         });
     }
 }

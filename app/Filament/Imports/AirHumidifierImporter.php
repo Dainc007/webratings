@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Imports;
 
 use App\Models\AirHumidifier;
@@ -7,7 +9,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
-class AirHumidifierImporter extends Importer
+final class AirHumidifierImporter extends Importer
 {
     protected static ?string $model = AirHumidifier::class;
 
@@ -15,238 +17,108 @@ class AirHumidifierImporter extends Importer
     {
         return [
             ImportColumn::make('remote_id'),
-            ImportColumn::make('status')
-                ->requiredMapping()
-                ->rules(['required']),
-            ImportColumn::make('sort')
-                ->requiredMapping()
-                ->numeric()
-                ->rules(['required', 'integer']),
-            ImportColumn::make('user_created')
-                ->numeric()
-                ->rules(['integer']),
+            ImportColumn::make('status'),
             ImportColumn::make('date_created'),
-            ImportColumn::make('user_updated')
-                ->numeric()
-                ->rules(['integer']),
             ImportColumn::make('date_updated'),
-            ImportColumn::make('brand_name')
-                ->requiredMapping()
-                ->rules(['required']),
-            ImportColumn::make('model')
-                ->requiredMapping()
-                ->rules(['required']),
-            ImportColumn::make('type'),
-            ImportColumn::make('price')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('price_before')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('discount_info'),
-            ImportColumn::make('partner_name'),
+            ImportColumn::make('model'),
+            ImportColumn::make('brand_name'),
+            ImportColumn::make('price'),
             ImportColumn::make('partner_link_url'),
-            ImportColumn::make('partner_link_rel_2'),
-            ImportColumn::make('partner_link_title'),
-            ImportColumn::make('ceneo_link_rel_2'),
+            ImportColumn::make('partner_link_rel_2')
+                ->castStateUsing(function ($state) {
+                    return json_encode(array_map('trim', explode(',', $state)));
+                }),
             ImportColumn::make('ceneo_url'),
-            ImportColumn::make('ceneo_link_title'),
-            ImportColumn::make('image'),
-            ImportColumn::make('humidification_efficiency')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('tested_efficiency')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('max_area')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('tested_max_area')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('water_tank_capacity')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('water_tank_min_time')
-                ->numeric()
-                ->rules(['integer']),
+            ImportColumn::make('ceneo_link_rel_2')
+                ->castStateUsing(function ($state) {
+                    return json_encode(array_map('trim', explode(',', $state)));
+                }),
+            ImportColumn::make('max_performance'),
+            ImportColumn::make('max_area'),
+            ImportColumn::make('max_area_ro'),
+            ImportColumn::make('humidification_efficiency'),
+            ImportColumn::make('tested_efficiency'),
+            ImportColumn::make('water_tank_capacity'),
+            ImportColumn::make('water_tank_min_time'),
             ImportColumn::make('water_tank_fill_type'),
             ImportColumn::make('hygrostat')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
-            ImportColumn::make('hygrostat_min')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('hygrostat_max')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('hygrostat_step')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('fan_modes_count')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('min_fan_volume')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('max_fan_volume')
-                ->numeric()
-                ->rules(['integer']),
+                ->boolean(),
+            ImportColumn::make('hygrostat_min'),
+            ImportColumn::make('hygrostat_max'),
+            ImportColumn::make('hygrostat_step'),
+            ImportColumn::make('fan_modes_count'),
+            ImportColumn::make('min_fan_volume'),
+            ImportColumn::make('max_fan_volume'),
             ImportColumn::make('night_mode')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('evaporative_filter')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
-            ImportColumn::make('evaporative_filter_life')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('evaporative_filter_price')
-                ->numeric()
-                ->rules(['integer']),
+                ->boolean(),
+            ImportColumn::make('evaporative_filter_life'),
+            ImportColumn::make('evaporative_filter_price'),
             ImportColumn::make('silver_ion')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
-            ImportColumn::make('silver_ion_life')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('silver_ion_price')
-                ->numeric()
-                ->rules(['integer']),
+                ->boolean(),
+            ImportColumn::make('silver_ion_life'),
+            ImportColumn::make('silver_ion_price'),
             ImportColumn::make('ceramic_filter')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
-            ImportColumn::make('ceramic_filter_life')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('ceramic_filter_price')
-                ->numeric()
-                ->rules(['integer']),
+                ->boolean(),
+            ImportColumn::make('ceramic_filter_life'),
+            ImportColumn::make('ceramic_filter_price'),
             ImportColumn::make('uv_lamp')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('ionization')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('mobile_app')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('mobile_features'),
             ImportColumn::make('control_other'),
             ImportColumn::make('remote_control')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('functions'),
-            ImportColumn::make('min_rated_power_consumption')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('max_rated_power_consumption')
-                ->numeric()
-                ->rules(['integer']),
+            ImportColumn::make('min_rated_power_consumption'),
+            ImportColumn::make('max_rated_power_consumption'),
             ImportColumn::make('rated_voltage'),
-            ImportColumn::make('width')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('height')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('depth')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('weight')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('colors'),
-            ImportColumn::make('capability_points')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('capability')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('profitability_points')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('ranking')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('profitability')
-                ->numeric()
-                ->rules(['integer']),
+            ImportColumn::make('width'),
+            ImportColumn::make('height'),
+            ImportColumn::make('weight'),
+            ImportColumn::make('depth'),
             ImportColumn::make('review_link'),
+            ImportColumn::make('colors'),
+            ImportColumn::make('capability_points'),
+            ImportColumn::make('capability'),
+            ImportColumn::make('profitability_points'),
+            ImportColumn::make('ranking'),
+            ImportColumn::make('profitability'),
             ImportColumn::make('ranking_hidden')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
-            ImportColumn::make('Filter_cots_humi')
-                ->numeric()
-                ->rules(['integer']),
+                ->boolean(),
+            ImportColumn::make('Filter_cots_humi'),
             ImportColumn::make('disks')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
-            ImportColumn::make('main_ranking')
-                ->numeric()
-                ->rules(['integer']),
+                ->boolean(),
+            ImportColumn::make('main_ranking'),
             ImportColumn::make('for_plant')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('for_desk')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('alergic')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('astmatic')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('small')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('for_kids')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('big_area')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
-            ImportColumn::make('humidification_area')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('max_area_ro')
-                ->numeric()
-                ->rules(['integer']),
-            ImportColumn::make('max_performance')
-                ->numeric()
-                ->rules(['integer']),
+                ->boolean(),
+            ImportColumn::make('humidification_area'),
+            ImportColumn::make('max_area_ro'),
+            ImportColumn::make('max_performance'),
             ImportColumn::make('hepa_filter_class'),
             ImportColumn::make('mesh_filter')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('carbon_filter')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('type_of_device'),
             ImportColumn::make('is_promo')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('gallery'),
         ];
     }

@@ -475,4 +475,9 @@ final class AirPurifierResource extends Resource
             'edit' => Pages\EditAirPurifier::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
 }

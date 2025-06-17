@@ -427,4 +427,9 @@ class AirHumidifierResource extends Resource
     {
         return (string) static::getModel()::count();
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['brand_name', 'model'];
+    }
 }

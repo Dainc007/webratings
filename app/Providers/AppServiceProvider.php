@@ -65,6 +65,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         Column::configureUsing(function (Column $column): void {
             $column
+            ->wrapHeader()
                 ->alignCenter()
                 ->sortable()
                 ->translateLabel();

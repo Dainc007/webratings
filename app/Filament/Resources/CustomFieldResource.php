@@ -36,6 +36,7 @@ final class CustomFieldResource extends Resource
                 Select::make('table_name')
                     ->options([
                         'air_purifiers' => 'Oczyszczacz Powietrza',
+                        'air_humidifiers' => 'Nawilżacz Powietrza',
                     ])
                     ->required(),
 

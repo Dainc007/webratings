@@ -54,7 +54,7 @@ final class TableColumnPreferenceResource extends Resource
                             })
                             ->toArray();
                     }),
-            ])
+                ], layout: \Filament\Tables\Enums\FiltersLayout::AboveContent)
             ->actions([])
             ->bulkActions([]);
     }

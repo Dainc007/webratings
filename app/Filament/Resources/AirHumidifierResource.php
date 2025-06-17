@@ -16,6 +16,7 @@ use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TagsInput;
 
 class AirHumidifierResource extends Resource
 {
@@ -32,6 +33,9 @@ class AirHumidifierResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $recordTitleAttribute = 'model';
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -43,26 +47,18 @@ class AirHumidifierResource extends Resource
                                 Forms\Components\Section::make('Basic Information')
                                     ->schema([
                                         Forms\Components\TextInput::make('remote_id')
-                                            ->label('Remote ID')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('status')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('model')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('brand_name')
-                                            ->required(),
+                                            ->label('Remote ID'),
+                                        Forms\Components\TextInput::make('status'),
+                                        Forms\Components\TextInput::make('model'),
+                                        Forms\Components\TextInput::make('brand_name'),
                                         Forms\Components\TextInput::make('price')
-                                            ->numeric()
-                                            ->required(),
+                                            ->numeric(),
                                         Forms\Components\TextInput::make('partner_link_url')
-                                            ->url()
-                                            ->required(),
+                                            ->url(),
                                         Forms\Components\TextInput::make('ceneo_url')
-                                            ->url()
-                                            ->required(),
+                                            ->url(),
                                         Forms\Components\TextInput::make('review_link')
-                                            ->url()
-                                            ->required(),
+                                            ->url(),
                                     ])->columns(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Performance')
@@ -98,8 +94,7 @@ class AirHumidifierResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make('Controls')
                                     ->schema([
-                                        Forms\Components\Toggle::make('hygrostat')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('hygrostat'),
                                         Forms\Components\TextInput::make('hygrostat_min')
                                             ->numeric(),
                                         Forms\Components\TextInput::make('hygrostat_max')
@@ -112,54 +107,47 @@ class AirHumidifierResource extends Resource
                                             ->numeric(),
                                         Forms\Components\TextInput::make('max_fan_volume')
                                             ->numeric(),
-                                        Forms\Components\Toggle::make('night_mode')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('night_mode'),
                                         Forms\Components\TextInput::make('control_other'),
-                                        Forms\Components\Toggle::make('remote_control')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('functions'),
+                                        Forms\Components\Toggle::make('remote_control'),
+                                        TagsInput::make('functions')
+                                        ->separator(','),
                                     ])->columns(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Filters')
                             ->schema([
                                 Forms\Components\Section::make('Filters')
                                     ->schema([
-                                        Forms\Components\Toggle::make('evaporative_filter')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('evaporative_filter'),
                                         Forms\Components\TextInput::make('evaporative_filter_life')
                                             ->numeric(),
                                         Forms\Components\TextInput::make('evaporative_filter_price')
                                             ->numeric(),
-                                        Forms\Components\Toggle::make('silver_ion')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('silver_ion'),
                                         Forms\Components\TextInput::make('silver_ion_life')
                                             ->numeric(),
                                         Forms\Components\TextInput::make('silver_ion_price')
                                             ->numeric(),
-                                        Forms\Components\Toggle::make('ceramic_filter')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('ceramic_filter'),
                                         Forms\Components\TextInput::make('ceramic_filter_life')
                                             ->numeric(),
                                         Forms\Components\TextInput::make('ceramic_filter_price')
                                             ->numeric(),
-                                        Forms\Components\Toggle::make('uv_lamp')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('ionization')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('uv_lamp'),
+                                        Forms\Components\Toggle::make('ionization'),
                                         Forms\Components\TextInput::make('hepa_filter_class'),
-                                        Forms\Components\Toggle::make('mesh_filter')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('carbon_filter')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('mesh_filter'),
+                                        Forms\Components\Toggle::make('carbon_filter'),
                                     ])->columns(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Smart Features')
                             ->schema([
                                 Forms\Components\Section::make('Smart Features')
                                     ->schema([
-                                        Forms\Components\Toggle::make('mobile_app')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('mobile_features'),
+                                        Forms\Components\Toggle::make('mobile_app'),
+                                        TagsInput::make('mobile_features')
+                                        ->placeholder('Add feature')
+                                        ->separator(','),
                                     ])->columns(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Power & Dimensions')
@@ -186,20 +174,13 @@ class AirHumidifierResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make('Categories')
                                     ->schema([
-                                        Forms\Components\Toggle::make('for_plant')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('for_desk')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('alergic')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('astmatic')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('small')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('for_kids')
-                                            ->required(),
-                                        Forms\Components\Toggle::make('big_area')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('for_plant'),
+                                        Forms\Components\Toggle::make('for_desk'),
+                                        Forms\Components\Toggle::make('alergic'),
+                                        Forms\Components\Toggle::make('astmatic'),
+                                        Forms\Components\Toggle::make('small'),
+                                        Forms\Components\Toggle::make('for_kids'),
+                                        Forms\Components\Toggle::make('big_area'),
                                     ])->columns(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Ranking')
@@ -213,8 +194,7 @@ class AirHumidifierResource extends Resource
                                             ->numeric(),
                                         Forms\Components\TextInput::make('ranking'),
                                         Forms\Components\TextInput::make('profitability'),
-                                        Forms\Components\Toggle::make('ranking_hidden')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('ranking_hidden'),
                                         Forms\Components\TextInput::make('main_ranking'),
                                     ])->columns(2),
                             ]),
@@ -222,14 +202,16 @@ class AirHumidifierResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make('Additional')
                                     ->schema([
-                                        Forms\Components\TextInput::make('colors'),
+                                        TagsInput::make('colors')
+                                        ->placeholder('Add color')
+                                        ->separator(','),
                                         Forms\Components\TextInput::make('type_of_device'),
-                                        Forms\Components\Toggle::make('is_promo')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('gallery'),
+                                        Forms\Components\Toggle::make('is_promo'),
+                                        TagsInput::make('gallery')
+                                        ->placeholder('Add image')
+                                        ->separator(','),
                                         Forms\Components\TextInput::make('Filter_cots_humi'),
-                                        Forms\Components\Toggle::make('disks')
-                                            ->required(),
+                                        Forms\Components\Toggle::make('disks'),
                                     ])->columns(2),
                             ]),
                     ])
@@ -240,9 +222,19 @@ class AirHumidifierResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->recordUrl(null)
             ->headerActions([
                 ImportAction::make()
-                ->importer(AirHumidifierImporter::class)
+                ->importer(AirHumidifierImporter::class),
+                Tables\Actions\Action::make('Ustawienia')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->url(fn() => route('filament.admin.resources.table-column-preferences.index', [
+                    'tableFilters' => [
+                        'table_name' => [
+                            'value' => 'air_humidifiers',
+                        ],
+                    ],
+                ])),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('remote_id')
@@ -406,7 +398,6 @@ class AirHumidifierResource extends Resource
                     ->label('Big Area'),
             ], layout: \Filament\Tables\Enums\FiltersLayout::Modal)
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -428,7 +419,6 @@ class AirHumidifierResource extends Resource
         return [
             'index' => Pages\ListAirHumidifiers::route('/'),
             'create' => Pages\CreateAirHumidifier::route('/create'),
-            'view' => Pages\ViewAirHumidifier::route('/{record}'),
             'edit' => Pages\EditAirHumidifier::route('/{record}/edit'),
         ];
     }

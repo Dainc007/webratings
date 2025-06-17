@@ -13,6 +13,7 @@ final class AirPurifier extends Model
 
     protected $casts = [
         'colors' => 'array',
+        'functions' => 'array',
     ];
 
     protected $fillable = [

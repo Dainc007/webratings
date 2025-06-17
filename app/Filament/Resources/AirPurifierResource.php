@@ -44,6 +44,9 @@ final class AirPurifierResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $recordTitleAttribute = 'model';
+
+
     public static function form(Form $form): Form
     {
         $customFields = CustomField::where('table_name', 'air_purifiers')->get();

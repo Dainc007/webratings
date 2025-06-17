@@ -20,13 +20,13 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 
 final class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->spa()
             ->topNavigation()
             ->default()
             ->id('admin')
@@ -57,6 +57,9 @@ final class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 UpgradeToHttpsUnderNgrok::class,
+            ])
+            ->plugins([
+                GlobalSearchModalPlugin::make()
             ])
             ->authMiddleware([
                 Authenticate::class,

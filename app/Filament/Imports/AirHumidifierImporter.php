@@ -69,11 +69,43 @@ final class AirHumidifierImporter extends Importer
                 ->boolean(),
             ImportColumn::make('mobile_app')
                 ->boolean(),
-            ImportColumn::make('mobile_features'),
+            ImportColumn::make('mobile_features')
+                ->castStateUsing(function ($state) {
+                    if (empty($state)) return [];
+                    // If it's already a JSON string, decode it first
+                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                        $state = json_decode($state, true);
+                    }
+                    // If it's a string, split by comma
+                    if (is_string($state)) {
+                        return array_map('trim', explode(',', $state));
+                    }
+                    // If it's already an array, return it
+                    if (is_array($state)) {
+                        return array_map('trim', $state);
+                    }
+                    return [];
+                }),
             ImportColumn::make('control_other'),
             ImportColumn::make('remote_control')
                 ->boolean(),
-            ImportColumn::make('functions'),
+            ImportColumn::make('functions')
+                ->castStateUsing(function ($state) {
+                    if (empty($state)) return [];
+                    // If it's already a JSON string, decode it first
+                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                        $state = json_decode($state, true);
+                    }
+                    // If it's a string, split by comma
+                    if (is_string($state)) {
+                        return array_map('trim', explode(',', $state));
+                    }
+                    // If it's already an array, return it
+                    if (is_array($state)) {
+                        return array_map('trim', $state);
+                    }
+                    return [];
+                }),
             ImportColumn::make('min_rated_power_consumption'),
             ImportColumn::make('max_rated_power_consumption'),
             ImportColumn::make('rated_voltage'),
@@ -82,7 +114,23 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('weight'),
             ImportColumn::make('depth'),
             ImportColumn::make('review_link'),
-            ImportColumn::make('colors'),
+            ImportColumn::make('colors')
+                ->castStateUsing(function ($state) {
+                    if (empty($state)) return [];
+                    // If it's already a JSON string, decode it first
+                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                        $state = json_decode($state, true);
+                    }
+                    // If it's a string, split by comma
+                    if (is_string($state)) {
+                        return array_map('trim', explode(',', $state));
+                    }
+                    // If it's already an array, return it
+                    if (is_array($state)) {
+                        return array_map('trim', $state);
+                    }
+                    return [];
+                }),
             ImportColumn::make('capability_points'),
             ImportColumn::make('capability'),
             ImportColumn::make('profitability_points'),
@@ -119,7 +167,23 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('type_of_device'),
             ImportColumn::make('is_promo')
                 ->boolean(),
-            ImportColumn::make('gallery'),
+            ImportColumn::make('gallery')
+                ->castStateUsing(function ($state) {
+                    if (empty($state)) return [];
+                    // If it's already a JSON string, decode it first
+                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                        $state = json_decode($state, true);
+                    }
+                    // If it's a string, split by comma
+                    if (is_string($state)) {
+                        return array_map('trim', explode(',', $state));
+                    }
+                    // If it's already an array, return it
+                    if (is_array($state)) {
+                        return array_map('trim', $state);
+                    }
+                    return [];
+                }),
         ];
     }
 

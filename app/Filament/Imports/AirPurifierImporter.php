@@ -114,8 +114,40 @@ final class AirPurifierImporter extends Importer
             ImportColumn::make('pm2_sensor')
                 ->requiredMapping()
                 ->boolean(),
-            ImportColumn::make('colors'),
-            ImportColumn::make('functions'),
+            ImportColumn::make('colors')
+                ->castStateUsing(function ($state) {
+                    if (empty($state)) return [];
+                    // If it's already a JSON string, decode it first
+                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                        $state = json_decode($state, true);
+                    }
+                    // If it's a string, split by comma
+                    if (is_string($state)) {
+                        return array_map('trim', explode(',', $state));
+                    }
+                    // If it's already an array, return it
+                    if (is_array($state)) {
+                        return array_map('trim', $state);
+                    }
+                    return [];
+                }),
+            ImportColumn::make('functions')
+                ->castStateUsing(function ($state) {
+                    if (empty($state)) return [];
+                    // If it's already a JSON string, decode it first
+                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                        $state = json_decode($state, true);
+                    }
+                    // If it's a string, split by comma
+                    if (is_string($state)) {
+                        return array_map('trim', explode(',', $state));
+                    }
+                    // If it's already an array, return it
+                    if (is_array($state)) {
+                        return array_map('trim', $state);
+                    }
+                    return [];
+                }),
             ImportColumn::make('lzo_tvcop_sensor')
                 ->requiredMapping()
                 ->boolean(),

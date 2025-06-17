@@ -92,53 +92,125 @@ class AirHumidifierResource extends Resource
                             ]),
                         Forms\Components\Tabs\Tab::make('Controls')
                             ->schema([
-                                Forms\Components\Section::make('Controls')
+                                Forms\Components\Grid::make(2)
                                     ->schema([
-                                        Forms\Components\Toggle::make('hygrostat'),
-                                        Forms\Components\TextInput::make('hygrostat_min')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('hygrostat_max')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('hygrostat_step')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('fan_modes_count')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('min_fan_volume')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('max_fan_volume')
-                                            ->numeric(),
-                                        Forms\Components\Toggle::make('night_mode'),
-                                        Forms\Components\TextInput::make('control_other'),
-                                        Forms\Components\Toggle::make('remote_control'),
-                                        TagsInput::make('functions')
-                                        ->separator(','),
-                                    ])->columns(2),
+                                        Forms\Components\Grid::make(1)
+                                            ->schema([
+                                                Forms\Components\Toggle::make('hygrostat')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('hygrostat_min')
+                                                    ->visible(fn(callable $get) => $get('hygrostat'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('hygrostat_max')
+                                                    ->visible(fn(callable $get) => $get('hygrostat'))
+                                                    ->numeric(),
+                                                Forms\Components\Toggle::make('timer')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('timer_min')
+                                                    ->visible(fn(callable $get) => $get('timer'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('timer_max')
+                                                    ->visible(fn(callable $get) => $get('timer'))
+                                                    ->numeric(),
+                                            ]),
+                                        Forms\Components\Grid::make(1)
+                                            ->schema([
+                                                Forms\Components\Toggle::make('auto_mode')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('auto_mode_min')
+                                                    ->visible(fn(callable $get) => $get('auto_mode'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('auto_mode_max')
+                                                    ->visible(fn(callable $get) => $get('auto_mode'))
+                                                    ->numeric(),
+                                                Forms\Components\Toggle::make('night_mode')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('night_mode_min')
+                                                    ->visible(fn(callable $get) => $get('night_mode'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('night_mode_max')
+                                                    ->visible(fn(callable $get) => $get('night_mode'))
+                                                    ->numeric(),
+                                                Forms\Components\Toggle::make('child_lock')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('child_lock_min')
+                                                    ->visible(fn(callable $get) => $get('child_lock'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('child_lock_max')
+                                                    ->visible(fn(callable $get) => $get('child_lock'))
+                                                    ->numeric(),
+                                                Forms\Components\Toggle::make('display')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('display_min')
+                                                    ->visible(fn(callable $get) => $get('display'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('display_max')
+                                                    ->visible(fn(callable $get) => $get('display'))
+                                                    ->numeric(),
+                                                Forms\Components\Toggle::make('remote_control')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('remote_control_min')
+                                                    ->visible(fn(callable $get) => $get('remote_control'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('remote_control_max')
+                                                    ->visible(fn(callable $get) => $get('remote_control'))
+                                                    ->numeric(),
+                                            ]),
+                                    ]),
+                                TagsInput::make('functions')
+                                    ->separator(',')
+                                    ->columnSpanFull(),
                             ]),
                         Forms\Components\Tabs\Tab::make('Filters')
                             ->schema([
-                                Forms\Components\Section::make('Filters')
+                                Forms\Components\Grid::make(2)
                                     ->schema([
-                                        Forms\Components\Toggle::make('evaporative_filter'),
-                                        Forms\Components\TextInput::make('evaporative_filter_life')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('evaporative_filter_price')
-                                            ->numeric(),
-                                        Forms\Components\Toggle::make('silver_ion'),
-                                        Forms\Components\TextInput::make('silver_ion_life')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('silver_ion_price')
-                                            ->numeric(),
-                                        Forms\Components\Toggle::make('ceramic_filter'),
-                                        Forms\Components\TextInput::make('ceramic_filter_life')
-                                            ->numeric(),
-                                        Forms\Components\TextInput::make('ceramic_filter_price')
-                                            ->numeric(),
-                                        Forms\Components\Toggle::make('uv_lamp'),
-                                        Forms\Components\Toggle::make('ionization'),
-                                        Forms\Components\TextInput::make('hepa_filter_class'),
-                                        Forms\Components\Toggle::make('mesh_filter'),
-                                        Forms\Components\Toggle::make('carbon_filter'),
-                                    ])->columns(2),
+                                        Forms\Components\Section::make('Evaporative Filter')
+                                            ->schema([
+                                                Forms\Components\Toggle::make('evaporative_filter')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('evaporative_filter_life')
+                                                    ->visible(fn(callable $get) => $get('evaporative_filter'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('evaporative_filter_price')
+                                                    ->visible(fn(callable $get) => $get('evaporative_filter'))
+                                                    ->numeric(),
+                                            ]),
+                                        Forms\Components\Section::make('Silver Ion')
+                                            ->schema([
+                                                Forms\Components\Toggle::make('silver_ion')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('silver_ion_life')
+                                                    ->visible(fn(callable $get) => $get('silver_ion'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('silver_ion_price')
+                                                    ->visible(fn(callable $get) => $get('silver_ion'))
+                                                    ->numeric(),
+                                            ]),
+                                        Forms\Components\Section::make('Ceramic Filter')
+                                            ->schema([
+                                                Forms\Components\Toggle::make('ceramic_filter')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('ceramic_filter_life')
+                                                    ->visible(fn(callable $get) => $get('ceramic_filter'))
+                                                    ->numeric(),
+                                                Forms\Components\TextInput::make('ceramic_filter_price')
+                                                    ->visible(fn(callable $get) => $get('ceramic_filter'))
+                                                    ->numeric(),
+                                            ]),
+                                        Forms\Components\Section::make('Other Filters')
+                                            ->schema([
+                                                Forms\Components\Toggle::make('uv_lamp')
+                                                    ->live(),
+                                                Forms\Components\Toggle::make('ionization')
+                                                    ->live(),
+                                                Forms\Components\TextInput::make('hepa_filter_class'),
+                                                Forms\Components\Toggle::make('mesh_filter')
+                                                    ->live(),
+                                                Forms\Components\Toggle::make('carbon_filter')
+                                                    ->live(),
+                                            ]),
+                                    ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Smart Features')
                             ->schema([
@@ -215,6 +287,7 @@ class AirHumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
                     ])
+                    ->persistTabInQueryString()
                     ->columnSpanFull(),
             ]);
     }

@@ -92,7 +92,7 @@ return new class extends Migration
             $table->boolean('ranking_hidden')->nullable();
             $table->decimal('Filter_cots_humi', 8, 2)->nullable();
             $table->boolean('disks')->nullable();
-            $table->integer('main_ranking')->nullable();
+            $table->boolean('main_ranking')->nullable();
             $table->boolean('for_plant')->nullable();
             $table->boolean('for_desk')->nullable();
             $table->boolean('alergic')->nullable();

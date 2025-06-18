@@ -134,14 +134,43 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('capability_points'),
             ImportColumn::make('capability'),
             ImportColumn::make('profitability_points'),
-            ImportColumn::make('ranking'),
+            ImportColumn::make('ranking')
+                ->castStateUsing(function ($state) {
+                    if (is_bool($state)) return $state;
+                    if (is_null($state) || $state === '') return false;
+                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
+                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
+                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
+                    if (in_array($stateLower, $trueValues, true)) return true;
+                    if (in_array($stateLower, $falseValues, true)) return false;
+                    return false;
+                }),
             ImportColumn::make('profitability'),
             ImportColumn::make('ranking_hidden')
-                ->boolean(),
+                ->castStateUsing(function ($state) {
+                    if (is_bool($state)) return $state;
+                    if (is_null($state) || $state === '') return false;
+                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
+                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
+                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
+                    if (in_array($stateLower, $trueValues, true)) return true;
+                    if (in_array($stateLower, $falseValues, true)) return false;
+                    return false;
+                }),
             ImportColumn::make('Filter_cots_humi'),
             ImportColumn::make('disks')
                 ->boolean(),
-            ImportColumn::make('main_ranking'),
+            ImportColumn::make('main_ranking')
+                ->castStateUsing(function ($state) {
+                    if (is_bool($state)) return $state;
+                    if (is_null($state) || $state === '') return false;
+                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
+                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
+                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
+                    if (in_array($stateLower, $trueValues, true)) return true;
+                    if (in_array($stateLower, $falseValues, true)) return false;
+                    return false;
+                }),
             ImportColumn::make('for_plant')
                 ->boolean(),
             ImportColumn::make('for_desk')

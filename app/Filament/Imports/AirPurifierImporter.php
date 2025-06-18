@@ -165,14 +165,32 @@ final class AirPurifierImporter extends Importer
                 ->numeric(),
             ImportColumn::make('price_date'),
             ImportColumn::make('ranking_hidden')
-                ->numeric(),
+                ->castStateUsing(function ($state) {
+                    if (is_bool($state)) return $state;
+                    if (is_null($state) || $state === '') return false;
+                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
+                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
+                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
+                    if (in_array($stateLower, $trueValues, true)) return true;
+                    if (in_array($stateLower, $falseValues, true)) return false;
+                    return false;
+                }),
             ImportColumn::make('filter_costs'),
             ImportColumn::make('functions_and_equipment'),
             ImportColumn::make('heating_and_cooling_function')
                 ->requiredMapping()
                 ->boolean(),
             ImportColumn::make('main_ranking')
-                ->numeric(),
+                ->castStateUsing(function ($state) {
+                    if (is_bool($state)) return $state;
+                    if (is_null($state) || $state === '') return false;
+                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
+                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
+                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
+                    if (in_array($stateLower, $trueValues, true)) return true;
+                    if (in_array($stateLower, $falseValues, true)) return false;
+                    return false;
+                }),
             ImportColumn::make('for_kids')
                 ->requiredMapping()
                 ->boolean(),

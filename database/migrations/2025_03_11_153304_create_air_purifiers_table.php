@@ -75,13 +75,13 @@ return new class extends Migration
             $table->decimal('effectiveness_hepa_filter', 10, 2)->nullable();
 
             $table->date('price_date')->nullable();
-            $table->string('ranking_hidden')->nullable();
+            $table->boolean('ranking_hidden')->nullable();
 
             $table->string('filter_costs')->nullable();
             $table->string('functions_and_equipment')->nullable();
             $table->boolean('heating_and_cooling_function')->default(false)->nullable();
 
-            $table->string('main_ranking')->nullable();
+            $table->boolean('main_ranking')->nullable();
             $table->boolean('for_kids')->default(false)->nullable();
             $table->boolean('cooling_function')->default(false)->nullable();
             $table->boolean('bedroom')->default(false)->nullable();

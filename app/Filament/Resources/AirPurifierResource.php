@@ -200,53 +200,43 @@ final class AirPurifierResource extends Resource
 
                         Tabs\Tab::make('Filters')
                             ->schema([
-                                Section::make('Evaporative Filter')
+                                Toggle::make('evaporative_filter')->live(),
+                                Section::make('Filtr ewaporacyjny')
                                     ->schema([
-                                        Toggle::make('evaporative_filter'),
-
                                         TextInput::make('evaporative_filter_life')
-                                            ->numeric()
-                                            ->visible(fn(callable $get) => $get('evaporative_filter')),
-
+                                            ->numeric(),
                                         TextInput::make('evaporative_filter_price')
-                                            ->numeric()
-                                            ->visible(fn(callable $get) => $get('evaporative_filter')),
-                                    ])->collapsible(),
+                                            ->numeric(),
+                                    ])
+                                    ->collapsible()
+                                    ->visible(fn(callable $get) => $get('evaporative_filter')),
 
-                                Section::make('HEPA Filter')
+                                Toggle::make('hepa_filter')->live(),
+                                Section::make('Filtr HEPA')
                                     ->schema([
-                                        Toggle::make('hepa_filter'),
-
-                                        TextInput::make('hepa_filter_class')
-                                            ->visible(fn(callable $get) => $get('hepa_filter')),
-
+                                        TextInput::make('hepa_filter_class'),
                                         TextInput::make('effectiveness_hepa_filter')
                                             ->numeric()
                                             ->minValue(0)
-                                            ->maxValue(100)
-                                            ->visible(fn(callable $get) => $get('hepa_filter')),
-
+                                            ->maxValue(100),
                                         TextInput::make('hepa_filter_service_life')
-                                            ->numeric()
-                                            ->visible(fn(callable $get) => $get('hepa_filter')),
-
+                                            ->numeric(),
                                         TextInput::make('hepa_filter_price')
-                                            ->numeric()
-                                            ->visible(fn(callable $get) => $get('hepa_filter')),
-                                    ])->collapsible(),
+                                            ->numeric(),
+                                    ])
+                                    ->collapsible()
+                                    ->visible(fn(callable $get) => $get('hepa_filter')),
 
-                                Section::make('Carbon Filter')
+                                Toggle::make('carbon_filter')->live(),
+                                Section::make('Filtr węglowy')
                                     ->schema([
-                                        Toggle::make('carbon_filter'),
-
                                         TextInput::make('carbon_filter_service_life')
-                                            ->numeric()
-                                            ->visible(fn(callable $get) => $get('carbon_filter')),
-
+                                            ->numeric(),
                                         TextInput::make('carbon_filter_price')
-                                            ->numeric()
-                                            ->visible(fn(callable $get) => $get('carbon_filter')),
-                                    ])->collapsible(),
+                                            ->numeric(),
+                                    ])
+                                    ->collapsible()
+                                    ->visible(fn(callable $get) => $get('carbon_filter')),
 
                                 Toggle::make('mesh_filter'),
 
@@ -255,16 +245,13 @@ final class AirPurifierResource extends Resource
 
                         Tabs\Tab::make('Features')
                             ->schema([
+                                Toggle::make('ionization')->live(),
                                 Section::make('Ionizer')
                                     ->schema([
-                                        Toggle::make('ionization'),
-
-                                        TextInput::make('ionizer_type')
-                                            ->visible(fn(callable $get) => $get('ionization')),
-
-                                        Toggle::make('ionizer_switch')
-                                            ->visible(fn(callable $get) => $get('ionization')),
-                                    ])->collapsible(),
+                                        TextInput::make('ionizer_type'),
+                                        Toggle::make('ionizer_switch'),
+                                    ])
+                                    ->visible(fn(callable $get) => $get('ionization')),
 
                                 Section::make('Other Features')
                                     ->schema([

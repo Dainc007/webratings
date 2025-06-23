@@ -15,6 +15,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\CreateAction;
 use App\Enums\ShortcodeOperator;
+use Illuminate\Support\Facades\Schema;
 
 class ConditionsRelationManager extends RelationManager
 {
@@ -25,13 +26,40 @@ class ConditionsRelationManager extends RelationManager
     public function form(Forms\Form $form): Forms\Form
     {
         return $form->schema([
-            TextInput::make('field')
+            Select::make('field')
                 ->required()
-                ->label('Pole'),
+                ->label('Pole')
+                ->searchable()
+                ->getSearchResultsUsing(function (string $search) {
+                    $shortcode = $this->getOwnerRecord();
+                    $productTypes = $shortcode->product_types ?? [];
+                    
+                    $columns = collect();
+                    
+                    foreach ($productTypes as $type) {
+                        $tableName = match ($type) {
+                            'air_purifiers' => 'air_purifiers',
+                            'air_humidifiers' => 'air_humidifiers',
+                            default => null,
+                        };
+                        
+                        if ($tableName && Schema::hasTable($tableName)) {
+                            $tableColumns = Schema::getColumnListing($tableName);
+                            foreach ($tableColumns as $column) {
+                                if (str_contains(strtolower($column), strtolower($search))) {
+                                    $columns->put($column, $column);
+                                }
+                            }
+                        }
+                    }
+                    
+                    return $columns->take(50)->toArray();
+                })
+                ->getOptionLabelUsing(fn ($value): string => $value),
             Select::make('operator')
                 ->options(ShortcodeOperator::optionsForSelect())
                 ->required()
-                ->label('Warunek'),
+                ->label('Operator'),
             TextInput::make('value')
                 ->required()
                 ->label('Wartość'),

@@ -157,7 +157,13 @@ final class AirHumidifierImporter extends Importer
                     if (in_array($stateLower, $falseValues, true)) return false;
                     return false;
                 }),
-            ImportColumn::make('Filter_cots_humi'),
+            ImportColumn::make('Filter_cots_humi')
+                ->castStateUsing(function ($state) {
+                    if (is_null($state) || $state === '' || strtolower(trim($state)) === 'brak') {
+                        return null;
+                    }
+                    return is_numeric($state) ? (float) $state : null;
+                }),
             ImportColumn::make('disks')
                 ->boolean(),
             ImportColumn::make('main_ranking')

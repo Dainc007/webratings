@@ -1,58 +1,37 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ShortcodeProductResource;
-use App\Models\Shortcode;
-use App\Models\AirPurifier;
-use App\Models\AirHumidifier;
-use Illuminate\Http\Request;
+use App\Http\Requests\ShortcodeSearchRequest;
+use App\Services\ShortcodeService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use App\Models\Shortcode;
 
 class ShortcodeController extends Controller
 {
-    public function show(Request $request, string $shortcode): AnonymousResourceCollection|Response
+    public function __construct(
+        private readonly ShortcodeService $shortcodeService
+    ) {
+    }
+
+    public function index(ShortcodeSearchRequest $request): AnonymousResourceCollection
     {
-        $shortcodeModel = Shortcode::where('name', $shortcode)
-            ->orWhere('id', $shortcode)
-            ->with('conditions')
-            ->first();
+        $shortcode = $request->validated('shortcode');
 
-        if (! $shortcodeModel) {
-            return response(['message' => 'Shortcode not found'], SymfonyResponse::HTTP_NOT_FOUND);
-        }
+        $shortcodeModel = $this->shortcodeService->findShortcodeByNameOrId($shortcode);
+        $results = $this->shortcodeService->executeShortcode($shortcodeModel);
 
-        $results = collect();
-        $conditions = $shortcodeModel->conditions;
-        $productTypes = $shortcodeModel->product_types;
+        return ShortcodeProductResource::collection($results);
+    }
 
-        foreach ($productTypes as $type) {
-            $query = match ($type) {
-                'air_purifiers' => AirPurifier::query(),
-                'air_humidifiers' => AirHumidifier::query(),
-                default => null,
-            };
-            if (! $query) {
-                continue;
-            }
-            foreach ($conditions as $condition) {
-                $field = $condition->field;
-                $operator = $condition->operator;
-                $value = $condition->value;
-                $typeCast = $condition->type;
-                if ($typeCast === 'integer') {
-                    $value = (int) $value;
-                } elseif ($typeCast === 'boolean') {
-                    $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-                }
-                $query->where($field, $operator, $value);
-            }
-            $results = $results->merge($query->get());
-        }
+
+    public function show(Shortcode $shortcode): AnonymousResourceCollection
+    {
+        $results = $this->shortcodeService->executeShortcode($shortcode);
 
         return ShortcodeProductResource::collection($results);
     }

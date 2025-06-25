@@ -195,7 +195,9 @@ final class UprightVacuumImporter extends Importer
 
     public function resolveRecord(): ?UprightVacuum
     {
-        return new UprightVacuum();
+        return UprightVacuum::firstOrNew([
+            'remote_id' => $this->data['remote_id'],
+        ]);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

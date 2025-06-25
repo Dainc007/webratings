@@ -196,7 +196,9 @@ final class DehumidifierImporter extends Importer
 
     public function resolveRecord(): ?Dehumidifier
     {
-        return new Dehumidifier();
+        return Dehumidifier::firstOrNew([
+            'remote_id' => $this->data['remote_id'],
+        ]);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

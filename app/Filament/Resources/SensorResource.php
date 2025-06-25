@@ -6,133 +6,493 @@ use App\Filament\Resources\SensorResource\Pages;
 use App\Filament\Resources\SensorResource\RelationManagers;
 use App\Models\Sensor;
 use Filament\Forms;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\SensorResource\Importers\SensorImporter;
+use App\Filament\Imports\SensorImporter;
 
 class SensorResource extends Resource
 {
     protected static ?string $model = Sensor::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
+
+    protected static ?string $navigationLabel = 'Czujniki';
+
+    protected static ?string $pluralLabel = 'Czujniki';
+
+    protected static ?string $label = 'Czujnik';
+
+    protected static ?string $navigationGroup = 'Produkty';
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $recordTitleAttribute = 'model';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('remote_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('status'),
-                Forms\Components\TextInput::make('sort')
-                    ->numeric(),
-                Forms\Components\TextInput::make('user_created'),
-                Forms\Components\DateTimePicker::make('date_created'),
-                Forms\Components\TextInput::make('user_updated'),
-                Forms\Components\DateTimePicker::make('date_updated'),
-                Forms\Components\TextInput::make('brand_name'),
-                Forms\Components\TextInput::make('model'),
-                Forms\Components\TextInput::make('price')
-                    ->numeric()
-                    ->prefix('$'),
-                Forms\Components\TextInput::make('price_before')
-                    ->numeric(),
-                Forms\Components\FileUpload::make('image')
-                    ->image(),
-                Forms\Components\Textarea::make('discount_info')
+                Tabs::make('Formularz Czujnika')
+                    ->tabs([
+                        Tabs\Tab::make('Podstawowe informacje')
+                            ->schema([
+                                Section::make('Podstawowe informacje')
+                                    ->schema([
+                                        Select::make('status')
+                                            ->selectablePlaceholder(false)
+                                            ->options([
+                                                'draft' => 'Szkic',
+                                                'published' => 'Opublikowany',
+                                                'archived' => 'Zarchiwizowany'
+                                            ])
+                                            ->required()
+                                            ->label('Status'),
+
+                                        TextInput::make('model')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->label('Model'),
+
+                                        TextInput::make('brand_name')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->label('Marka'),
+
+                                        TextInput::make('price')
+                                            ->numeric()
+                                            ->prefix('PLN')
+                                            ->label('Cena'),
+
+                                        TextInput::make('price_before')
+                                            ->numeric()
+                                            ->prefix('PLN')
+                                            ->label('Cena przed'),
+
+                                        Forms\Components\FileUpload::make('image')
+                                            ->image()
+                                            ->label('Zdjęcie'),
+
+                                        Textarea::make('discount_info')
+                                            ->label('Informacje o zniżce')
+                                            ->columnSpanFull(),
+                                    ])->columns(2),
+
+                                Section::make('Linki partnerskie')
+                                    ->schema([
+                                        TextInput::make('partner_name')
+                                            ->label('Nazwa partnera'),
+
+                                        Textarea::make('partner_link_url')
+                                            ->label('Link partnerski')
+                                            ->columnSpanFull(),
+
+                                        Select::make('partner_link_rel_2')
+                                            ->multiple()
+                                            ->options([
+                                                'nofollow' => 'nofollow',
+                                                'dofollow' => 'dofollow',
+                                                'sponsored' => 'sponsored',
+                                                'noopener' => 'noopener',
+                                            ])
+                                            ->label('Atrybuty rel partnera'),
+
+                                        TextInput::make('partner_link_title')
+                                            ->label('Tytuł linku partnera'),
+
+                                        Textarea::make('ceneo_url')
+                                            ->label('Link Ceneo')
+                                            ->columnSpanFull(),
+
+                                        Select::make('ceneo_link_rel_2')
+                                            ->multiple()
+                                            ->options([
+                                                'nofollow' => 'nofollow',
+                                                'dofollow' => 'dofollow',
+                                                'sponsored' => 'sponsored',
+                                                'noopener' => 'noopener',
+                                            ])
+                                            ->label('Atrybuty rel Ceneo'),
+
+                                        TextInput::make('ceneo_link_title')
+                                            ->label('Tytuł linku Ceneo'),
+
+                                        Textarea::make('review_link')
+                                            ->label('Link do recenzji')
+                                            ->columnSpanFull(),
+                                    ])->columns(2)->collapsible(),
+                            ]),
+
+                        Tabs\Tab::make('Czujniki PM')
+                            ->schema([
+                                Section::make('Czujnik PM1')
+                                    ->schema([
+                                        Toggle::make('is_pm1')
+                                            ->live()
+                                            ->label('Posiada czujnik PM1'),
+
+                                        TextInput::make('pm1_range')
+                                            ->visible(fn(callable $get) => $get('is_pm1'))
+                                            ->label('Zakres PM1'),
+
+                                        TextInput::make('pm1_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_pm1'))
+                                            ->label('Dokładność PM1'),
+
+                                        TextInput::make('pm1_sensor_type')
+                                            ->visible(fn(callable $get) => $get('is_pm1'))
+                                            ->label('Typ czujnika PM1'),
+                                    ])->columns(2),
+
+                                Section::make('Czujnik PM2.5')
+                                    ->schema([
+                                        Toggle::make('is_pm2')
+                                            ->live()
+                                            ->label('Posiada czujnik PM2.5'),
+
+                                        TextInput::make('pm2_range')
+                                            ->visible(fn(callable $get) => $get('is_pm2'))
+                                            ->label('Zakres PM2.5'),
+
+                                        TextInput::make('pm2_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_pm2'))
+                                            ->label('Dokładność PM2.5'),
+
+                                        TextInput::make('pm2_sensor_type')
+                                            ->visible(fn(callable $get) => $get('is_pm2'))
+                                            ->label('Typ czujnika PM2.5'),
+                                    ])->columns(2),
+
+                                Section::make('Czujnik PM10')
+                                    ->schema([
+                                        Toggle::make('is_pm10')
+                                            ->live()
+                                            ->label('Posiada czujnik PM10'),
+
+                                        TextInput::make('pm10_range')
+                                            ->visible(fn(callable $get) => $get('is_pm10'))
+                                            ->label('Zakres PM10'),
+
+                                        TextInput::make('pm10_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_pm10'))
+                                            ->label('Dokładność PM10'),
+
+                                        TextInput::make('pm10_sensor_type')
+                                            ->visible(fn(callable $get) => $get('is_pm10'))
+                                            ->label('Typ czujnika PM10'),
+                                    ])->columns(2),
+                            ]),
+
+                        Tabs\Tab::make('Czujniki chemiczne')
+                            ->schema([
+                                Section::make('Czujnik LZO (Ozon)')
+                                    ->schema([
+                                        Toggle::make('is_lzo')
+                                            ->live()
+                                            ->label('Posiada czujnik LZO'),
+
+                                        TextInput::make('lzo_range')
+                                            ->visible(fn(callable $get) => $get('is_lzo'))
+                                            ->label('Zakres LZO'),
+
+                                        TextInput::make('lzo_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_lzo'))
+                                            ->label('Dokładność LZO'),
+
+                                        TextInput::make('lzo_sensor_type')
+                                            ->visible(fn(callable $get) => $get('is_lzo'))
+                                            ->label('Typ czujnika LZO'),
+                                    ])->columns(2),
+
+                                Section::make('Czujnik HCHO (Formaldehyd)')
+                                    ->schema([
+                                        Toggle::make('is_hcho')
+                                            ->live()
+                                            ->label('Posiada czujnik HCHO'),
+
+                                        TextInput::make('hcho_range')
+                                            ->visible(fn(callable $get) => $get('is_hcho'))
+                                            ->label('Zakres HCHO'),
+
+                                        TextInput::make('hcho_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_hcho'))
+                                            ->label('Dokładność HCHO'),
+
+                                        TextInput::make('hcho_sensor_type')
+                                            ->visible(fn(callable $get) => $get('is_hcho'))
+                                            ->label('Typ czujnika HCHO'),
+                                    ])->columns(2),
+
+                                Section::make('Czujnik CO2')
+                                    ->schema([
+                                        Toggle::make('is_co2')
+                                            ->live()
+                                            ->label('Posiada czujnik CO2'),
+
+                                        TextInput::make('co2_range')
+                                            ->visible(fn(callable $get) => $get('is_co2'))
+                                            ->label('Zakres CO2'),
+
+                                        TextInput::make('co2_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_co2'))
+                                            ->label('Dokładność CO2'),
+
+                                        TextInput::make('co2_sensor_type')
+                                            ->visible(fn(callable $get) => $get('is_co2'))
+                                            ->label('Typ czujnika CO2'),
+                                    ])->columns(2),
+
+                                Section::make('Czujnik CO')
+                                    ->schema([
+                                        Toggle::make('is_co')
+                                            ->live()
+                                            ->label('Posiada czujnik CO'),
+
+                                        TextInput::make('co_range')
+                                            ->visible(fn(callable $get) => $get('is_co'))
+                                            ->label('Zakres CO'),
+
+                                        TextInput::make('co_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_co'))
+                                            ->label('Dokładność CO'),
+
+                                        TextInput::make('co_sensor_type')
+                                            ->visible(fn(callable $get) => $get('is_co'))
+                                            ->label('Typ czujnika CO'),
+                                    ])->columns(2),
+                            ]),
+
+                        Tabs\Tab::make('Czujniki środowiskowe')
+                            ->schema([
+                                Section::make('Czujnik temperatury')
+                                    ->schema([
+                                        Toggle::make('is_temperature')
+                                            ->live()
+                                            ->label('Posiada czujnik temperatury'),
+
+                                        TextInput::make('temperature_range')
+                                            ->visible(fn(callable $get) => $get('is_temperature'))
+                                            ->label('Zakres temperatury'),
+
+                                        TextInput::make('temperature_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_temperature'))
+                                            ->label('Dokładność temperatury'),
+
+                                        TextInput::make('temperature')
+                                            ->label('Aktualna temperatura'),
+                                    ])->columns(2),
+
+                                Section::make('Czujnik wilgotności')
+                                    ->schema([
+                                        Toggle::make('is_humidity')
+                                            ->live()
+                                            ->label('Posiada czujnik wilgotności'),
+
+                                        TextInput::make('humidity_range')
+                                            ->visible(fn(callable $get) => $get('is_humidity'))
+                                            ->label('Zakres wilgotności'),
+
+                                        TextInput::make('humidity_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_humidity'))
+                                            ->label('Dokładność wilgotności'),
+
+                                        TextInput::make('humidity')
+                                            ->label('Aktualna wilgotność'),
+                                    ])->columns(2),
+
+                                Section::make('Czujnik ciśnienia')
+                                    ->schema([
+                                        Toggle::make('is_pressure')
+                                            ->live()
+                                            ->label('Posiada czujnik ciśnienia'),
+
+                                        TextInput::make('pressure_range')
+                                            ->visible(fn(callable $get) => $get('is_pressure'))
+                                            ->label('Zakres ciśnienia'),
+
+                                        TextInput::make('pressure_accuracy')
+                                            ->visible(fn(callable $get) => $get('is_pressure'))
+                                            ->label('Dokładność ciśnienia'),
+                                    ])->columns(2),
+                            ]),
+
+                        Tabs\Tab::make('Zasilanie i łączność')
+                            ->schema([
+                                Section::make('Zasilanie')
+                                    ->schema([
+                                        TextInput::make('battery')
+                                            ->label('Typ baterii'),
+
+                                        TextInput::make('battery_capacity')
+                                            ->numeric()
+                                            ->label('Pojemność baterii (mAh)'),
+
+                                        TextInput::make('voltage')
+                                            ->numeric()
+                                            ->label('Napięcie (V)'),
+
+                                        Toggle::make('has_power_cord')
+                                            ->label('Posiada przewód zasilający'),
+                                    ])->columns(2),
+
+                                Section::make('Łączność')
+                                    ->schema([
+                                        Toggle::make('wifi')
+                                            ->label('Wi-Fi'),
+
+                                        Toggle::make('bluetooth')
+                                            ->label('Bluetooth'),
+
+                                        TagsInput::make('mobile_features')
+                                            ->separator(',')
+                                            ->label('Funkcje mobilne')
+                                            ->columnSpanFull(),
+                                    ])->columns(2),
+                            ]),
+
+                        Tabs\Tab::make('Funkcje urządzenia')
+                            ->schema([
+                                Section::make('Funkcje')
+                                    ->schema([
+                                        Grid::make(3)
+                                            ->schema([
+                                                Toggle::make('has_history')
+                                                    ->label('Historia pomiarów'),
+
+                                                Toggle::make('has_display')
+                                                    ->label('Wyświetlacz'),
+
+                                                Toggle::make('has_alarm')
+                                                    ->label('Alarm'),
+
+                                                Toggle::make('has_assessment')
+                                                    ->label('Ocena jakości'),
+
+                                                Toggle::make('has_outdoor_indicator')
+                                                    ->label('Wskaźnik zewnętrzny'),
+
+                                                Toggle::make('has_battery_indicator')
+                                                    ->label('Wskaźnik baterii'),
+
+                                                Toggle::make('has_clock')
+                                                    ->label('Zegar'),
+                                            ]),
+                                    ]),
+                            ]),
+
+                        Tabs\Tab::make('Wymiary i wydajność')
+                            ->schema([
+                                Section::make('Wymiary fizyczne')
+                                    ->schema([
+                                        TextInput::make('width')
+                                            ->numeric()
+                                            ->step(0.1)
+                                            ->suffix('cm')
+                                            ->label('Szerokość'),
+
+                                        TextInput::make('height')
+                                            ->numeric()
+                                            ->step(0.1)
+                                            ->suffix('cm')
+                                            ->label('Wysokość'),
+
+                                        TextInput::make('depth')
+                                            ->numeric()
+                                            ->step(0.1)
+                                            ->suffix('cm')
+                                            ->label('Głębokość'),
+
+                                        TextInput::make('weight')
+                                            ->numeric()
+                                            ->step(0.01)
+                                            ->suffix('kg')
+                                            ->label('Waga'),
+                                    ])->columns(2),
+
+                                Section::make('Ocena wydajności')
+                                    ->schema([
+                                        TextInput::make('capability_points')
+                                            ->numeric()
+                                            ->label('Punkty możliwości'),
+
+                                        TextInput::make('capability')
+                                            ->numeric()
+                                            ->label('Możliwości'),
+
+                                        TextInput::make('profitability_points')
+                                            ->numeric()
+                                            ->step(0.01)
+                                            ->label('Punkty opłacalności'),
+
+                                        TextInput::make('profitability')
+                                            ->numeric()
+                                            ->label('Opłacalność'),
+                                    ])->columns(2),
+                            ]),
+
+                        Tabs\Tab::make('Ranking')
+                            ->schema([
+                                Section::make('Ustawienia rankingu')
+                                    ->schema([
+                                        TextInput::make('ranking')
+                                            ->numeric()
+                                            ->label('Pozycja w rankingu'),
+
+                                        Toggle::make('ranking_hidden')
+                                            ->label('Ukryj w rankingu'),
+
+                                        TextInput::make('main_ranking')
+                                            ->label('Główny ranking'),
+                                    ])->columns(2),
+                            ]),
+
+                        Tabs\Tab::make('Metadane')
+                            ->schema([
+                                Section::make('Identyfikatory systemu')
+                                    ->schema([
+                                        TextInput::make('remote_id')
+                                            ->numeric()
+                                            ->label('ID zdalne'),
+
+                                        TextInput::make('sort')
+                                            ->numeric()
+                                            ->label('Kolejność sortowania'),
+
+                                        TextInput::make('user_created')
+                                            ->disabled()
+                                            ->label('Utworzone przez'),
+
+                                        TextInput::make('user_updated')
+                                            ->disabled()
+                                            ->label('Zaktualizowane przez'),
+                                    ])->columns(2),
+
+                                Section::make('Znaczniki czasu')
+                                    ->schema([
+                                        DateTimePicker::make('date_created')
+                                            ->disabled()
+                                            ->label('Data utworzenia'),
+
+                                        DateTimePicker::make('date_updated')
+                                            ->disabled()
+                                            ->label('Data aktualizacji'),
+                                    ])->columns(2),
+                            ]),
+                    ])
+                    ->persistTabInQueryString()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('partner_name'),
-                Forms\Components\Textarea::make('partner_link_url')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('partner_link_rel_2')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('partner_link_title'),
-                Forms\Components\Textarea::make('ceneo_url')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('ceneo_link_rel_2')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('ceneo_link_title'),
-                Forms\Components\Toggle::make('is_pm1'),
-                Forms\Components\TextInput::make('pm1_range'),
-                Forms\Components\TextInput::make('pm1_accuracy'),
-                Forms\Components\TextInput::make('pm1_sensor_type'),
-                Forms\Components\Toggle::make('is_pm2'),
-                Forms\Components\TextInput::make('pm2_range'),
-                Forms\Components\TextInput::make('pm2_accuracy'),
-                Forms\Components\TextInput::make('pm2_sensor_type'),
-                Forms\Components\Toggle::make('is_pm10'),
-                Forms\Components\TextInput::make('pm10_range'),
-                Forms\Components\TextInput::make('pm10_accuracy'),
-                Forms\Components\TextInput::make('pm10_sensor_type'),
-                Forms\Components\Toggle::make('is_lzo'),
-                Forms\Components\TextInput::make('lzo_range'),
-                Forms\Components\TextInput::make('lzo_accuracy'),
-                Forms\Components\TextInput::make('lzo_sensor_type'),
-                Forms\Components\Toggle::make('is_hcho'),
-                Forms\Components\TextInput::make('hcho_range'),
-                Forms\Components\TextInput::make('hcho_accuracy'),
-                Forms\Components\TextInput::make('hcho_sensor_type'),
-                Forms\Components\Toggle::make('is_co2'),
-                Forms\Components\TextInput::make('co2_range'),
-                Forms\Components\TextInput::make('co2_accuracy'),
-                Forms\Components\TextInput::make('co2_sensor_type'),
-                Forms\Components\Toggle::make('is_co'),
-                Forms\Components\TextInput::make('co_range'),
-                Forms\Components\TextInput::make('co_accuracy'),
-                Forms\Components\TextInput::make('co_sensor_type'),
-                Forms\Components\Toggle::make('is_temperature'),
-                Forms\Components\TextInput::make('temperature_range'),
-                Forms\Components\TextInput::make('temperature_accuracy'),
-                Forms\Components\Toggle::make('is_humidity'),
-                Forms\Components\TextInput::make('humidity_range'),
-                Forms\Components\TextInput::make('humidity_accuracy'),
-                Forms\Components\Toggle::make('is_pressure'),
-                Forms\Components\TextInput::make('pressure_range'),
-                Forms\Components\TextInput::make('pressure_accuracy'),
-                Forms\Components\TextInput::make('battery'),
-                Forms\Components\TextInput::make('battery_capacity')
-                    ->numeric(),
-                Forms\Components\TextInput::make('voltage')
-                    ->numeric(),
-                Forms\Components\Toggle::make('has_power_cord'),
-                Forms\Components\Toggle::make('wifi'),
-                Forms\Components\Textarea::make('mobile_features')
-                    ->columnSpanFull(),
-                Forms\Components\Toggle::make('bluetooth'),
-                Forms\Components\Toggle::make('has_history'),
-                Forms\Components\Toggle::make('has_display'),
-                Forms\Components\Toggle::make('has_alarm'),
-                Forms\Components\Toggle::make('has_assessment'),
-                Forms\Components\Toggle::make('has_outdoor_indicator'),
-                Forms\Components\Toggle::make('has_battery_indicator'),
-                Forms\Components\Toggle::make('has_clock'),
-                Forms\Components\TextInput::make('temperature'),
-                Forms\Components\TextInput::make('humidity'),
-                Forms\Components\TextInput::make('width')
-                    ->numeric(),
-                Forms\Components\TextInput::make('height')
-                    ->numeric(),
-                Forms\Components\TextInput::make('depth')
-                    ->numeric(),
-                Forms\Components\TextInput::make('weight')
-                    ->numeric(),
-                Forms\Components\TextInput::make('capability_points')
-                    ->numeric(),
-                Forms\Components\TextInput::make('capability')
-                    ->numeric(),
-                Forms\Components\TextInput::make('profitability_points')
-                    ->numeric(),
-                Forms\Components\TextInput::make('profitability')
-                    ->numeric(),
-                Forms\Components\TextInput::make('ranking')
-                    ->numeric(),
-                Forms\Components\Textarea::make('review_link')
-                    ->columnSpanFull(),
-                Forms\Components\Toggle::make('ranking_hidden'),
-                Forms\Components\TextInput::make('main_ranking'),
             ]);
     }
 
@@ -361,5 +721,15 @@ class SensorResource extends Resource
             'create' => Pages\CreateSensor::route('/create'),
             'edit' => Pages\EditSensor::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['brand_name', 'model'];
     }
 }

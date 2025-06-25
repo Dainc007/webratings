@@ -22,7 +22,7 @@ class AirHumidifierResource extends Resource
 {
     protected static ?string $model = AirHumidifier::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-beaker';
     protected static ?string $navigationLabel = 'Nawilżacze Powietrza';
 
     protected static ?string $pluralLabel = 'Nawilżacze Powietrza';

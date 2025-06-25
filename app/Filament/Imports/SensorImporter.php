@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Imports;
 
 use App\Models\Sensor;
@@ -7,7 +9,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 
-class SensorImporter extends Importer
+final class SensorImporter extends Importer
 {
     protected static ?string $model = Sensor::class;
 
@@ -15,175 +17,187 @@ class SensorImporter extends Importer
     {
         return [
             ImportColumn::make('remote_id')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('status'),
             ImportColumn::make('sort')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('user_created'),
-            ImportColumn::make('date_created')
-                ->rules(['datetime']),
+            ImportColumn::make('date_created'),
             ImportColumn::make('user_updated'),
-            ImportColumn::make('date_updated')
-                ->rules(['datetime']),
+            ImportColumn::make('date_updated'),
+
+            // Basic product information
             ImportColumn::make('brand_name'),
             ImportColumn::make('model'),
             ImportColumn::make('price')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('price_before')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('image'),
             ImportColumn::make('discount_info'),
+
+            // Partner information
             ImportColumn::make('partner_name'),
             ImportColumn::make('partner_link_url'),
-            ImportColumn::make('partner_link_rel_2'),
+            ImportColumn::make('partner_link_rel_2')
+                ->castStateUsing(function ($state) {
+                    if (is_null($state) || $state === '' || $state === 'null') return null;
+                    if (empty($state)) return null;
+                    return json_encode(array_filter(array_map('trim', explode(',', $state))));
+                }),
             ImportColumn::make('partner_link_title'),
+
+            // Ceneo integration
             ImportColumn::make('ceneo_url'),
-            ImportColumn::make('ceneo_link_rel_2'),
+            ImportColumn::make('ceneo_link_rel_2')
+                ->castStateUsing(function ($state) {
+                    if (is_null($state) || $state === '' || $state === 'null') return null;
+                    if (empty($state)) return null;
+                    return json_encode(array_filter(array_map('trim', explode(',', $state))));
+                }),
             ImportColumn::make('ceneo_link_title'),
+
+            // PM1 sensor capabilities
             ImportColumn::make('is_pm1')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('pm1_range'),
             ImportColumn::make('pm1_accuracy'),
             ImportColumn::make('pm1_sensor_type'),
+
+            // PM2.5 sensor capabilities
             ImportColumn::make('is_pm2')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('pm2_range'),
             ImportColumn::make('pm2_accuracy'),
             ImportColumn::make('pm2_sensor_type'),
+
+            // PM10 sensor capabilities
             ImportColumn::make('is_pm10')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('pm10_range'),
             ImportColumn::make('pm10_accuracy'),
             ImportColumn::make('pm10_sensor_type'),
+
+            // LZO sensor capabilities
             ImportColumn::make('is_lzo')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('lzo_range'),
             ImportColumn::make('lzo_accuracy'),
             ImportColumn::make('lzo_sensor_type'),
+
+            // HCHO (Formaldehyde) sensor capabilities
             ImportColumn::make('is_hcho')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('hcho_range'),
             ImportColumn::make('hcho_accuracy'),
             ImportColumn::make('hcho_sensor_type'),
+
+            // CO2 sensor capabilities
             ImportColumn::make('is_co2')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('co2_range'),
             ImportColumn::make('co2_accuracy'),
             ImportColumn::make('co2_sensor_type'),
+
+            // CO sensor capabilities
             ImportColumn::make('is_co')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('co_range'),
             ImportColumn::make('co_accuracy'),
             ImportColumn::make('co_sensor_type'),
+
+            // Temperature sensor capabilities
             ImportColumn::make('is_temperature')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('temperature_range'),
             ImportColumn::make('temperature_accuracy'),
+
+            // Humidity sensor capabilities
             ImportColumn::make('is_humidity')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('humidity_range'),
             ImportColumn::make('humidity_accuracy'),
+
+            // Pressure sensor capabilities
             ImportColumn::make('is_pressure')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('pressure_range'),
             ImportColumn::make('pressure_accuracy'),
+
+            // Power and connectivity
             ImportColumn::make('battery'),
             ImportColumn::make('battery_capacity')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('voltage')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('has_power_cord')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('wifi')
-                ->boolean()
-                ->rules(['boolean']),
-            ImportColumn::make('mobile_features'),
+                ->boolean(),
+            ImportColumn::make('mobile_features')
+                ->castStateUsing(function ($state) {
+                    if (is_null($state) || $state === '' || $state === 'null') return null;
+                    if (empty($state)) return null;
+                    return json_encode(array_filter(array_map('trim', explode(',', $state))));
+                }),
             ImportColumn::make('bluetooth')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
+
+            // Device features
             ImportColumn::make('has_history')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('has_display')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('has_alarm')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('has_assessment')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('has_outdoor_indicator')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('has_battery_indicator')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('has_clock')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
+
+            // Environmental readings
             ImportColumn::make('temperature'),
             ImportColumn::make('humidity'),
+
+            // Physical dimensions
             ImportColumn::make('width')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('height')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('depth')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('weight')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
+
+            // Capability and profitability scoring
             ImportColumn::make('capability_points')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('capability')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('profitability_points')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('profitability')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
+
+            // Ranking information
             ImportColumn::make('ranking')
-                ->numeric()
-                ->rules(['integer']),
+                ->numeric(),
             ImportColumn::make('review_link'),
             ImportColumn::make('ranking_hidden')
-                ->boolean()
-                ->rules(['boolean']),
+                ->boolean(),
             ImportColumn::make('main_ranking'),
         ];
     }
 
     public function resolveRecord(): ?Sensor
     {
-        // return Sensor::firstOrNew([
-        //     // Update existing records, matching them by `$this->data['column_name']`
-        //     'email' => $this->data['email'],
-        // ]);
-
-        return new Sensor();
+        return Sensor::firstOrNew([
+            'remote_id' => $this->data['remote_id'],
+        ]);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

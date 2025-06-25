@@ -24,6 +24,8 @@ class ShortcodeResource extends Resource
     protected static ?string $pluralLabel = 'Shortcody';
     protected static ?string $modelLabel = 'Shortcode';
     protected static ?string $label = 'Shortcode';
+    protected static ?string $navigationGroup = 'Ustawienia';
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

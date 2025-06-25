@@ -32,7 +32,7 @@ final class AirPurifierResource extends Resource
 {
     protected static ?string $model = AirPurifier::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $navigationIcon = 'heroicon-o-heart';
 
     protected static ?string $navigationLabel = 'Oczyszczacze Powietrza';
 

@@ -98,7 +98,7 @@ final class CustomFieldResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name'];
+        return ['display_name', 'table_name'];
     }
 
     public static function getNavigationBadge(): ?string

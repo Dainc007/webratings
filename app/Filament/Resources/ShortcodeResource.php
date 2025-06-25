@@ -97,7 +97,7 @@ class ShortcodeResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name'];
+        return ['name', 'description'];
     }
 
     public static function getNavigationBadge(): ?string

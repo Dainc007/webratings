@@ -95,4 +95,14 @@ final class CustomFieldResource extends Resource
             'edit' => Pages\EditCustomField::route('/{record}/edit'),
         ];
     }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name'];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
 }

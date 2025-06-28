@@ -66,15 +66,7 @@ class UprightVacuumResource extends Resource
                                             ->maxLength(255)
                                             ->label('Marka'),
 
-                                        Select::make('type')
-                                            ->options([
-                                                'stick' => 'Stick',
-                                                'stick_electro' => 'Stick z elektroszczotką',
-                                                'stick_wet' => 'Stick z funkcją mopowania',
-                                                'stick_led' => 'Stick z podświetleniem LED',
-                                                'odkurzaczmyjacy' => 'Odkurzacz myjący',
-                                                'electricmop' => 'Elektryczny mop',
-                                            ])
+                                        TextInput::make('type')
                                             ->label('Typ odkurzacza'),
 
                                         TextInput::make('price')
@@ -87,9 +79,8 @@ class UprightVacuumResource extends Resource
                                             ->prefix('PLN')
                                             ->label('Cena przed'),
 
-                                        FileUpload::make('image')
-                                            ->image()
-                                            ->label('Zdjęcie'),
+                                        TextInput::make('image')
+                                            ->disabled(),
 
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
@@ -463,7 +454,7 @@ class UprightVacuumResource extends Resource
                                         Toggle::make('ranking_hidden')
                                             ->label('Ukryj w rankingu'),
 
-                                        TextInput::make('main_ranking')
+                                        Toggle::make('main_ranking')
                                             ->label('Główny ranking'),
 
                                         TextInput::make('videorecenzja1')
@@ -477,6 +468,7 @@ class UprightVacuumResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->recordUrl(false)
         ->headerActions([
             ImportAction::make('Import Upright Vacuums')
                 ->importer(UprightVacuumImporter::class),

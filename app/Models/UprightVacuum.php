@@ -16,5 +16,6 @@ class UprightVacuum extends Model
         'power_supply' => 'array',
         'display_type' => 'array',
         'additional_equipment' => 'array',
+        'charging_station' => 'array',
     ];
 }

@@ -48,7 +48,8 @@ return new class extends Migration
             $table->integer('tested_efficiency')->nullable(); // ml/h
             $table->integer('max_area')->nullable(); // m²
             $table->integer('tested_max_area')->nullable(); // m²
-            $table->integer('water_tank_capacity')->nullable();
+            $table->decimal('water_tank_capacity', 8, 2)->nullable();
+            
             $table->integer('water_tank_min_time')->nullable();
             $table->string('water_tank_fill_type')->nullable();
             $table->boolean('hygrostat')->nullable();
@@ -75,8 +76,8 @@ return new class extends Migration
             $table->json('control_other')->nullable();
             $table->boolean('remote_control')->nullable();
             $table->json('functions')->nullable();
-            $table->integer('min_rated_power_consumption')->nullable();
-            $table->integer('max_rated_power_consumption')->nullable();
+            $table->decimal('min_rated_power_consumption', 8, 2)->nullable();
+            $table->decimal('max_rated_power_consumption', 8, 2)->nullable();
             $table->string('rated_voltage')->nullable();
             $table->decimal('width', 8, 2)->nullable();
             $table->decimal('height', 8, 2)->nullable();

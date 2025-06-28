@@ -61,7 +61,7 @@ return new class extends Migration
             $table->integer('rated_power_consumption')->nullable();
             $table->integer('rated_voltage')->nullable();
             $table->string('refrigerant_kind')->nullable();
-            $table->integer('refrigerant_amount')->nullable();
+            $table->decimal('refrigerant_amount', 8, 2)->nullable();
             $table->string('needs_to_be_completed')->nullable();
 
             // Features and functions

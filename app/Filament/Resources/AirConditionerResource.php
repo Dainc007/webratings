@@ -68,17 +68,8 @@ class AirConditionerResource extends Resource
                                             ->maxLength(255)
                                             ->label('Marka'),
 
-                                        Select::make('type')
-                                            ->options([
-                                                'portable' => 'Przenośny',
-                                                'window' => 'Okienny',
-                                                'split' => 'Split',
-                                                'multi_split' => 'Multi Split',
-                                                'cassette' => 'Kasetonowy',
-                                                'ducted' => 'Kanałowy',
-                                            ])
-                                            ->label('Typ'),
-
+                                        TextInput::make('type'),
+                       
                                         TextInput::make('price')
                                             ->numeric()
                                             ->prefix('PLN')
@@ -89,9 +80,8 @@ class AirConditionerResource extends Resource
                                             ->prefix('PLN')
                                             ->label('Cena przed'),
 
-                                        FileUpload::make('image')
-                                            ->image()
-                                            ->label('Zdjęcie'),
+                                        TextInput::make('image')
+                                            ->disabled(),
 
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
@@ -499,7 +489,7 @@ class AirConditionerResource extends Resource
                                         Toggle::make('ranking_hidden')
                                             ->label('Ukryj w rankingu'),
 
-                                        TextInput::make('main_ranking')
+                                        Toggle::make('main_ranking')
                                             ->label('Główny ranking'),
 
                                         TextInput::make('small')
@@ -509,6 +499,7 @@ class AirConditionerResource extends Resource
                                 Section::make('Dokumentacja')
                                     ->schema([
                                         TextInput::make('manual')
+                                            ->disabled()
                                             ->label('Instrukcja obsługi'),
                                     ]),
 

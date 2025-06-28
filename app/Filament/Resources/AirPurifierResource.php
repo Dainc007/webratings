@@ -93,7 +93,9 @@ final class AirPurifierResource extends Resource
                                     ->prefix('zł')
                                     ,
 
-                                DateTimePicker::make('price_date')->default(now()),
+                                DateTimePicker::make('price_date')
+                                ->default(now())
+                                ->seconds(false),
 
                                 Toggle::make('is_promo'),
 

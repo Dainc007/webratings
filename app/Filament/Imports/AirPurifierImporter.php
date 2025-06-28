@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Imports;
 
 use App\Models\AirPurifier;
+use App\Services\ImportBooleanCaster;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -165,32 +166,14 @@ final class AirPurifierImporter extends Importer
                 ->numeric(),
             ImportColumn::make('price_date'),
             ImportColumn::make('ranking_hidden')
-                ->castStateUsing(function ($state) {
-                    if (is_bool($state)) return $state;
-                    if (is_null($state) || $state === '') return false;
-                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
-                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
-                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
-                    if (in_array($stateLower, $trueValues, true)) return true;
-                    if (in_array($stateLower, $falseValues, true)) return false;
-                    return false;
-                }),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('filter_costs'),
             ImportColumn::make('functions_and_equipment'),
             ImportColumn::make('heating_and_cooling_function')
                 ->requiredMapping()
                 ->boolean(),
             ImportColumn::make('main_ranking')
-                ->castStateUsing(function ($state) {
-                    if (is_bool($state)) return $state;
-                    if (is_null($state) || $state === '') return false;
-                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
-                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
-                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
-                    if (in_array($stateLower, $trueValues, true)) return true;
-                    if (in_array($stateLower, $falseValues, true)) return false;
-                    return false;
-                }),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('for_kids')
                 ->requiredMapping()
                 ->boolean(),

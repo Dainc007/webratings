@@ -188,8 +188,9 @@ final class SensorImporter extends Importer
                 ->numeric(),
             ImportColumn::make('review_link'),
             ImportColumn::make('ranking_hidden')
-                ->boolean(),
-            ImportColumn::make('main_ranking'),
+                ->castStateUsing(ImportBooleanCaster::closure()),
+            ImportColumn::make('main_ranking')
+                ->castStateUsing(ImportBooleanCaster::closure()),
         ];
     }
 

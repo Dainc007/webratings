@@ -90,7 +90,8 @@ final class AirPurifierResource extends Resource
                                 TextInput::make('price')
                                     ->numeric()
                                     ->required()
-                                    ->prefix('PLN'),
+                                    ->prefix('zł')
+                                    ,
 
                                 DateTimePicker::make('price_date')->default(now()),
 

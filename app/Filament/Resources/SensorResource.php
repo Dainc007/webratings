@@ -416,7 +416,7 @@ class SensorResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-        ->recordUrl(false)
+        ->recordUrl(null)
         ->headerActions([
             Tables\Actions\ImportAction::make('Import Sensors')
                 ->importer(SensorImporter::class),

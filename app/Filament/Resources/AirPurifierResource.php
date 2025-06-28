@@ -432,7 +432,7 @@ final class AirPurifierResource extends Resource
         }
 
         return $table
-        ->recordUrl(false)
+        ->recordUrl(null)
             ->columns($availableColumns)
             ->filters([])
             ->actions([

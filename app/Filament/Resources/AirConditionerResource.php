@@ -533,7 +533,7 @@ class AirConditionerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-        ->recordUrl(false)
+        ->recordUrl(null)
         ->headerActions([
             ImportAction::make()
             ->importer(AirConditionerImporter::class),

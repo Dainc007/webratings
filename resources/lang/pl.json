@@ -241,5 +241,22 @@
     "Mode purify": "Tryb oczyszczania",
     "Max performance dry condition": "Warunki maksymalnej wydajności osuszania",
     "Small": "Mały",
-    "Remote id": "Zdalny identyfikator"
+    "Remote id": "Zdalny identyfikator",
+    "Other performance condition": "Warunki innej wydajności",
+    "Max drying area manufacturer": "Maks. powierzchnia osuszania (producent)",
+    "Other performance dry": "Inna wydajność osuszania",
+    "Max drying area ro": "Maks. powierzchnia osuszania (RO)",
+    "Minimum temperature": "Minimalna temperatura",
+    "Maximum temperature": "Maksymalna temperatura",
+    "Minimum humidity": "Minimalna wilgotność",
+    "Maximum humidity": "Maksymalna wilgotność",
+    "Rated power consumption": "Zużycie energii",
+    "Water tank capacity": "Pojemność zbiornika na wodę",
+    "Minimum fill time": "Minimalny czas napełniania",
+    "Average filling time": "Średni czas napełniania",
+    "Min value for hygrostat": "Minimalna wartość higrostatu",
+    "Max value for hygrostat": "Maksymalna wartość higrostatu",
+    "Increment of the hygrostat": "Krok higrostatu",
+    "Uv light generator": "Generator światła UV",
+    "Manual file": "Plik instrukcji"
 }

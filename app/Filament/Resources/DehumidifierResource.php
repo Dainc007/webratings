@@ -67,16 +67,8 @@ class DehumidifierResource extends Resource
                                             ->maxLength(255)
                                             ->label('Marka'),
 
-                                        Select::make('type')
-                                            ->options([
-                                                'kondensacyjny' => 'Kondensacyjny',
-                                                'adsorpcyjny' => 'Adsorpcyjny',
-                                                'Peltiera' => 'Peltiera',
-                                                'Osuszacz powietrza' => 'Osuszacz powietrza',
-                                                'Osuszacz powietrza z oczyszczaczem' => 'Osuszacz powietrza z oczyszczaczem',
-                                                'Osuszacz powietrza z jonizatorem' => 'Osuszacz powietrza z jonizatorem',
-                                                'Osuszacz budowlany' => 'Osuszacz budowlany',
-                                            ])
+                                        TextInput::make('type')
+                            
                                             ->label('Typ'),
 
                                         TextInput::make('price')
@@ -89,9 +81,8 @@ class DehumidifierResource extends Resource
                                             ->prefix('PLN')
                                             ->label('Cena przed'),
 
-                                        FileUpload::make('image')
-                                            ->image()
-                                            ->label('Zdjęcie'),
+                                        TextInput::make('image')
+                                            ->disabled(),
 
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
@@ -432,6 +423,7 @@ class DehumidifierResource extends Resource
                                             ->columnSpanFull(),
 
                                         TextInput::make('manual_file')
+                                            ->disabled()
                                             ->label('Plik instrukcji'),
                                     ]),
 

@@ -203,6 +203,7 @@ final class AirPurifierImporter extends Importer
                 ->requiredMapping()
                 ->boolean(),
             ImportColumn::make('is_promo')
+            ->castStateUsing(App\Services\ImportBooleanCaster::closure())
                 ->requiredMapping()
                 ->boolean(),
         ];

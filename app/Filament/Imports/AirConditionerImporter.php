@@ -182,16 +182,7 @@ final class AirConditionerImporter extends Importer
                 ->boolean(),
             ImportColumn::make('max_performance_dry_condition'),
             ImportColumn::make('ranking_hidden')
-                ->castStateUsing(function ($state) {
-                    if (is_bool($state)) return $state;
-                    if (is_null($state) || $state === '') return false;
-                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
-                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
-                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
-                    if (in_array($stateLower, $trueValues, true)) return true;
-                    if (in_array($stateLower, $falseValues, true)) return false;
-                    return false;
-                }),
+            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
             ImportColumn::make('functions_and_equipment_condi')
                 ->castStateUsing(function ($state) {
                     if (is_null($state) || $state === '' || $state === 'null') return null;
@@ -200,27 +191,10 @@ final class AirConditionerImporter extends Importer
                 }),
             ImportColumn::make('small'),
             ImportColumn::make('main_ranking')
-                ->castStateUsing(function ($state) {
-                    if (is_bool($state)) return $state;
-                    if (is_null($state) || $state === '') return false;
-                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
-                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
-                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
-                    if (in_array($stateLower, $trueValues, true)) return true;
-                    if (in_array($stateLower, $falseValues, true)) return false;
-                    return false;
-                }),
+            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
             ImportColumn::make('is_promo')
-                ->castStateUsing(function ($state) {
-                    if (is_bool($state)) return $state;
-                    if (is_null($state) || $state === '') return false;
-                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
-                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
-                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
-                    if (in_array($stateLower, $trueValues, true)) return true;
-                    if (in_array($stateLower, $falseValues, true)) return false;
-                    return false;
-                }),
+            ->castStateUsing(App\Services\ImportBooleanCaster::closure())
+                ->boolean(),
             ImportColumn::make('gallery')
                 ->castStateUsing(function ($state) {
                     if (is_null($state) || $state === '' || $state === 'null') return null;

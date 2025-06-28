@@ -8,6 +8,7 @@ use App\Models\Sensor;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Imports\Models\ImportBooleanCaster;
 
 final class SensorImporter extends Importer
 {

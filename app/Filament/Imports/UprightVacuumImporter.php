@@ -165,30 +165,13 @@ final class UprightVacuumImporter extends Importer
             ImportColumn::make('weight_hand')
                 ->numeric(),
             ImportColumn::make('type_of_washing'),
-            ImportColumn::make('main_ranking'),
+            ImportColumn::make('main_ranking')
+                ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
             ImportColumn::make('type'),
             ImportColumn::make('ranking_hidden')
-                ->castStateUsing(function ($state) {
-                    if (is_bool($state)) return $state;
-                    if (is_null($state) || $state === '') return false;
-                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
-                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
-                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
-                    if (in_array($stateLower, $trueValues, true)) return true;
-                    if (in_array($stateLower, $falseValues, true)) return false;
-                    return false;
-                }),
+            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
             ImportColumn::make('is_promo')
-                ->castStateUsing(function ($state) {
-                    if (is_bool($state)) return $state;
-                    if (is_null($state) || $state === '') return false;
-                    $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
-                    $falseValues = ['0', 0, 'false', 'no', 'nie', 'n', 'f', false];
-                    $stateLower = is_string($state) ? strtolower(trim($state)) : $state;
-                    if (in_array($stateLower, $trueValues, true)) return true;
-                    if (in_array($stateLower, $falseValues, true)) return false;
-                    return false;
-                }),
+            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
             ImportColumn::make('videorecenzja1'),
         ];
     }

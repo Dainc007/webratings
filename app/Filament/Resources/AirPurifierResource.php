@@ -128,6 +128,7 @@ final class AirPurifierResource extends Resource
                             ]),
 
                         Tabs\Tab::make('Performance')
+                        ->columns(4)
                             ->schema([
                                 TextInput::make('max_performance')
                                     ->numeric()
@@ -160,9 +161,11 @@ final class AirPurifierResource extends Resource
                                 TextInput::make('profitability_points')
                                     ->numeric()
                                     ->nullable(),
-                            ]),
+                            ])
+                            ,
 
                         Tabs\Tab::make('Humidification')
+                        ->columns(4)
                             ->schema([
                                 Toggle::make('has_humidification'),
 
@@ -289,6 +292,7 @@ final class AirPurifierResource extends Resource
                             ]),
 
                         Tabs\Tab::make('Physical Attributes')
+                        ->columns(4)
                             ->schema([
                                 TextInput::make('width')
                                     ->numeric()
@@ -307,7 +311,8 @@ final class AirPurifierResource extends Resource
                                     ->step(0.1),
 
                                 TagsInput::make('colors')
-                                    ->placeholder('Add color')
+                                    ->columnSpanFull()
+                                    ->placeholder('Dodaj kolor')
                                     ->separator(','),
                             ]),
 

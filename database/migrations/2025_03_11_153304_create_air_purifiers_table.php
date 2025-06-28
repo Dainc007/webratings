@@ -63,7 +63,7 @@ return new class extends Migration
             $table->decimal('min_loudness', 10, 2)->nullable();
             $table->decimal('max_loudness', 10, 2)->nullable();
             $table->decimal('max_rated_power_consumption', 10, 2)->nullable();
-            $table->string('certificates')->nullable();
+            $table->json('certificates')->nullable();
             $table->boolean('pm2_sensor')->default(false)->nullable();
             $table->string('colors')->nullable();
             $table->string('functions')->nullable();

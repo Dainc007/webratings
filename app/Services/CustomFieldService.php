@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\Status;
 use App\Models\CustomField;
 use App\Models\TableColumnPreference;
 use Filament\Forms\Components\TextInput;
@@ -62,6 +63,16 @@ final class CustomFieldService
                             ->success()
                             ->send();
                     });
+            }
+
+            if ($column['column_name'] === 'brand_name') {
+                $field->badge();
+            }
+
+            if ($column['column_name'] === 'status') {
+                $field->badge()
+                    ->formatStateUsing(fn (string $state): string => Status::from($state)->getLabel())
+                    ->color(fn (string $state): string => Status::from($state)->getColor());
             }
 
             $field->when(

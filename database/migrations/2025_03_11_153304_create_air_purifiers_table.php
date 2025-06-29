@@ -23,9 +23,9 @@ return new class extends Migration
             $table->string('brand_name')->nullable();
             $table->decimal('price', 10, 2)->nullable();
             $table->string('partner_link_url')->nullable();
-            $table->string('partner_link_rel_2')->nullable();
+            $table->json('partner_link_rel_2')->nullable();
             $table->string('ceneo_url')->nullable();
-            $table->string('ceneo_link_rel_2')->nullable();
+            $table->json('ceneo_link_rel_2')->nullable();
             $table->decimal('max_performance', 10, 2)->nullable();
             $table->decimal('max_area', 10, 2)->nullable();
             $table->decimal('max_area_ro', 10, 2)->nullable();

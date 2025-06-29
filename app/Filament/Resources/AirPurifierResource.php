@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Enums\Status;
 use App\Filament\Imports\AirPurifierImporter;
 use App\Filament\Resources\AirPurifierResource\Pages;
 use App\Models\AirPurifier;
@@ -50,25 +51,19 @@ final class AirPurifierResource extends Resource
                         Tabs\Tab::make('Basic Information')
                             ->schema([
                                 Select::make('status')
+                                    ->default('draft')
                                     ->selectablePlaceholder(false)
-                                    ->options([
-                                        'draft' => 'Szkic',
-                                        'published' => 'Opublikowany',
-                                        'archived' => 'Zarchiwizowany',
-                                    ])
-                                    ->required(),
+                                    ->options(Status::getOptions())
+                                    ,
 
                                 TextInput::make('model')
-                                    ->required()
                                     ->maxLength(255),
 
                                 TextInput::make('brand_name')
-                                    ->required()
                                     ->maxLength(255),
 
                                 TextInput::make('price')
                                     ->numeric()
-                                    ->required()
                                     ->prefix('zł'),
 
                                 DateTimePicker::make('price_date')

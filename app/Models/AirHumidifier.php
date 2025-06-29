@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AirHumidifier extends Model
+final class AirHumidifier extends Model
 {
     protected $casts = [
         'colors' => 'array',

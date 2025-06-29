@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Enums\Product;
 use App\Filament\Resources\TableColumnPreferenceResource\Pages;
 use App\Models\TableColumnPreference;
 use Filament\Forms\Form;
@@ -36,25 +37,17 @@ final class TableColumnPreferenceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('column_name')->searchable(),
                 Tables\Columns\TextColumn::make('sort_order'),
-                Tables\Columns\ToggleColumn::make('is_visible')
+                Tables\Columns\ToggleColumn::make('is_visible'),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
                 Tables\Filters\SelectFilter::make('table_name')
-                    ->label("Tabela")
+                    ->label('Tabela')
                     ->selectablePlaceholder(false)
                     ->default('air_purifiers')
-                    ->options(function () {
-                        return TableColumnPreference::distinct()
-                            ->pluck('table_name')
-                            ->mapWithKeys(function ($tableName) {
-                                $label = __($tableName);
-                                return [$tableName => $label];
-                            })
-                            ->toArray();
-                    }),
-                ], layout: \Filament\Tables\Enums\FiltersLayout::AboveContent)
+                    ->options(Product::getOptions()),
+            ], layout: Tables\Enums\FiltersLayout::AboveContent)
             ->actions([])
             ->bulkActions([]);
     }

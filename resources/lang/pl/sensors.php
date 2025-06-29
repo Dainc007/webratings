@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     // Basic Information
     'remote_id' => 'Zdalny identyfikator',
@@ -169,9 +171,9 @@ return [
                 'draft' => 'Szkic',
                 'published' => 'Opublikowany',
                 'archived' => 'Zarchiwizowany',
-            ]
+            ],
         ],
-        
+
         // Basic Information
         'model' => 'Model',
         'brand_name' => 'Marka',
@@ -190,7 +192,7 @@ return [
                 'dofollow' => 'dofollow',
                 'sponsored' => 'sponsored',
                 'noopener' => 'noopener',
-            ]
+            ],
         ],
         'partner_link_title' => 'Tytuł linku partnera',
         'ceneo_url' => 'Link Ceneo',
@@ -201,7 +203,7 @@ return [
                 'dofollow' => 'dofollow',
                 'sponsored' => 'sponsored',
                 'noopener' => 'noopener',
-            ]
+            ],
         ],
         'ceneo_link_title' => 'Tytuł linku Ceneo',
         'review_link' => 'Link do recenzji',
@@ -333,4 +335,4 @@ return [
             'updated_at' => 'Rekord zaktualizowany',
         ],
     ],
-]; 
+];

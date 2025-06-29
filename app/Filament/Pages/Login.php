@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages;
 
-class Login extends \Filament\Pages\Auth\Login
+final class Login extends \Filament\Pages\Auth\Login
 {
     public function mount(): void
     {

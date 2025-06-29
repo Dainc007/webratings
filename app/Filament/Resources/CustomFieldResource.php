@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Enums\Product;
 use App\Filament\Resources\CustomFieldResource\Pages;
 use App\Models\CustomField;
 use Filament\Forms\Components\Select;
@@ -34,10 +35,7 @@ final class CustomFieldResource extends Resource
         return $form
             ->schema([
                 Select::make('table_name')
-                    ->options([
-                        'air_purifiers' => 'Oczyszczacz Powietrza',
-                        'air_humidifiers' => 'Nawilżacz Powietrza',
-                    ])
+                    ->options(Product::getOptions())
                     ->required(),
 
                 Select::make('column_type')
@@ -103,6 +101,6 @@ final class CustomFieldResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        return (string) self::getModel()::count();
     }
 }

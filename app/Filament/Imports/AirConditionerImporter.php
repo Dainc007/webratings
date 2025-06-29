@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Imports;
 
 use App\Models\AirConditioner;
+use App\Services\ImportBooleanCaster;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -38,16 +39,26 @@ final class AirConditionerImporter extends Importer
             ImportColumn::make('partner_link_url'),
             ImportColumn::make('partner_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('partner_link_title'),
             ImportColumn::make('ceneo_url'),
             ImportColumn::make('ceneo_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('ceneo_link_title'),
@@ -66,8 +77,13 @@ final class AirConditionerImporter extends Importer
             ImportColumn::make('usage'),
             ImportColumn::make('colors')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('max_loudness')
@@ -113,16 +129,26 @@ final class AirConditionerImporter extends Importer
                 ->boolean(),
             ImportColumn::make('mobile_features')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('remote_control')
                 ->boolean(),
             ImportColumn::make('functions')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('refrigerant_kind'),
@@ -182,26 +208,47 @@ final class AirConditionerImporter extends Importer
                 ->boolean(),
             ImportColumn::make('max_performance_dry_condition'),
             ImportColumn::make('ranking_hidden')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('functions_and_equipment_condi')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('small'),
             ImportColumn::make('main_ranking')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
             ImportColumn::make('is_promo')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure())
+                ->castStateUsing(App\Services\ImportBooleanCaster::closure())
                 ->boolean(),
             ImportColumn::make('gallery')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
         ];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your air conditioner import has completed and '.number_format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
+
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
+            $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
+        }
+
+        return $body;
     }
 
     public function resolveRecord(): ?AirConditioner
@@ -209,16 +256,5 @@ final class AirConditionerImporter extends Importer
         return AirConditioner::firstOrNew([
             'remote_id' => $this->data['remote_id'],
         ]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your air conditioner import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
-        }
-
-        return $body;
     }
 }

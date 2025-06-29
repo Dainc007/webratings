@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Resources;
@@ -6,7 +7,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShortcodeProductResource extends JsonResource
+final class ShortcodeProductResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,6 +17,7 @@ class ShortcodeProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         $type = $this->getTable();
+
         return [
             'id' => $this->id,
             'type' => $type,

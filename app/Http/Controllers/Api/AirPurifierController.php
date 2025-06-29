@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -8,7 +10,7 @@ use App\Http\Resources\AirPurifierResource;
 use App\Models\AirPurifier;
 use Illuminate\Http\Request;
 
-class AirPurifierController extends Controller
+final class AirPurifierController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,30 +23,28 @@ class AirPurifierController extends Controller
             $columns = explode(',', $request->get('display'));
             $query->select($columns);
         }
+        if ($request->filled('id')) {
+            $ids = explode(',', $request->get('id'));
+            $airPurifiers = $request->filled('display')
+                ? $query->whereIn('id', $ids)->get()
+                : AirPurifier::find($ids);
 
-        switch (true) {
-            case $request->filled('id'):
-                $ids = explode(',', $request->get('id'));
-                $airPurifiers = $request->filled('display')
-                    ? $query->whereIn('id', $ids)->get()
-                    : AirPurifier::find($ids);
-                return AirPurifierResource::collection($airPurifiers);
-
-            case $request->boolean('paginate'):
-                return AirPurifierResource::collection($query->paginate());
-
-            case $request->filled('max'):
-                return AirPurifierResource::collection($query->limit($request->integer('max'))->get());
-
-            default:
-                return AirPurifierResource::collection($query->get());
+            return AirPurifierResource::collection($airPurifiers);
         }
+        if ($request->boolean('paginate')) {
+            return AirPurifierResource::collection($query->paginate());
+        }
+        if ($request->filled('max')) {
+            return AirPurifierResource::collection($query->limit($request->integer('max'))->get());
+        }
+
+        return AirPurifierResource::collection($query->get());
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         //
     }
@@ -60,7 +60,7 @@ class AirPurifierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): void
     {
         //
     }
@@ -68,7 +68,7 @@ class AirPurifierController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): void
     {
         //
     }

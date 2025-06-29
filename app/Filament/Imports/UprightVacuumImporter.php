@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Imports;
 
 use App\Models\UprightVacuum;
+use App\Services\ImportBooleanCaster;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -30,8 +31,13 @@ final class UprightVacuumImporter extends Importer
             ImportColumn::make('model'),
             ImportColumn::make('colors')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('image'),
@@ -45,23 +51,38 @@ final class UprightVacuumImporter extends Importer
             ImportColumn::make('partner_link_url'),
             ImportColumn::make('partner_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('partner_link_title'),
             ImportColumn::make('ceneo_url'),
             ImportColumn::make('ceneo_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('ceneo_link_title'),
             ImportColumn::make('vacuum_cleaner_type')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('suction_power_aw')
@@ -88,8 +109,13 @@ final class UprightVacuumImporter extends Importer
                 ->numeric(),
             ImportColumn::make('power_supply')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('maximum_operation_time'),
@@ -116,8 +142,13 @@ final class UprightVacuumImporter extends Importer
             ImportColumn::make('display'),
             ImportColumn::make('display_type')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('pollution_filtration_system'),
@@ -134,8 +165,13 @@ final class UprightVacuumImporter extends Importer
             ImportColumn::make('charging_station'),
             ImportColumn::make('additional_equipment')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('for_pet_owners'),
@@ -166,14 +202,25 @@ final class UprightVacuumImporter extends Importer
                 ->numeric(),
             ImportColumn::make('type_of_washing'),
             ImportColumn::make('main_ranking')
-                ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('type'),
             ImportColumn::make('ranking_hidden')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('is_promo')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('videorecenzja1'),
         ];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your upright vacuum import has completed and '.number_format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
+
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
+            $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
+        }
+
+        return $body;
     }
 
     public function resolveRecord(): ?UprightVacuum
@@ -181,16 +228,5 @@ final class UprightVacuumImporter extends Importer
         return UprightVacuum::firstOrNew([
             'remote_id' => $this->data['remote_id'],
         ]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your upright vacuum import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
-        }
-
-        return $body;
     }
 }

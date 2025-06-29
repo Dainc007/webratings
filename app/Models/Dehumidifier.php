@@ -6,7 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Dehumidifier extends Model
+final class Dehumidifier extends Model
 {
     protected $casts = [
         'partner_link_rel_2' => 'array',

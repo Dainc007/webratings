@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -96,7 +98,7 @@ return new class extends Migration
             $table->string('carpet_and_floor_brush')->nullable();
             $table->string('attachment_for_pets')->nullable();
             $table->string('telescopic_tube')->nullable();
-            $table->string('charging_station')->nullable();
+            $table->json('charging_station')->nullable();
             $table->json('additional_equipment')->nullable();
 
             // Suitability

@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
+use App\Filament\Imports\UprightVacuumImporter;
 use App\Filament\Resources\UprightVacuumResource\Pages;
-use App\Filament\Resources\UprightVacuumResource\RelationManagers;
 use App\Models\UprightVacuum;
-use Filament\Forms;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -18,25 +17,29 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Actions\ImportAction;
-use App\Filament\Imports\UprightVacuumImporter;
+use Filament\Tables\Table;
 
-class UprightVacuumResource extends Resource
+final class UprightVacuumResource extends Resource
 {
     protected static ?string $model = UprightVacuum::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationLabel = 'Odkurzacze Pionowe';
+
     protected static ?string $pluralLabel = 'Odkurzacze Pionowe';
+
     protected static ?string $label = 'Odkurzacz Pionowy';
+
     protected static ?string $navigationGroup = 'Produkty';
+
     protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
+        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('upright_vacuums');
+
         return $form
             ->schema([
                 Tabs::make('Formularz Odkurzacza Pionowego')
@@ -51,7 +54,7 @@ class UprightVacuumResource extends Resource
                                             ->options([
                                                 'draft' => 'Szkic',
                                                 'published' => 'Opublikowany',
-                                                'archived' => 'Zarchiwizowany'
+                                                'archived' => 'Zarchiwizowany',
                                             ])
                                             ->required()
                                             ->label('Status'),
@@ -461,228 +464,34 @@ class UprightVacuumResource extends Resource
                                             ->label('Link do wideo recenzji'),
                                     ])->columns(2),
                             ]),
+
+                        Tabs\Tab::make('custom_fields')
+                            ->schema(
+                                $customFieldSchema
+                            ),
                     ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
+        $availableColumns = \App\Services\CustomFieldService::getTableColumns('upright_vacuums');
+
         return $table
-        ->recordUrl(null)
-        ->headerActions([
-            ImportAction::make('Import Upright Vacuums')
-                ->importer(UprightVacuumImporter::class),
-            Tables\Actions\Action::make('Ustawienia')
-                ->icon('heroicon-o-cog-6-tooth')
-                ->url(fn() => route('filament.admin.resources.table-column-preferences.index', [
-                    'tableFilters' => [
-                        'table_name' => [
-                            'value' => 'upright_vacuums',
+            ->recordUrl(null)
+            ->columns($availableColumns)
+            ->headerActions([
+                ImportAction::make('Import Upright Vacuums')
+                    ->importer(UprightVacuumImporter::class),
+                Tables\Actions\Action::make('Ustawienia')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                        'tableFilters' => [
+                            'table_name' => [
+                                'value' => 'upright_vacuums',
+                            ],
                         ],
-                    ],
-                ])),
-        ])
-            ->columns([
-                Tables\Columns\TextColumn::make('remote_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('sort')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('user_created')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('date_created')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('user_updated')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('date_updated')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('brand_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('model')
-                    ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('price_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('price_before')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('partner_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('partner_link_title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('ceneo_link_title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('suction_power_aw')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('suction_power_pa')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('number_of_suction_power_levels')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('automatic_power_adjustment')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('suction_power_highest_level_pa')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('suction_power_medium_level_pa')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('suction_power_low_level_pa')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('maximum_engine_power')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('rotation_speed')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('noise_level')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('battery_change')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('cable_length')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('maximum_operation_time')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('battery_charging_time')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('battery_voltage')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('battery_capacity')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('mopping_function')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('active_washing_function')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('self_cleaning_function')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('self_cleaning_underlays')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('clean_water_tank_capacity')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('dirty_water_tank_capacity')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('dust_tank_capacity')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('hand_vacuum_cleaner')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('led_backlight')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('uv_technology')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('detecting_dirt_on_the_floor')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('detecting_carpet')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('display')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pollution_filtration_system')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('cyclone_technology')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('mesh_filter')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('hepa_filter')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('epa_filter')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('electric_brush')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('bendable_pipe')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('turbo_brush')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('carpet_and_floor_brush')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('attachment_for_pets')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('telescopic_tube')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('charging_station')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('for_pet_owners')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('for_allergy_sufferers')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('weight')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('warranty')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('profitability')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('capability')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('capability_points')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('profitability_points')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('ranking')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('mopping_time_max')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('vacuuming_time_max')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('easy_emptying_tank')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('continuous_work')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('displaying_battery_status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('operation_time_turbo')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('operation_time_eco')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('weight_hand')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type_of_washing')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('main_ranking')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('ranking_hidden')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_promo')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('videorecenzja1')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                    ])),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -717,6 +526,6 @@ class UprightVacuumResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        return (string) self::getModel()::count();
     }
 }

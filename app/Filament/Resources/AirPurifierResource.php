@@ -7,8 +7,6 @@ namespace App\Filament\Resources;
 use App\Filament\Imports\AirPurifierImporter;
 use App\Filament\Resources\AirPurifierResource\Pages;
 use App\Models\AirPurifier;
-use App\Models\CustomField;
-use App\Models\TableColumnPreference;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -19,14 +17,9 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Schema;
 
 final class AirPurifierResource extends Resource
 {
@@ -46,23 +39,9 @@ final class AirPurifierResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'model';
 
-
     public static function form(Form $form): Form
     {
-        $customFields = CustomField::where('table_name', 'air_purifiers')->get();
-        $customFieldSchema = [];
-        foreach ($customFields as $customField) {
-            if ($customField->column_type === 'boolean') {
-                $field = Toggle::make($customField->column_name);
-            } else {
-                $field = TextInput::make($customField->column_name);
-            }
-
-            if ($customField->column_type === 'integer') {
-                $field->numeric();
-            }
-            $customFieldSchema[] = $field;
-        }
+        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('air_purifiers');
 
         return $form
             ->schema([
@@ -75,7 +54,7 @@ final class AirPurifierResource extends Resource
                                     ->options([
                                         'draft' => 'Szkic',
                                         'published' => 'Opublikowany',
-                                        'archived' => "Zarchiwizowany"
+                                        'archived' => 'Zarchiwizowany',
                                     ])
                                     ->required(),
 
@@ -90,12 +69,11 @@ final class AirPurifierResource extends Resource
                                 TextInput::make('price')
                                     ->numeric()
                                     ->required()
-                                    ->prefix('zł')
-                                    ,
+                                    ->prefix('zł'),
 
                                 DateTimePicker::make('price_date')
-                                ->default(now())
-                                ->seconds(false),
+                                    ->default(now())
+                                    ->seconds(false),
 
                                 Toggle::make('is_promo'),
 
@@ -111,7 +89,7 @@ final class AirPurifierResource extends Resource
                                                 'dofollow' => 'dofollow',
                                                 'sponsored' => 'sponsored',
                                                 'noopener' => 'noopener',
-                                                ]),
+                                            ]),
 
                                         TextInput::make('ceneo_url')
                                             ->maxLength(255),
@@ -131,7 +109,7 @@ final class AirPurifierResource extends Resource
                             ]),
 
                         Tabs\Tab::make('Performance')
-                        ->columns(4)
+                            ->columns(4)
                             ->schema([
                                 TextInput::make('max_performance')
                                     ->numeric()
@@ -164,11 +142,10 @@ final class AirPurifierResource extends Resource
                                 TextInput::make('profitability_points')
                                     ->numeric()
                                     ->nullable(),
-                            ])
-                            ,
+                            ]),
 
                         Tabs\Tab::make('Humidification')
-                        ->columns(4)
+                            ->columns(4)
                             ->schema([
                                 Toggle::make('has_humidification'),
 
@@ -178,26 +155,26 @@ final class AirPurifierResource extends Resource
                                         'ultrasonic' => 'Ultrasonic',
                                         'evaporative' => 'Evaporative',
                                     ])
-                                    ->visible(fn(callable $get) => $get('has_humidification')),
+                                    ->visible(fn (callable $get) => $get('has_humidification')),
 
                                 Toggle::make('humidification_switch')
-                                    ->visible(fn(callable $get) => $get('has_humidification')),
+                                    ->visible(fn (callable $get) => $get('has_humidification')),
 
                                 TextInput::make('humidification_efficiency')
                                     ->numeric()
                                     ->minValue(0)
-                                    ->visible(fn(callable $get) => $get('has_humidification')),
+                                    ->visible(fn (callable $get) => $get('has_humidification')),
 
                                 TextInput::make('humidification_area')
                                     ->numeric()
                                     ->minValue(0)
                                     ->nullable()
-                                    ->visible(fn(callable $get) => $get('has_humidification')),
+                                    ->visible(fn (callable $get) => $get('has_humidification')),
 
                                 TextInput::make('water_tank_capacity')
                                     ->numeric()
                                     ->minValue(0)
-                                    ->visible(fn(callable $get) => $get('has_humidification')),
+                                    ->visible(fn (callable $get) => $get('has_humidification')),
 
                                 Toggle::make('hygrometer'),
 
@@ -215,7 +192,7 @@ final class AirPurifierResource extends Resource
                                             ->numeric(),
                                     ])
                                     ->collapsible()
-                                    ->visible(fn(callable $get) => $get('evaporative_filter')),
+                                    ->visible(fn (callable $get) => $get('evaporative_filter')),
 
                                 Toggle::make('hepa_filter')->live(),
                                 Section::make('Filtr HEPA')
@@ -231,7 +208,7 @@ final class AirPurifierResource extends Resource
                                             ->numeric(),
                                     ])
                                     ->collapsible()
-                                    ->visible(fn(callable $get) => $get('hepa_filter')),
+                                    ->visible(fn (callable $get) => $get('hepa_filter')),
 
                                 Toggle::make('carbon_filter')->live(),
                                 Section::make('Filtr węglowy')
@@ -242,7 +219,7 @@ final class AirPurifierResource extends Resource
                                             ->numeric(),
                                     ])
                                     ->collapsible()
-                                    ->visible(fn(callable $get) => $get('carbon_filter')),
+                                    ->visible(fn (callable $get) => $get('carbon_filter')),
 
                                 Toggle::make('mesh_filter'),
 
@@ -257,7 +234,7 @@ final class AirPurifierResource extends Resource
                                         TextInput::make('ionizer_type'),
                                         Toggle::make('ionizer_switch'),
                                     ])
-                                    ->visible(fn(callable $get) => $get('ionization')),
+                                    ->visible(fn (callable $get) => $get('ionization')),
 
                                 Section::make('Other Features')
                                     ->schema([
@@ -295,7 +272,7 @@ final class AirPurifierResource extends Resource
                             ]),
 
                         Tabs\Tab::make('Physical Attributes')
-                        ->columns(4)
+                            ->columns(4)
                             ->schema([
                                 TextInput::make('width')
                                     ->numeric()
@@ -374,65 +351,10 @@ final class AirPurifierResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $availableColumns = [
-            TextColumn::make('id')->hidden(),
-        ];
-
-        $columns = TableColumnPreference::where('table_name', 'air_purifiers')
-            ->where('is_visible', true)
-            ->orderBy('sort_order')
-            ->get();
-
-        foreach ($columns as $column) {
-            $field = TextColumn::make($column['column_name']);
-
-            if ($column['column_name'] === 'price') {
-                $field = TextInputColumn::make($column['column_name'])
-                    ->width('50px')
-                    ->extraInputAttributes(['step' => '0.01'])
-                    ->afterStateUpdated(function ($record, $state): void {
-                        Notification::make()
-                            ->title('Cena została zaktualizowana')
-                            ->success()
-                            ->send();
-                    });
-            }
-
-            $field->when(
-                Schema::hasColumn('air_purifiers', $column['column_name']),
-                fn () => $field->searchable()
-            );
-
-            $availableColumns[] = $field;
-        }
-
-        $customFields = CustomField::where('table_name', 'air_purifiers')->get();
-        foreach ($customFields as $customField) {
-            if ($customField->column_type === 'boolean') {
-                $field = ToggleColumn::make($customField->column_name);
-            } else {
-                $field = TextColumn::make($customField->column_name);
-            }
-
-            if ($customField->column_type === 'integer') {
-                $field->numeric();
-            }
-
-            $field->searchable();
-
-            $field->when(
-                Schema::hasColumn('air_purifiers', $customField->column_name),
-                fn () => $field->searchable()
-            );
-
-            $label = $customField->display_name ?? __($customField->column_name);
-            $field->label($label);
-
-            $availableColumns[] = $field;
-        }
+        $availableColumns = \App\Services\CustomFieldService::getTableColumns('air_purifiers');
 
         return $table
-        ->recordUrl(null)
+            ->recordUrl(null)
             ->columns($availableColumns)
             ->filters([])
             ->actions([
@@ -443,7 +365,7 @@ final class AirPurifierResource extends Resource
                     ->importer(AirPurifierImporter::class),
                 Tables\Actions\Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn() => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'air_purifiers',
@@ -451,6 +373,7 @@ final class AirPurifierResource extends Resource
                         ],
                     ])),
             ])
+            ->actionsPosition(Tables\Enums\ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -476,7 +399,7 @@ final class AirPurifierResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        return (string) self::getModel()::count();
     }
 
     public static function getGloballySearchableAttributes(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     'failed' => 'Te dane uwierzytelniające nie pasują do naszych rekordów.',

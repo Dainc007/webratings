@@ -1,28 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Imports\AirHumidifierImporter;
 use App\Filament\Resources\AirHumidifierResource\Pages;
-use App\Filament\Resources\AirHumidifierResource\RelationManagers;
 use App\Models\AirHumidifier;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Forms;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\TagsInput;
 
-class AirHumidifierResource extends Resource
+final class AirHumidifierResource extends Resource
 {
     protected static ?string $model = AirHumidifier::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
+
     protected static ?string $navigationLabel = 'Nawilżacze Powietrza';
 
     protected static ?string $pluralLabel = 'Nawilżacze Powietrza';
@@ -35,9 +33,10 @@ class AirHumidifierResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'model';
 
-
     public static function form(Form $form): Form
     {
+        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('air_humidifiers');
+
         return $form
             ->schema([
                 Forms\Components\Tabs::make('Formularz Nawilżacza Powietrza')
@@ -116,22 +115,22 @@ class AirHumidifierResource extends Resource
                                                     ->live()
                                                     ->label('Higrostat'),
                                                 Forms\Components\TextInput::make('hygrostat_min')
-                                                    ->visible(fn(callable $get) => $get('hygrostat'))
+                                                    ->visible(fn (callable $get) => $get('hygrostat'))
                                                     ->numeric()
                                                     ->label('Higrostat min'),
                                                 Forms\Components\TextInput::make('hygrostat_max')
-                                                    ->visible(fn(callable $get) => $get('hygrostat'))
+                                                    ->visible(fn (callable $get) => $get('hygrostat'))
                                                     ->numeric()
                                                     ->label('Higrostat max'),
                                                 Forms\Components\Toggle::make('timer')
                                                     ->live()
                                                     ->label('Timer'),
                                                 Forms\Components\TextInput::make('timer_min')
-                                                    ->visible(fn(callable $get) => $get('timer'))
+                                                    ->visible(fn (callable $get) => $get('timer'))
                                                     ->numeric()
                                                     ->label('Timer min'),
                                                 Forms\Components\TextInput::make('timer_max')
-                                                    ->visible(fn(callable $get) => $get('timer'))
+                                                    ->visible(fn (callable $get) => $get('timer'))
                                                     ->numeric()
                                                     ->label('Timer max'),
                                             ]),
@@ -141,55 +140,55 @@ class AirHumidifierResource extends Resource
                                                     ->live()
                                                     ->label('Tryb automatyczny'),
                                                 Forms\Components\TextInput::make('auto_mode_min')
-                                                    ->visible(fn(callable $get) => $get('auto_mode'))
+                                                    ->visible(fn (callable $get) => $get('auto_mode'))
                                                     ->numeric()
                                                     ->label('Tryb auto min'),
                                                 Forms\Components\TextInput::make('auto_mode_max')
-                                                    ->visible(fn(callable $get) => $get('auto_mode'))
+                                                    ->visible(fn (callable $get) => $get('auto_mode'))
                                                     ->numeric()
                                                     ->label('Tryb auto max'),
                                                 Forms\Components\Toggle::make('night_mode')
                                                     ->live()
                                                     ->label('Tryb nocny'),
                                                 Forms\Components\TextInput::make('night_mode_min')
-                                                    ->visible(fn(callable $get) => $get('night_mode'))
+                                                    ->visible(fn (callable $get) => $get('night_mode'))
                                                     ->numeric()
                                                     ->label('Tryb nocny min'),
                                                 Forms\Components\TextInput::make('night_mode_max')
-                                                    ->visible(fn(callable $get) => $get('night_mode'))
+                                                    ->visible(fn (callable $get) => $get('night_mode'))
                                                     ->numeric()
                                                     ->label('Tryb nocny max'),
                                                 Forms\Components\Toggle::make('child_lock')
                                                     ->live()
                                                     ->label('Blokada rodzicielska'),
                                                 Forms\Components\TextInput::make('child_lock_min')
-                                                    ->visible(fn(callable $get) => $get('child_lock'))
+                                                    ->visible(fn (callable $get) => $get('child_lock'))
                                                     ->numeric()
                                                     ->label('Blokada rodzicielska min'),
                                                 Forms\Components\TextInput::make('child_lock_max')
-                                                    ->visible(fn(callable $get) => $get('child_lock'))
+                                                    ->visible(fn (callable $get) => $get('child_lock'))
                                                     ->numeric()
                                                     ->label('Blokada rodzicielska max'),
                                                 Forms\Components\Toggle::make('display')
                                                     ->live()
                                                     ->label('Wyświetlacz'),
                                                 Forms\Components\TextInput::make('display_min')
-                                                    ->visible(fn(callable $get) => $get('display'))
+                                                    ->visible(fn (callable $get) => $get('display'))
                                                     ->numeric()
                                                     ->label('Wyświetlacz min'),
                                                 Forms\Components\TextInput::make('display_max')
-                                                    ->visible(fn(callable $get) => $get('display'))
+                                                    ->visible(fn (callable $get) => $get('display'))
                                                     ->numeric()
                                                     ->label('Wyświetlacz max'),
                                                 Forms\Components\Toggle::make('remote_control')
                                                     ->live()
                                                     ->label('Pilot'),
                                                 Forms\Components\TextInput::make('remote_control_min')
-                                                    ->visible(fn(callable $get) => $get('remote_control'))
+                                                    ->visible(fn (callable $get) => $get('remote_control'))
                                                     ->numeric()
                                                     ->label('Pilot min'),
                                                 Forms\Components\TextInput::make('remote_control_max')
-                                                    ->visible(fn(callable $get) => $get('remote_control'))
+                                                    ->visible(fn (callable $get) => $get('remote_control'))
                                                     ->numeric()
                                                     ->label('Pilot max'),
                                             ]),
@@ -209,11 +208,11 @@ class AirHumidifierResource extends Resource
                                                     ->live()
                                                     ->label('Filtr ewaporacyjny'),
                                                 Forms\Components\TextInput::make('evaporative_filter_life')
-                                                    ->visible(fn(callable $get) => $get('evaporative_filter'))
+                                                    ->visible(fn (callable $get) => $get('evaporative_filter'))
                                                     ->numeric()
                                                     ->label('Żywotność filtra ewaporacyjnego'),
                                                 Forms\Components\TextInput::make('evaporative_filter_price')
-                                                    ->visible(fn(callable $get) => $get('evaporative_filter'))
+                                                    ->visible(fn (callable $get) => $get('evaporative_filter'))
                                                     ->numeric()
                                                     ->label('Cena filtra ewaporacyjnego'),
                                             ]),
@@ -223,11 +222,11 @@ class AirHumidifierResource extends Resource
                                                     ->live()
                                                     ->label('Srebrna jonizacja'),
                                                 Forms\Components\TextInput::make('silver_ion_life')
-                                                    ->visible(fn(callable $get) => $get('silver_ion'))
+                                                    ->visible(fn (callable $get) => $get('silver_ion'))
                                                     ->numeric()
                                                     ->label('Żywotność srebrnej jonizacji'),
                                                 Forms\Components\TextInput::make('silver_ion_price')
-                                                    ->visible(fn(callable $get) => $get('silver_ion'))
+                                                    ->visible(fn (callable $get) => $get('silver_ion'))
                                                     ->numeric()
                                                     ->label('Cena srebrnej jonizacji'),
                                             ]),
@@ -237,11 +236,11 @@ class AirHumidifierResource extends Resource
                                                     ->live()
                                                     ->label('Filtr ceramiczny'),
                                                 Forms\Components\TextInput::make('ceramic_filter_life')
-                                                    ->visible(fn(callable $get) => $get('ceramic_filter'))
+                                                    ->visible(fn (callable $get) => $get('ceramic_filter'))
                                                     ->numeric()
                                                     ->label('Żywotność filtra ceramicznego'),
                                                 Forms\Components\TextInput::make('ceramic_filter_price')
-                                                    ->visible(fn(callable $get) => $get('ceramic_filter'))
+                                                    ->visible(fn (callable $get) => $get('ceramic_filter'))
                                                     ->numeric()
                                                     ->label('Cena filtra ceramicznego'),
                                             ]),
@@ -367,6 +366,10 @@ class AirHumidifierResource extends Resource
                                             ->label('Dyski'),
                                     ])->columns(2),
                             ]),
+                        Tabs\Tab::make('custom_fields')
+                            ->schema(
+                                $customFieldSchema
+                            ),
                     ])
                     ->persistTabInQueryString()
                     ->columnSpanFull(),
@@ -375,66 +378,24 @@ class AirHumidifierResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $availableColumns = \App\Services\CustomFieldService::getTableColumns('air_humidifiers');
+
         return $table
-        ->recordUrl(null)
+            ->recordUrl(null)
+            ->columns($availableColumns)
+            ->filters([])
             ->headerActions([
                 ImportAction::make()
-                ->importer(AirHumidifierImporter::class),
+                    ->importer(AirHumidifierImporter::class),
                 Tables\Actions\Action::make('Ustawienia')
-                ->icon('heroicon-o-cog-6-tooth')
-                ->url(fn() => route('filament.admin.resources.table-column-preferences.index', [
-                    'tableFilters' => [
-                        'table_name' => [
-                            'value' => 'air_humidifiers',
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                        'tableFilters' => [
+                            'table_name' => [
+                                'value' => 'air_humidifiers',
+                            ],
                         ],
-                    ],
-                ])),
-            ])
-            ->columns([
-                Tables\Columns\TextColumn::make('remote_id')
-                    ->label('ID zdalne')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('model')
-                    ->label('Model')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('brand_name')
-                    ->label('Marka')
-                    ->searchable(),
-                TextInputColumn::make('price')
-                    ->label('Cena')
-                    ->width('50px')
-                    ->extraInputAttributes(['step' => '0.01'])
-                    ->afterStateUpdated(function ($record, $state): void {
-                        Notification::make()
-                            ->title('Cena została zaktualizowana')
-                            ->success()
-                            ->send();
-                    }),
-                Tables\Columns\TextColumn::make('max_performance')
-                    ->label('Maksymalna wydajność')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('max_area')
-                    ->label('Maksymalna powierzchnia')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('water_tank_capacity')
-                    ->label('Pojemność zbiornika na wodę')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Utworzono')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Zaktualizowano')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ])),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -464,7 +425,7 @@ class AirHumidifierResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        return (string) self::getModel()::count();
     }
 
     public static function getGloballySearchableAttributes(): array

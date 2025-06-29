@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\ShortcodeResource\Pages;
 
 use App\Filament\Resources\ShortcodeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditShortcode extends EditRecord
+final class EditShortcode extends EditRecord
 {
     protected static string $resource = ShortcodeResource::class;
 

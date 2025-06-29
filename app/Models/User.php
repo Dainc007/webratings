@@ -19,7 +19,7 @@ final class User extends Authenticatable implements FilamentUser
     /** @use HasFactory<UserFactory> */
     use HasFactory,
         //        HasApiTokens,
-    Notifiable;
+        Notifiable;
 
     /**
      * The attributes that are mass assignable.

@@ -6,7 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sensor extends Model
+final class Sensor extends Model
 {
     protected $casts = [
         'partner_link_rel_2' => 'array',

@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\Product;
 use App\Models\Shortcode;
-use App\Models\AirPurifier;
-use App\Models\AirHumidifier;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
-class ShortcodeService
+final class ShortcodeService
 {
     /**
      * Create a new class instance.
@@ -20,7 +17,7 @@ class ShortcodeService
         //
     }
 
-    public function findShortcodeByNameOrId(\App\Models\Shortcode $identifier): Shortcode
+    public function findShortcodeByNameOrId(Shortcode $identifier): Shortcode
     {
         return Shortcode::where('name', $identifier)
             ->orWhere('id', $identifier)
@@ -35,9 +32,9 @@ class ShortcodeService
         $productTypes = $shortcode->product_types;
 
         foreach ($productTypes as $type) {
-            $query = $this->getQueryForProductType($type);
+            $query = Product::getQueryForType($type);
 
-            if (!$query) {
+            if (! $query instanceof \Illuminate\Database\Eloquent\Builder) {
                 continue;
             }
 
@@ -46,15 +43,6 @@ class ShortcodeService
         }
 
         return $results;
-    }
-
-    private function getQueryForProductType(string $type): ?\Illuminate\Database\Eloquent\Builder
-    {
-        return match ($type) {
-            'air_purifiers' => AirPurifier::query(),
-            'air_humidifiers' => AirHumidifier::query(),
-            default => null,
-        };
     }
 
     private function applyConditionsToQuery(\Illuminate\Database\Eloquent\Builder $query, $conditions): void
@@ -71,7 +59,7 @@ class ShortcodeService
     private function castValue(string $value, ?string $type): mixed
     {
         return match ($type) {
-            'integer' => (int)$value,
+            'integer' => (int) $value,
             'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
             default => $value,
         };

@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
+use App\Filament\Imports\SensorImporter;
 use App\Filament\Resources\SensorResource\Pages;
-use App\Filament\Resources\SensorResource\RelationManagers;
 use App\Models\Sensor;
-use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -16,15 +17,12 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Imports\SensorImporter;
-use Filament\Forms\Get;
 
-class SensorResource extends Resource
+final class SensorResource extends Resource
 {
     protected static ?string $model = Sensor::class;
 
@@ -44,6 +42,8 @@ class SensorResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('sensors');
+
         return $form
             ->schema([
                 Tabs::make('Sensor form')
@@ -57,7 +57,7 @@ class SensorResource extends Resource
                                             ->options([
                                                 'draft' => __('sensors.fields.status.options.draft'),
                                                 'published' => __('sensors.fields.status.options.published'),
-                                                'archived' => __('sensors.fields.status.options.archived')
+                                                'archived' => __('sensors.fields.status.options.archived'),
                                             ])
                                             ->required(),
 
@@ -78,8 +78,7 @@ class SensorResource extends Resource
                                             ->prefix('PLN'),
 
                                         TextInput::make('image')
-                                            ->disabled()
-                                        ,
+                                            ->disabled(),
 
                                         Textarea::make('discount_info')
                                             ->columnSpanFull(),
@@ -130,13 +129,13 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('pm1_range')
-                                            ->visible(fn(Get $get) => $get('is_pm1')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm1')),
 
                                         TextInput::make('pm1_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_pm1')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm1')),
 
                                         TextInput::make('pm1_sensor_type')
-                                            ->visible(fn(Get $get) => $get('is_pm1')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm1')),
                                     ])->columns(2),
 
                                 Section::make(__('sensors.sections.pm2_sensor'))
@@ -145,13 +144,13 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('pm2_range')
-                                            ->visible(fn(Get $get) => $get('is_pm2')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm2')),
 
                                         TextInput::make('pm2_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_pm2')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm2')),
 
                                         TextInput::make('pm2_sensor_type')
-                                            ->visible(fn(Get $get) => $get('is_pm2')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm2')),
                                     ])->columns(2),
 
                                 Section::make(__('sensors.sections.pm10_sensor'))
@@ -160,13 +159,13 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('pm10_range')
-                                            ->visible(fn(Get $get) => $get('is_pm10')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm10')),
 
                                         TextInput::make('pm10_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_pm10')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm10')),
 
                                         TextInput::make('pm10_sensor_type')
-                                            ->visible(fn(Get $get) => $get('is_pm10')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pm10')),
                                     ])->columns(2),
                             ]),
 
@@ -178,13 +177,13 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('lzo_range')
-                                            ->visible(fn(Get $get) => $get('is_lzo')),
+                                            ->visible(fn (Get $get): mixed => $get('is_lzo')),
 
                                         TextInput::make('lzo_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_lzo')),
+                                            ->visible(fn (Get $get): mixed => $get('is_lzo')),
 
                                         TextInput::make('lzo_sensor_type')
-                                            ->visible(fn(Get $get) => $get('is_lzo')),
+                                            ->visible(fn (Get $get): mixed => $get('is_lzo')),
                                     ])->columns(2),
 
                                 Section::make(__('sensors.sections.hcho_sensor'))
@@ -193,13 +192,13 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('hcho_range')
-                                            ->visible(fn(Get $get) => $get('is_hcho')),
+                                            ->visible(fn (Get $get): mixed => $get('is_hcho')),
 
                                         TextInput::make('hcho_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_hcho')),
+                                            ->visible(fn (Get $get): mixed => $get('is_hcho')),
 
                                         TextInput::make('hcho_sensor_type')
-                                            ->visible(fn(Get $get) => $get('is_hcho')),
+                                            ->visible(fn (Get $get): mixed => $get('is_hcho')),
                                     ])->columns(2),
 
                                 Section::make(__('sensors.sections.co2_sensor'))
@@ -208,13 +207,13 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('co2_range')
-                                            ->visible(fn(Get $get) => $get('is_co2')),
+                                            ->visible(fn (Get $get): mixed => $get('is_co2')),
 
                                         TextInput::make('co2_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_co2')),
+                                            ->visible(fn (Get $get): mixed => $get('is_co2')),
 
                                         TextInput::make('co2_sensor_type')
-                                            ->visible(fn(Get $get) => $get('is_co2')),
+                                            ->visible(fn (Get $get): mixed => $get('is_co2')),
                                     ])->columns(2),
 
                                 Section::make(__('sensors.sections.co_sensor'))
@@ -223,13 +222,13 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('co_range')
-                                            ->visible(fn(Get $get) => $get('is_co')),
+                                            ->visible(fn (Get $get): mixed => $get('is_co')),
 
                                         TextInput::make('co_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_co')),
+                                            ->visible(fn (Get $get): mixed => $get('is_co')),
 
                                         TextInput::make('co_sensor_type')
-                                            ->visible(fn(Get $get) => $get('is_co')),
+                                            ->visible(fn (Get $get): mixed => $get('is_co')),
                                     ])->columns(2),
                             ]),
 
@@ -241,10 +240,10 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('temperature_range')
-                                            ->visible(fn(Get $get) => $get('is_temperature')),
+                                            ->visible(fn (Get $get): mixed => $get('is_temperature')),
 
                                         TextInput::make('temperature_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_temperature')),
+                                            ->visible(fn (Get $get): mixed => $get('is_temperature')),
 
                                         TextInput::make('temperature'),
                                     ])->columns(2),
@@ -255,10 +254,10 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('humidity_range')
-                                            ->visible(fn(Get $get) => $get('is_humidity')),
+                                            ->visible(fn (Get $get): mixed => $get('is_humidity')),
 
                                         TextInput::make('humidity_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_humidity')),
+                                            ->visible(fn (Get $get): mixed => $get('is_humidity')),
 
                                         TextInput::make('humidity'),
                                     ])->columns(2),
@@ -269,10 +268,10 @@ class SensorResource extends Resource
                                             ->live(),
 
                                         TextInput::make('pressure_range')
-                                            ->visible(fn(Get $get) => $get('is_pressure')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pressure')),
 
                                         TextInput::make('pressure_accuracy')
-                                            ->visible(fn(Get $get) => $get('is_pressure')),
+                                            ->visible(fn (Get $get): mixed => $get('is_pressure')),
                                     ])->columns(2),
                             ]),
 
@@ -407,6 +406,11 @@ class SensorResource extends Resource
                                             ->disabled(),
                                     ])->columns(2),
                             ]),
+
+                        Tabs\Tab::make('custom_fields')
+                            ->schema(
+                                $customFieldSchema
+                            ),
                     ])
                     ->persistTabInQueryString()
                     ->columnSpanFull(),
@@ -415,205 +419,24 @@ class SensorResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $availableColumns = \App\Services\CustomFieldService::getTableColumns('sensors');
+
         return $table
-        ->recordUrl(null)
-        ->headerActions([
-            Tables\Actions\ImportAction::make('Import Sensors')
-                ->importer(SensorImporter::class),
-            Tables\Actions\Action::make('Settings')
-                ->icon('heroicon-o-cog-6-tooth')
-                ->url(fn() => route('filament.admin.resources.table-column-preferences.index', [
-                    'tableFilters' => [
-                        'table_name' => [
-                            'value' => 'sensors',
+            ->recordUrl(null)
+            ->columns($availableColumns)
+            ->filters([])
+            ->headerActions([
+                Tables\Actions\ImportAction::make('Import Sensors')
+                    ->importer(SensorImporter::class),
+                Tables\Actions\Action::make('Settings')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                        'tableFilters' => [
+                            'table_name' => [
+                                'value' => 'sensors',
+                            ],
                         ],
-                    ],
-                ])),
-        ])
-            ->columns([
-                Tables\Columns\TextColumn::make('remote_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('sort')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('user_created')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('date_created')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('user_updated')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('date_updated')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('brand_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('model')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('price_before')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('partner_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('partner_link_title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('ceneo_link_title')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_pm1')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('pm1_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pm1_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pm1_sensor_type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_pm2')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('pm2_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pm2_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pm2_sensor_type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_pm10')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('pm10_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pm10_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pm10_sensor_type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_lzo')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('lzo_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('lzo_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('lzo_sensor_type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_hcho')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('hcho_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('hcho_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('hcho_sensor_type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_co2')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('co2_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('co2_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('co2_sensor_type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_co')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('co_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('co_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('co_sensor_type')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_temperature')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('temperature_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('temperature_accuracy')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_humidity')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('humidity_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('humidity_accuracy')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_pressure')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('pressure_range')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('pressure_accuracy')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('battery')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('battery_capacity')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('voltage')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('has_power_cord')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('wifi')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('bluetooth')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('has_history')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('has_display')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('has_alarm')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('has_assessment')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('has_outdoor_indicator')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('has_battery_indicator')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('has_clock')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('temperature')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('humidity')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('width')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('height')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('depth')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('weight')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('capability_points')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('capability')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('profitability_points')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('profitability')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('ranking')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('ranking_hidden')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('main_ranking')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                    ])),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -643,7 +466,7 @@ class SensorResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        return (string) self::getModel()::count();
     }
 
     public static function getGloballySearchableAttributes(): array

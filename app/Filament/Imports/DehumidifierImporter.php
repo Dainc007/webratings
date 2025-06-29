@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Imports;
 
 use App\Models\Dehumidifier;
+use App\Services\ImportBooleanCaster;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -76,8 +77,13 @@ final class DehumidifierImporter extends Importer
             ImportColumn::make('needs_to_be_completed'),
             ImportColumn::make('functions')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('water_tank_capacity')
@@ -88,8 +94,13 @@ final class DehumidifierImporter extends Importer
                 ->numeric(),
             ImportColumn::make('higrostat')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('min_value_for_hygrostat')
@@ -108,8 +119,13 @@ final class DehumidifierImporter extends Importer
                 ->numeric(),
             ImportColumn::make('modes_of_operation')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('mesh_filter')
@@ -136,20 +152,35 @@ final class DehumidifierImporter extends Importer
                 ->boolean(),
             ImportColumn::make('mobile_features')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(' ', trim($state, '[]"')))));
                 }),
             ImportColumn::make('partner_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('ceneo_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('manual_file'),
@@ -168,23 +199,44 @@ final class DehumidifierImporter extends Importer
                 ->boolean(),
             ImportColumn::make('functions_and_equipment_dehumi')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
                 }),
             ImportColumn::make('main_ranking')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
 
             ImportColumn::make('is_promo')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure())
+                ->castStateUsing(ImportBooleanCaster::closure())
                 ->boolean(),
             ImportColumn::make('gallery')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
         ];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your dehumidifier import has completed and '.number_format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
+
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
+            $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
+        }
+
+        return $body;
     }
 
     public function resolveRecord(): ?Dehumidifier
@@ -192,16 +244,5 @@ final class DehumidifierImporter extends Importer
         return Dehumidifier::firstOrNew([
             'remote_id' => $this->data['remote_id'],
         ]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your dehumidifier import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
-        }
-
-        return $body;
     }
 }

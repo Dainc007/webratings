@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Imports;
 
 use App\Models\AirHumidifier;
+use App\Services\ImportBooleanCaster;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -71,7 +72,9 @@ final class AirHumidifierImporter extends Importer
                 ->boolean(),
             ImportColumn::make('mobile_features')
                 ->castStateUsing(function ($state) {
-                    if (empty($state)) return [];
+                    if (empty($state)) {
+                        return [];
+                    }
                     // If it's already a JSON string, decode it first
                     if (is_string($state) && str_starts_with(trim($state), '[')) {
                         $state = json_decode($state, true);
@@ -84,6 +87,7 @@ final class AirHumidifierImporter extends Importer
                     if (is_array($state)) {
                         return array_map('trim', $state);
                     }
+
                     return [];
                 }),
             ImportColumn::make('control_other'),
@@ -91,7 +95,9 @@ final class AirHumidifierImporter extends Importer
                 ->boolean(),
             ImportColumn::make('functions')
                 ->castStateUsing(function ($state) {
-                    if (empty($state)) return [];
+                    if (empty($state)) {
+                        return [];
+                    }
                     // If it's already a JSON string, decode it first
                     if (is_string($state) && str_starts_with(trim($state), '[')) {
                         $state = json_decode($state, true);
@@ -104,6 +110,7 @@ final class AirHumidifierImporter extends Importer
                     if (is_array($state)) {
                         return array_map('trim', $state);
                     }
+
                     return [];
                 }),
             ImportColumn::make('min_rated_power_consumption'),
@@ -116,7 +123,9 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('review_link'),
             ImportColumn::make('colors')
                 ->castStateUsing(function ($state) {
-                    if (empty($state)) return [];
+                    if (empty($state)) {
+                        return [];
+                    }
                     // If it's already a JSON string, decode it first
                     if (is_string($state) && str_starts_with(trim($state), '[')) {
                         $state = json_decode($state, true);
@@ -129,27 +138,29 @@ final class AirHumidifierImporter extends Importer
                     if (is_array($state)) {
                         return array_map('trim', $state);
                     }
+
                     return [];
                 }),
             ImportColumn::make('capability_points'),
             ImportColumn::make('capability'),
             ImportColumn::make('profitability_points'),
             ImportColumn::make('ranking')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('profitability'),
             ImportColumn::make('ranking_hidden')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('Filter_cots_humi')
-                ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || strtolower(trim($state)) === 'brak') {
+                ->castStateUsing(function ($state): ?float {
+                    if (is_null($state) || $state === '' || mb_strtolower(trim($state)) === 'brak') {
                         return null;
                     }
+
                     return is_numeric($state) ? (float) $state : null;
                 }),
             ImportColumn::make('disks')
                 ->boolean(),
             ImportColumn::make('main_ranking')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure()),
+                ->castStateUsing(ImportBooleanCaster::closure()),
 
             ImportColumn::make('for_plant')
                 ->boolean(),
@@ -175,11 +186,13 @@ final class AirHumidifierImporter extends Importer
                 ->boolean(),
             ImportColumn::make('type_of_device'),
             ImportColumn::make('is_promo')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure())
+                ->castStateUsing(ImportBooleanCaster::closure())
                 ->boolean(),
             ImportColumn::make('gallery')
                 ->castStateUsing(function ($state) {
-                    if (empty($state)) return [];
+                    if (empty($state)) {
+                        return [];
+                    }
                     // If it's already a JSON string, decode it first
                     if (is_string($state) && str_starts_with(trim($state), '[')) {
                         $state = json_decode($state, true);
@@ -192,9 +205,25 @@ final class AirHumidifierImporter extends Importer
                     if (is_array($state)) {
                         return array_map('trim', $state);
                     }
+
                     return [];
                 }),
         ];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your air humidifier import has completed and '.number_format($import->successful_rows).' '.str(
+            'row'
+        )->plural($import->successful_rows).' imported.';
+
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
+            $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural(
+                $failedRowsCount
+            ).' failed to import.';
+        }
+
+        return $body;
     }
 
     public function resolveRecord(): ?AirHumidifier
@@ -202,20 +231,5 @@ final class AirHumidifierImporter extends Importer
         return AirHumidifier::firstOrNew([
             'id' => $this->data['remote_id'],
         ]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your air humidifier import has completed and ' . number_format($import->successful_rows) . ' ' . str(
-                'row'
-            )->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural(
-                    $failedRowsCount
-                ) . ' failed to import.';
-        }
-
-        return $body;
     }
 }

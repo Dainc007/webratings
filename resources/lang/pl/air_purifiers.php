@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'remote_id' => 'Zdalny identyfikator',
     'status' => 'Status',
@@ -98,7 +100,7 @@ return [
                 'draft' => 'Wersja robocza',
                 'pending' => 'Oczekujące',
                 'published' => 'Opublikowane',
-            ]
+            ],
         ],
         'model' => 'Model',
         'brand_name' => 'Nazwa marki',
@@ -142,7 +144,7 @@ return [
                 'vapor' => 'Parowy',
                 'ultrasonic' => 'Ultradźwiękowy',
                 'evaporative' => 'Odparowujący',
-            ]
+            ],
         ],
         'humidification_switch' => 'Przełącznik nawilżania',
         'humidification_efficiency' => 'Wydajność nawilżania (ml/h)',

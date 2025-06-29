@@ -1,30 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
+use App\Enums\Product;
 use App\Filament\Resources\ShortcodeResource\Pages;
 use App\Filament\Resources\ShortcodeResource\RelationManagers;
 use App\Models\Shortcode;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Select;
 
-class ShortcodeResource extends Resource
+final class ShortcodeResource extends Resource
 {
     protected static ?string $model = Shortcode::class;
 
     protected static ?string $navigationLabel = 'Shortcody';
+
     protected static ?string $navigationIcon = 'heroicon-o-code-bracket-square';
+
     protected static ?string $pluralModelLabel = 'Shortcody';
+
     protected static ?string $pluralLabel = 'Shortcody';
+
     protected static ?string $modelLabel = 'Shortcode';
+
     protected static ?string $label = 'Shortcode';
+
     protected static ?string $navigationGroup = 'Ustawienia';
+
     protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
@@ -37,10 +45,7 @@ class ShortcodeResource extends Resource
                 Select::make('product_types')
                     ->label(__('Typy produktów'))
                     ->multiple()
-                    ->options([
-                        'air_purifiers' => __('Oczyszczacze powietrza'),
-                        'air_humidifiers' => __('Nawilżacze powietrza'),
-                    ])
+                    ->options(Product::getOptions())
                     ->required(),
                 Forms\Components\Textarea::make('description')
                     ->label(__('Opis'))
@@ -102,6 +107,6 @@ class ShortcodeResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        return (string) self::getModel()::count();
     }
 }

@@ -11,18 +11,20 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Infolists\Components\Entry;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -48,12 +50,12 @@ final class AppServiceProvider extends ServiceProvider
         Model::unguard();
         Model::shouldBeStrict($isProduction);
         Model::automaticallyEagerLoadRelationships();
-//        DB::prohibitDestructiveCommands($isProduction);
+        //        DB::prohibitDestructiveCommands($isProduction);
         URL::forceScheme('https');
 
         date_default_timezone_set(config('app.timezone'));
 
-        if (!$isProduction) {
+        if (! $isProduction) {
             Lang::handleMissingKeysUsing(function ($key, $replace, $locale, $fallback): void {
                 Log::channel('translations')->info("Missing translation key: {$key} in locale: {$locale}");
             });
@@ -72,7 +74,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         Column::configureUsing(function (Column $column): void {
             $column
-            ->wrapHeader()
+                ->wrapHeader()
                 ->alignCenter()
                 ->sortable()
                 ->translateLabel();
@@ -97,6 +99,12 @@ final class AppServiceProvider extends ServiceProvider
 
         ImportColumn::configureUsing(function (ImportColumn $importColumn): void {
             $importColumn->requiredMapping();
+        });
+
+        Table::configureUsing(function (Table $table): void {
+            $table
+                ->recordUrl(null)
+                ->actionsPosition(ActionsPosition::BeforeColumns);
         });
     }
 }

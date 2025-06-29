@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -49,7 +51,7 @@ return new class extends Migration
             $table->integer('max_area')->nullable(); // m²
             $table->integer('tested_max_area')->nullable(); // m²
             $table->decimal('water_tank_capacity', 8, 2)->nullable();
-            
+
             $table->integer('water_tank_min_time')->nullable();
             $table->string('water_tank_fill_type')->nullable();
             $table->boolean('hygrostat')->nullable();

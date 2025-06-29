@@ -117,7 +117,9 @@ final class AirPurifierImporter extends Importer
                 ->boolean(),
             ImportColumn::make('colors')
                 ->castStateUsing(function ($state) {
-                    if (empty($state)) return [];
+                    if (empty($state)) {
+                        return [];
+                    }
                     // If it's already a JSON string, decode it first
                     if (is_string($state) && str_starts_with(trim($state), '[')) {
                         $state = json_decode($state, true);
@@ -130,11 +132,14 @@ final class AirPurifierImporter extends Importer
                     if (is_array($state)) {
                         return array_map('trim', $state);
                     }
+
                     return [];
                 }),
             ImportColumn::make('functions')
                 ->castStateUsing(function ($state) {
-                    if (empty($state)) return [];
+                    if (empty($state)) {
+                        return [];
+                    }
                     // If it's already a JSON string, decode it first
                     if (is_string($state) && str_starts_with(trim($state), '[')) {
                         $state = json_decode($state, true);
@@ -147,6 +152,7 @@ final class AirPurifierImporter extends Importer
                     if (is_array($state)) {
                         return array_map('trim', $state);
                     }
+
                     return [];
                 }),
             ImportColumn::make('lzo_tvcop_sensor')
@@ -203,7 +209,7 @@ final class AirPurifierImporter extends Importer
                 ->requiredMapping()
                 ->boolean(),
             ImportColumn::make('is_promo')
-            ->castStateUsing(App\Services\ImportBooleanCaster::closure())
+                ->castStateUsing(ImportBooleanCaster::closure())
                 ->requiredMapping()
                 ->boolean(),
         ];

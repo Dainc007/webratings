@@ -17,5 +17,4 @@ final class AirPurifier extends Model
         'functions_and_equipment' => 'array',
         'certificates' => 'array',
     ];
-
 }

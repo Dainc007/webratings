@@ -6,7 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UprightVacuum extends Model
+final class UprightVacuum extends Model
 {
     protected $casts = [
         'colors' => 'array',

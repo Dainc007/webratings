@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\AirConditionerResource\Pages;
 
 use App\Filament\Resources\AirConditionerResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditAirConditioner extends EditRecord
+final class EditAirConditioner extends EditRecord
 {
     protected static string $resource = AirConditionerResource::class;
 

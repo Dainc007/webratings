@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enums\Product;
+use App\Services\TableColumnPreferenceService;
 use Illuminate\Database\Seeder;
 
 final class DatabaseSeeder extends Seeder
@@ -14,6 +15,6 @@ final class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        TableColumnPreferenceService::createDefaultPreferences(Product::getValues());
     }
 }

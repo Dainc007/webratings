@@ -6,6 +6,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Login;
 use App\Http\Middleware\UpgradeToHttpsUnderNgrok;
+use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -20,7 +21,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 
 final class AdminPanelProvider extends PanelProvider
 {
@@ -59,7 +59,7 @@ final class AdminPanelProvider extends PanelProvider
                 UpgradeToHttpsUnderNgrok::class,
             ])
             ->plugins([
-                GlobalSearchModalPlugin::make()
+                GlobalSearchModalPlugin::make(),
             ])
             ->authMiddleware([
                 Authenticate::class,

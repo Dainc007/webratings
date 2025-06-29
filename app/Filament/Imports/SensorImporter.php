@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Imports;
 
 use App\Models\Sensor;
+use App\Services\ImportBooleanCaster;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use Filament\Actions\Imports\Models\ImportBooleanCaster;
 
 final class SensorImporter extends Importer
 {
@@ -42,8 +42,13 @@ final class SensorImporter extends Importer
             ImportColumn::make('partner_link_url'),
             ImportColumn::make('partner_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('partner_link_title'),
@@ -52,8 +57,13 @@ final class SensorImporter extends Importer
             ImportColumn::make('ceneo_url'),
             ImportColumn::make('ceneo_link_rel_2')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('ceneo_link_title'),
@@ -137,8 +147,13 @@ final class SensorImporter extends Importer
                 ->boolean(),
             ImportColumn::make('mobile_features')
                 ->castStateUsing(function ($state) {
-                    if (is_null($state) || $state === '' || $state === 'null') return null;
-                    if (empty($state)) return null;
+                    if (is_null($state) || $state === '' || $state === 'null') {
+                        return null;
+                    }
+                    if (empty($state)) {
+                        return null;
+                    }
+
                     return json_encode(array_filter(array_map('trim', explode(',', $state))));
                 }),
             ImportColumn::make('bluetooth')
@@ -195,21 +210,21 @@ final class SensorImporter extends Importer
         ];
     }
 
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your sensor import has completed and '.number_format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
+
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
+            $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
+        }
+
+        return $body;
+    }
+
     public function resolveRecord(): ?Sensor
     {
         return Sensor::firstOrNew([
             'remote_id' => $this->data['remote_id'],
         ]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your sensor import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
-        }
-
-        return $body;
     }
 }

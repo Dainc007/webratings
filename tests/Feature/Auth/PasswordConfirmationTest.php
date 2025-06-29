@@ -30,5 +30,6 @@ test('password is not confirmed with invalid password', function (): void {
         'password' => 'wrong-password',
     ]);
 
-    $response->assertSessionHasErrors();
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['password']);
 });

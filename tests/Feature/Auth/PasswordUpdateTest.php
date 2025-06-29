@@ -36,7 +36,7 @@ test('correct password must be provided to update password', function (): void {
             'password_confirmation' => 'new-password',
         ]);
 
-    $response
-        ->assertSessionHasErrors('current_password')
-        ->assertRedirect('/profile');
+    // Check for JSON error response instead of session errors due to AlwaysAcceptJson middleware
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['current_password']);
 });

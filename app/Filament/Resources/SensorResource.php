@@ -4,20 +4,30 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Services\CustomFieldService;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\ImportAction;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\SensorResource\Pages\ListSensors;
+use App\Filament\Resources\SensorResource\Pages\CreateSensor;
+use App\Filament\Resources\SensorResource\Pages\EditSensor;
 use App\Filament\Imports\SensorImporter;
 use App\Filament\Resources\SensorResource\Pages;
 use App\Models\Sensor;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,7 +36,7 @@ final class SensorResource extends Resource
 {
     protected static ?string $model = Sensor::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cpu-chip';
 
     protected static ?string $navigationLabel = 'Sensors';
 
@@ -34,21 +44,21 @@ final class SensorResource extends Resource
 
     protected static ?string $label = 'Sensors';
 
-    protected static ?string $navigationGroup = 'Produkty';
+    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'model';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('sensors');
+        $customFieldSchema = CustomFieldService::getFormFields('sensors');
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Sensor form')
                     ->tabs([
-                        Tabs\Tab::make('Basic information')
+                        Tab::make('Basic information')
                             ->schema([
                                 Section::make('Basic information')
                                     ->schema([
@@ -121,7 +131,7 @@ final class SensorResource extends Resource
                                     ])->columns(2)->collapsible(),
                             ]),
 
-                        Tabs\Tab::make('PM sensors')
+                        Tab::make('PM sensors')
                             ->schema([
                                 Section::make(__('sensors.sections.pm1_sensor'))
                                     ->schema([
@@ -169,7 +179,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Chemical sensors')
+                        Tab::make('Chemical sensors')
                             ->schema([
                                 Section::make(__('sensors.sections.lzo_sensor'))
                                     ->schema([
@@ -232,7 +242,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Environmental sensors')
+                        Tab::make('Environmental sensors')
                             ->schema([
                                 Section::make(__('sensors.sections.temperature_sensor'))
                                     ->schema([
@@ -275,7 +285,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Power connectivity')
+                        Tab::make('Power connectivity')
                             ->schema([
                                 Section::make(__('sensors.sections.power'))
                                     ->schema([
@@ -302,7 +312,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Device features')
+                        Tab::make('Device features')
                             ->schema([
                                 Section::make(__('sensors.sections.features'))
                                     ->schema([
@@ -325,7 +335,7 @@ final class SensorResource extends Resource
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Dimensions performance')
+                        Tab::make('Dimensions performance')
                             ->schema([
                                 Section::make(__('sensors.sections.physical_dimensions'))
                                     ->schema([
@@ -367,7 +377,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Ranking')
+                        Tab::make('Ranking')
                             ->schema([
                                 Section::make(__('sensors.sections.ranking_settings'))
                                     ->schema([
@@ -380,7 +390,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Metadata')
+                        Tab::make('Metadata')
                             ->schema([
                                 Section::make(__('sensors.sections.system_identifiers'))
                                     ->schema([
@@ -407,7 +417,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('custom_fields')
+                        Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
                             ),
@@ -419,16 +429,16 @@ final class SensorResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $availableColumns = \App\Services\CustomFieldService::getTableColumns('sensors');
+        $availableColumns = CustomFieldService::getTableColumns('sensors');
 
         return $table
             ->recordUrl(null)
             ->columns($availableColumns)
             ->filters([])
             ->headerActions([
-                Tables\Actions\ImportAction::make('Import Sensors')
+                ImportAction::make('Import Sensors')
                     ->importer(SensorImporter::class),
-                Tables\Actions\Action::make('Settings')
+                Action::make('Settings')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
@@ -438,12 +448,12 @@ final class SensorResource extends Resource
                         ],
                     ])),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -458,9 +468,9 @@ final class SensorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSensors::route('/'),
-            'create' => Pages\CreateSensor::route('/create'),
-            'edit' => Pages\EditSensor::route('/{record}/edit'),
+            'index' => ListSensors::route('/'),
+            'create' => CreateSensor::route('/create'),
+            'edit' => EditSensor::route('/{record}/edit'),
         ];
     }
 

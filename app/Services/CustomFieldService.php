@@ -77,7 +77,7 @@ final class CustomFieldService
 
             $field->when(
                 Schema::hasColumn($tableName, $column['column_name']),
-                fn (): TextColumn|\Filament\Tables\Columns\TextInputColumn => $field->searchable()
+                fn (): TextColumn|TextInputColumn => $field->searchable()
             );
 
             $availableColumns[] = $field;
@@ -99,7 +99,7 @@ final class CustomFieldService
 
             $field->when(
                 Schema::hasColumn($tableName, $customField->column_name),
-                fn (): TextColumn|\Filament\Tables\Columns\ToggleColumn => $field->searchable()
+                fn (): TextColumn|ToggleColumn => $field->searchable()
             );
 
             $label = $customField->display_name ?? __($customField->column_name);

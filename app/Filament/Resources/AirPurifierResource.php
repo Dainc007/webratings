@@ -4,20 +4,31 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Services\CustomFieldService;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
+use Filament\Actions\Action;
+use Filament\Tables\Enums\RecordActionsPosition;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\AirPurifierResource\Pages\ListAirPurifiers;
+use App\Filament\Resources\AirPurifierResource\Pages\CreateAirPurifier;
+use App\Filament\Resources\AirPurifierResource\Pages\EditAirPurifier;
 use App\Enums\Status;
 use App\Filament\Imports\AirPurifierImporter;
 use App\Filament\Resources\AirPurifierResource\Pages;
 use App\Models\AirPurifier;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,7 +37,7 @@ final class AirPurifierResource extends Resource
 {
     protected static ?string $model = AirPurifier::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-heart';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-heart';
 
     protected static ?string $navigationLabel = 'Oczyszczacze Powietrza';
 
@@ -34,21 +45,21 @@ final class AirPurifierResource extends Resource
 
     protected static ?string $label = 'Oczyszczacze Powietrza';
 
-    protected static ?string $navigationGroup = 'Produkty';
+    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'model';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('air_purifiers');
+        $customFieldSchema = CustomFieldService::getFormFields('air_purifiers');
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Air Purifier Form')
                     ->tabs([
-                        Tabs\Tab::make('Basic Information')
+                        Tab::make('Basic Information')
                             ->schema([
                                 Select::make('status')
                                     ->default('draft')
@@ -103,7 +114,7 @@ final class AirPurifierResource extends Resource
                                     ])->collapsible(),
                             ]),
 
-                        Tabs\Tab::make('Performance')
+                        Tab::make('Performance')
                             ->columns(4)
                             ->schema([
                                 TextInput::make('max_performance')
@@ -139,7 +150,7 @@ final class AirPurifierResource extends Resource
                                     ->nullable(),
                             ]),
 
-                        Tabs\Tab::make('Humidification')
+                        Tab::make('Humidification')
                             ->columns(4)
                             ->schema([
                                 Toggle::make('has_humidification'),
@@ -176,7 +187,7 @@ final class AirPurifierResource extends Resource
                                 Toggle::make('hygrostat'),
                             ]),
 
-                        Tabs\Tab::make('Filters')
+                        Tab::make('Filters')
                             ->schema([
                                 Toggle::make('evaporative_filter')->live(),
                                 Section::make('Filtr ewaporacyjny')
@@ -221,7 +232,7 @@ final class AirPurifierResource extends Resource
                                 Textarea::make('filter_costs'),
                             ]),
 
-                        Tabs\Tab::make('Features')
+                        Tab::make('Features')
                             ->schema([
                                 Toggle::make('ionization')->live(),
                                 Section::make('Ionizer')
@@ -266,7 +277,7 @@ final class AirPurifierResource extends Resource
                                     ->separator(','),
                             ]),
 
-                        Tabs\Tab::make('Physical Attributes')
+                        Tab::make('Physical Attributes')
                             ->columns(4)
                             ->schema([
                                 TextInput::make('width')
@@ -291,7 +302,7 @@ final class AirPurifierResource extends Resource
                                     ->separator(','),
                             ]),
 
-                        Tabs\Tab::make('Classification')
+                        Tab::make('Classification')
                             ->schema([
                                 TagsInput::make('type_of_device')
                                     ->placeholder('Add device type')
@@ -319,7 +330,7 @@ final class AirPurifierResource extends Resource
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Timestamps')
+                        Tab::make('Timestamps')
                             ->schema([
                                 DateTimePicker::make('date_created')
                                     ->disabled(),
@@ -334,7 +345,7 @@ final class AirPurifierResource extends Resource
                                     ->disabled(),
                             ]),
 
-                        Tabs\Tab::make('custom_fields')
+                        Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
                             ),
@@ -346,19 +357,19 @@ final class AirPurifierResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $availableColumns = \App\Services\CustomFieldService::getTableColumns('air_purifiers');
+        $availableColumns = CustomFieldService::getTableColumns('air_purifiers');
 
         return $table
             ->recordUrl(null)
             ->columns($availableColumns)
             ->filters([])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
             ->headerActions([
-                Tables\Actions\ImportAction::make('Import Products')
+                ImportAction::make('Import Products')
                     ->importer(AirPurifierImporter::class),
-                Tables\Actions\Action::make('Ustawienia')
+                Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
@@ -368,10 +379,10 @@ final class AirPurifierResource extends Resource
                         ],
                     ])),
             ])
-            ->actionsPosition(Tables\Enums\ActionsPosition::BeforeColumns)
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->recordActionsPosition(RecordActionsPosition::BeforeColumns)
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -386,9 +397,9 @@ final class AirPurifierResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAirPurifiers::route('/'),
-            'create' => Pages\CreateAirPurifier::route('/create'),
-            'edit' => Pages\EditAirPurifier::route('/{record}/edit'),
+            'index' => ListAirPurifiers::route('/'),
+            'create' => CreateAirPurifier::route('/create'),
+            'edit' => EditAirPurifier::route('/{record}/edit'),
         ];
     }
 

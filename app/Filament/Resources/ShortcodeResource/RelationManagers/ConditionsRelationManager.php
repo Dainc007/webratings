@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\ShortcodeResource\RelationManagers;
 
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
 use App\Enums\Product;
 use App\Enums\ShortcodeOperator;
 use Filament\Forms;
@@ -11,9 +15,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Schema;
 
@@ -25,9 +26,9 @@ final class ConditionsRelationManager extends RelationManager
 
     protected static ?string $title = 'Warunki';
 
-    public function form(Forms\Form $form): Forms\Form
+    public function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $form->schema([
+        return $schema->components([
             Select::make('field')
                 ->required()
                 ->label('Pole')
@@ -64,7 +65,7 @@ final class ConditionsRelationManager extends RelationManager
         ]);
     }
 
-    public function table(Tables\Table $table): Tables\Table
+    public function table(Table $table): Table
     {
         return $table
             ->headerActions([
@@ -75,7 +76,7 @@ final class ConditionsRelationManager extends RelationManager
                 TextColumn::make('operator')->label('Warunek')->formatStateUsing(fn ($state): string => ShortcodeOperator::label($state)),
                 TextColumn::make('value')->label('Wartość'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ]);

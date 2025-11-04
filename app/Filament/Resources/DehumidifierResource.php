@@ -4,28 +4,37 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Services\CustomFieldService;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\ImportAction;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\DehumidifierResource\Pages\ListDehumidifiers;
+use App\Filament\Resources\DehumidifierResource\Pages\CreateDehumidifier;
+use App\Filament\Resources\DehumidifierResource\Pages\EditDehumidifier;
 use App\Filament\Imports\DehumidifierImporter;
 use App\Filament\Resources\DehumidifierResource\Pages;
 use App\Models\Dehumidifier;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Table;
 
 final class DehumidifierResource extends Resource
 {
     protected static ?string $model = Dehumidifier::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-eye-dropper';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-eye-dropper';
 
     protected static ?string $navigationLabel = 'Osuszacze Powietrza';
 
@@ -33,22 +42,22 @@ final class DehumidifierResource extends Resource
 
     protected static ?string $label = 'Osuszacz Powietrza';
 
-    protected static ?string $navigationGroup = 'Produkty';
+    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 5;
 
     protected static ?string $recordTitleAttribute = 'model';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('dehumidifiers');
+        $customFieldSchema = CustomFieldService::getFormFields('dehumidifiers');
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Formularz Osuszacza')
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make('Podstawowe informacje')
+                        Tab::make('Podstawowe informacje')
                             ->schema([
                                 Section::make('Podstawowe informacje')
                                     ->schema([
@@ -142,7 +151,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2)->collapsible(),
                             ]),
 
-                        Tabs\Tab::make('Wydajność osuszania')
+                        Tab::make('Wydajność osuszania')
                             ->schema([
                                 Section::make('Parametry osuszania')
                                     ->schema([
@@ -174,7 +183,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Warunki pracy')
+                        Tab::make('Warunki pracy')
                             ->schema([
                                 Section::make('Zakres temperatur')
                                     ->schema([
@@ -203,7 +212,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Zbiornik na wodę')
+                        Tab::make('Zbiornik na wodę')
                             ->schema([
                                 Section::make('Parametry zbiornika')
                                     ->schema([
@@ -224,7 +233,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Higrostat i sterowanie')
+                        Tab::make('Higrostat i sterowanie')
                             ->schema([
                                 Section::make('Higrostat')
                                     ->schema([
@@ -279,7 +288,7 @@ final class DehumidifierResource extends Resource
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Filtry i oczyszczanie')
+                        Tab::make('Filtry i oczyszczanie')
                             ->schema([
                                 Section::make('Filtry podstawowe')
                                     ->schema([
@@ -340,7 +349,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Sterowanie i łączność')
+                        Tab::make('Sterowanie i łączność')
                             ->schema([
                                 Section::make('Sterowanie')
                                     ->schema([
@@ -366,7 +375,7 @@ final class DehumidifierResource extends Resource
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Specyfikacja techniczna')
+                        Tab::make('Specyfikacja techniczna')
                             ->schema([
                                 Section::make('Chłodziwo')
                                     ->schema([
@@ -419,7 +428,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Dodatkowe informacje')
+                        Tab::make('Dodatkowe informacje')
                             ->schema([
                                 Section::make('Galeria i dokumentacja')
                                     ->schema([
@@ -485,7 +494,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2)->collapsible(),
                             ]),
 
-                        Tabs\Tab::make('custom_fields')
+                        Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
                             ),
@@ -495,7 +504,7 @@ final class DehumidifierResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $availableColumns = \App\Services\CustomFieldService::getTableColumns('dehumidifiers');
+        $availableColumns = CustomFieldService::getTableColumns('dehumidifiers');
 
         return $table
             ->recordUrl(null)
@@ -504,7 +513,7 @@ final class DehumidifierResource extends Resource
             ->headerActions([
                 ImportAction::make('Import Dehumidifiers')
                     ->importer(DehumidifierImporter::class),
-                Tables\Actions\Action::make('Ustawienia')
+                Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
@@ -515,12 +524,12 @@ final class DehumidifierResource extends Resource
                     ])),
             ])
 
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -535,9 +544,9 @@ final class DehumidifierResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDehumidifiers::route('/'),
-            'create' => Pages\CreateDehumidifier::route('/create'),
-            'edit' => Pages\EditDehumidifier::route('/{record}/edit'),
+            'index' => ListDehumidifiers::route('/'),
+            'create' => CreateDehumidifier::route('/create'),
+            'edit' => EditDehumidifier::route('/{record}/edit'),
         ];
     }
 

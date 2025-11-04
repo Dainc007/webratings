@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
-final class Login extends \Filament\Pages\Auth\Login
+final class Login extends \Filament\Auth\Pages\Login
 {
     public function mount(): void
     {

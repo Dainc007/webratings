@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\CustomFieldResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use App\Filament\Resources\CustomFieldResource;
 use App\Services\CustomFieldService;
 use Filament\Actions;
@@ -16,7 +17,7 @@ final class EditCustomField extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()->after(function ($record): void {
+            DeleteAction::make()->after(function ($record): void {
                 $customFieldService = app(CustomFieldService::class);
 
                 $customFieldService->deleteField(

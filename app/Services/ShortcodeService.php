@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Enums\Product;
 use App\Models\Shortcode;
 
@@ -34,7 +35,7 @@ final class ShortcodeService
         foreach ($productTypes as $type) {
             $query = Product::getQueryForType($type);
 
-            if (! $query instanceof \Illuminate\Database\Eloquent\Builder) {
+            if (! $query instanceof Builder) {
                 continue;
             }
 
@@ -45,7 +46,7 @@ final class ShortcodeService
         return $results;
     }
 
-    private function applyConditionsToQuery(\Illuminate\Database\Eloquent\Builder $query, $conditions): void
+    private function applyConditionsToQuery(Builder $query, $conditions): void
     {
         foreach ($conditions as $condition) {
             $field = $condition->field;

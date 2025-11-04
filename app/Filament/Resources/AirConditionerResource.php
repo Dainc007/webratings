@@ -4,28 +4,37 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Services\CustomFieldService;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\ImportAction;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\AirConditionerResource\Pages\ListAirConditioners;
+use App\Filament\Resources\AirConditionerResource\Pages\CreateAirConditioner;
+use App\Filament\Resources\AirConditionerResource\Pages\EditAirConditioner;
 use App\Filament\Imports\AirConditionerImporter;
 use App\Filament\Resources\AirConditionerResource\Pages;
 use App\Models\AirConditioner;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Table;
 
 final class AirConditionerResource extends Resource
 {
     protected static ?string $model = AirConditioner::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-circle';
 
     protected static ?string $navigationLabel = 'Klimatyzatory';
 
@@ -33,22 +42,22 @@ final class AirConditionerResource extends Resource
 
     protected static ?string $label = 'Klimatyzator';
 
-    protected static ?string $navigationGroup = 'Produkty';
+    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'model';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('air_conditioners');
+        $customFieldSchema = CustomFieldService::getFormFields('air_conditioners');
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Formularz Klimatyzatora')
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make('Podstawowe informacje')
+                        Tab::make('Podstawowe informacje')
                             ->schema([
                                 Section::make('Podstawowe informacje')
                                     ->schema([
@@ -140,7 +149,7 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2)->collapsible(),
                             ]),
 
-                        Tabs\Tab::make('Wydajność chłodzenia')
+                        Tab::make('Wydajność chłodzenia')
                             ->schema([
                                 Section::make('Parametry chłodzenia')
                                     ->schema([
@@ -186,7 +195,7 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Wydajność grzania')
+                        Tab::make('Wydajność grzania')
                             ->schema([
                                 Section::make('Parametry grzania')
                                     ->schema([
@@ -232,7 +241,7 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Tryby pracy i funkcje')
+                        Tab::make('Tryby pracy i funkcje')
                             ->schema([
                                 Section::make('Tryby pracy')
                                     ->schema([
@@ -288,7 +297,7 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Filtry i oczyszczanie')
+                        Tab::make('Filtry i oczyszczanie')
                             ->schema([
                                 Section::make('Filtry podstawowe')
                                     ->schema([
@@ -350,7 +359,7 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Sterowanie i łączność')
+                        Tab::make('Sterowanie i łączność')
                             ->schema([
                                 Section::make('Sterowanie')
                                     ->schema([
@@ -379,7 +388,7 @@ final class AirConditionerResource extends Resource
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Specyfikacja techniczna')
+                        Tab::make('Specyfikacja techniczna')
                             ->schema([
                                 Section::make('Chłodziwo')
                                     ->schema([
@@ -452,7 +461,7 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Dodatkowe informacje')
+                        Tab::make('Dodatkowe informacje')
                             ->schema([
                                 Section::make('Wygląd')
                                     ->schema([
@@ -531,7 +540,7 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2)->collapsible(),
                             ]),
 
-                        Tabs\Tab::make('custom_fields')
+                        Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
                             ),
@@ -541,7 +550,7 @@ final class AirConditionerResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $availableColumns = \App\Services\CustomFieldService::getTableColumns('air_conditioners');
+        $availableColumns = CustomFieldService::getTableColumns('air_conditioners');
 
         return $table
             ->columns($availableColumns)
@@ -549,7 +558,7 @@ final class AirConditionerResource extends Resource
             ->headerActions([
                 ImportAction::make()
                     ->importer(AirConditionerImporter::class),
-                Tables\Actions\Action::make('Ustawienia')
+                Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
@@ -559,12 +568,12 @@ final class AirConditionerResource extends Resource
                         ],
                     ])),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -579,9 +588,9 @@ final class AirConditionerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAirConditioners::route('/'),
-            'create' => Pages\CreateAirConditioner::route('/create'),
-            'edit' => Pages\EditAirConditioner::route('/{record}/edit'),
+            'index' => ListAirConditioners::route('/'),
+            'create' => CreateAirConditioner::route('/create'),
+            'edit' => EditAirConditioner::route('/{record}/edit'),
         ];
     }
 

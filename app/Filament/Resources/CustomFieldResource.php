@@ -4,12 +4,19 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\CustomFieldResource\Pages\ListCustomFields;
+use App\Filament\Resources\CustomFieldResource\Pages\CreateCustomField;
+use App\Filament\Resources\CustomFieldResource\Pages\EditCustomField;
 use App\Enums\Product;
 use App\Filament\Resources\CustomFieldResource\Pages;
 use App\Models\CustomField;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,20 +27,20 @@ final class CustomFieldResource extends Resource
 
     protected static ?string $navigationLabel = 'Dodatkowe Pola';
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog'; // lub inna ikona
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog'; // lub inna ikona
 
     protected static ?string $pluralLabel = 'Dodatkowe Pola';
 
     protected static ?string $label = 'Dodatkowe Pola';
 
-    protected static ?string $navigationGroup = 'Ustawienia';
+    protected static string | \UnitEnum | null $navigationGroup = 'Ustawienia';
 
     protected static ?int $navigationSort = 5;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('table_name')
                     ->options(Product::getOptions())
                     ->required(),
@@ -62,18 +69,18 @@ final class CustomFieldResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('display_name'),
-                Tables\Columns\TextColumn::make('table_name'),
+                TextColumn::make('display_name'),
+                TextColumn::make('table_name'),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -88,9 +95,9 @@ final class CustomFieldResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCustomFields::route('/'),
-            'create' => Pages\CreateCustomField::route('/create'),
-            'edit' => Pages\EditCustomField::route('/{record}/edit'),
+            'index' => ListCustomFields::route('/'),
+            'create' => CreateCustomField::route('/create'),
+            'edit' => EditCustomField::route('/{record}/edit'),
         ];
     }
 

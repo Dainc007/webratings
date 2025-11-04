@@ -4,27 +4,36 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Services\CustomFieldService;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\ImportAction;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\UprightVacuumResource\Pages\ListUprightVacuums;
+use App\Filament\Resources\UprightVacuumResource\Pages\CreateUprightVacuum;
+use App\Filament\Resources\UprightVacuumResource\Pages\EditUprightVacuum;
 use App\Filament\Imports\UprightVacuumImporter;
 use App\Filament\Resources\UprightVacuumResource\Pages;
 use App\Models\UprightVacuum;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Table;
 
 final class UprightVacuumResource extends Resource
 {
     protected static ?string $model = UprightVacuum::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationLabel = 'Odkurzacze Pionowe';
 
@@ -32,20 +41,20 @@ final class UprightVacuumResource extends Resource
 
     protected static ?string $label = 'Odkurzacz Pionowy';
 
-    protected static ?string $navigationGroup = 'Produkty';
+    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 6;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $customFieldSchema = \App\Services\CustomFieldService::getFormFields('upright_vacuums');
+        $customFieldSchema = CustomFieldService::getFormFields('upright_vacuums');
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Formularz Odkurzacza Pionowego')
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make('Podstawowe informacje')
+                        Tab::make('Podstawowe informacje')
                             ->schema([
                                 Section::make('Podstawowe informacje')
                                     ->schema([
@@ -138,7 +147,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2)->collapsible(),
                             ]),
 
-                        Tabs\Tab::make('Moc i wydajność')
+                        Tab::make('Moc i wydajność')
                             ->schema([
                                 Section::make('Parametry ssania')
                                     ->schema([
@@ -202,7 +211,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Zasilanie i bateria')
+                        Tab::make('Zasilanie i bateria')
                             ->schema([
                                 Section::make('Zasilanie')
                                     ->schema([
@@ -252,7 +261,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Funkcje czyszczenia')
+                        Tab::make('Funkcje czyszczenia')
                             ->schema([
                                 Section::make('Funkcje mopowania')
                                     ->schema([
@@ -297,7 +306,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Filtry i technologie')
+                        Tab::make('Filtry i technologie')
                             ->schema([
                                 Section::make('System filtracji')
                                     ->schema([
@@ -333,7 +342,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Szczotki i akcesoria')
+                        Tab::make('Szczotki i akcesoria')
                             ->schema([
                                 Section::make('Szczotki')
                                     ->schema([
@@ -373,7 +382,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Wyświetlacz i sterowanie')
+                        Tab::make('Wyświetlacz i sterowanie')
                             ->schema([
                                 Section::make('Wyświetlacz')
                                     ->schema([
@@ -404,7 +413,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('Dodatkowe informacje')
+                        Tab::make('Dodatkowe informacje')
                             ->schema([
                                 Section::make('Wygląd i wymiary')
                                     ->schema([
@@ -465,7 +474,7 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tabs\Tab::make('custom_fields')
+                        Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
                             ),
@@ -475,7 +484,7 @@ final class UprightVacuumResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $availableColumns = \App\Services\CustomFieldService::getTableColumns('upright_vacuums');
+        $availableColumns = CustomFieldService::getTableColumns('upright_vacuums');
 
         return $table
             ->recordUrl(null)
@@ -483,7 +492,7 @@ final class UprightVacuumResource extends Resource
             ->headerActions([
                 ImportAction::make('Import Upright Vacuums')
                     ->importer(UprightVacuumImporter::class),
-                Tables\Actions\Action::make('Ustawienia')
+                Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
@@ -493,12 +502,12 @@ final class UprightVacuumResource extends Resource
                         ],
                     ])),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -513,9 +522,9 @@ final class UprightVacuumResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUprightVacuums::route('/'),
-            'create' => Pages\CreateUprightVacuum::route('/create'),
-            'edit' => Pages\EditUprightVacuum::route('/{record}/edit'),
+            'index' => ListUprightVacuums::route('/'),
+            'create' => CreateUprightVacuum::route('/create'),
+            'edit' => EditUprightVacuum::route('/{record}/edit'),
         ];
     }
 

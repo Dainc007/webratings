@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Filament\Schemas\Components\Component;
+use Filament\Tables\Enums\RecordActionsPosition;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Imports\ImportColumn;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Infolists\Components\Entry;
 use Filament\Tables\Columns\Column;
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -104,7 +104,7 @@ final class AppServiceProvider extends ServiceProvider
         Table::configureUsing(function (Table $table): void {
             $table
                 ->recordUrl(null)
-                ->actionsPosition(ActionsPosition::BeforeColumns);
+                ->recordActionsPosition(RecordActionsPosition::BeforeColumns);
         });
     }
 }

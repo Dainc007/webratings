@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Enums\FiltersLayout;
+use App\Filament\Resources\TableColumnPreferenceResource\Pages\ListTableColumnPreferences;
+use App\Filament\Resources\TableColumnPreferenceResource\Pages\CreateTableColumnPreference;
+use App\Filament\Resources\TableColumnPreferenceResource\Pages\EditTableColumnPreference;
 use App\Enums\Product;
 use App\Filament\Resources\TableColumnPreferenceResource\Pages;
 use App\Models\TableColumnPreference;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,34 +29,34 @@ final class TableColumnPreferenceResource extends Resource
 
     protected static ?string $label = 'Ustawienia';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([]);
+        return $schema->components([]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('column_name')->searchable(),
-                Tables\Columns\TextColumn::make('sort_order'),
-                Tables\Columns\ToggleColumn::make('is_visible'),
+                TextColumn::make('column_name')->searchable(),
+                TextColumn::make('sort_order'),
+                ToggleColumn::make('is_visible'),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
-                Tables\Filters\SelectFilter::make('table_name')
+                SelectFilter::make('table_name')
                     ->label('Tabela')
                     ->selectablePlaceholder(false)
                     ->default('air_purifiers')
                     ->options(Product::getOptions()),
-            ], layout: Tables\Enums\FiltersLayout::AboveContent)
-            ->actions([])
-            ->bulkActions([]);
+            ], layout: FiltersLayout::AboveContent)
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 
     public static function getRelations(): array
@@ -62,9 +69,9 @@ final class TableColumnPreferenceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTableColumnPreferences::route('/'),
-            'create' => Pages\CreateTableColumnPreference::route('/create'),
-            'edit' => Pages\EditTableColumnPreference::route('/{record}/edit'),
+            'index' => ListTableColumnPreferences::route('/'),
+            'create' => CreateTableColumnPreference::route('/create'),
+            'edit' => EditTableColumnPreference::route('/{record}/edit'),
         ];
     }
 }

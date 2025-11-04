@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\ShortcodeResource\RelationManagers\ConditionsRelationManager;
+use App\Filament\Resources\ShortcodeResource\Pages\ListShortcodes;
+use App\Filament\Resources\ShortcodeResource\Pages\CreateShortcode;
+use App\Filament\Resources\ShortcodeResource\Pages\EditShortcode;
 use App\Enums\Product;
 use App\Filament\Resources\ShortcodeResource\Pages;
 use App\Filament\Resources\ShortcodeResource\RelationManagers;
 use App\Models\Shortcode;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,7 +31,7 @@ final class ShortcodeResource extends Resource
 
     protected static ?string $navigationLabel = 'Shortcody';
 
-    protected static ?string $navigationIcon = 'heroicon-o-code-bracket-square';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-code-bracket-square';
 
     protected static ?string $pluralModelLabel = 'Shortcody';
 
@@ -31,15 +41,15 @@ final class ShortcodeResource extends Resource
 
     protected static ?string $label = 'Shortcode';
 
-    protected static ?string $navigationGroup = 'Ustawienia';
+    protected static string | \UnitEnum | null $navigationGroup = 'Ustawienia';
 
     protected static ?int $navigationSort = 4;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->label(__('Nazwa shortcode')),
                 Select::make('product_types')
@@ -47,7 +57,7 @@ final class ShortcodeResource extends Resource
                     ->multiple()
                     ->options(Product::getOptions())
                     ->required(),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->label(__('Opis'))
                     ->columnSpanFull(),
             ]);
@@ -57,16 +67,16 @@ final class ShortcodeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label(__('ID'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -74,12 +84,12 @@ final class ShortcodeResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -87,16 +97,16 @@ final class ShortcodeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ConditionsRelationManager::class,
+            ConditionsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListShortcodes::route('/'),
-            'create' => Pages\CreateShortcode::route('/create'),
-            'edit' => Pages\EditShortcode::route('/{record}/edit'),
+            'index' => ListShortcodes::route('/'),
+            'create' => CreateShortcode::route('/create'),
+            'edit' => EditShortcode::route('/{record}/edit'),
         ];
     }
 

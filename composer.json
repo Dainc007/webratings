@@ -11,6 +11,7 @@
         "filament/filament": "^4.0",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "12.*",
+        "laravel/nightwatch": "^1.18",
         "laravel/pulse": "^1.4",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",

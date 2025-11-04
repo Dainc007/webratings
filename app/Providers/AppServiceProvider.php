@@ -93,9 +93,10 @@ final class AppServiceProvider extends ServiceProvider
             $action->translateLabel();
         });
 
-        Component::configureUsing(function (Component $component): void {
-            $component->translateLabel();
-        });
+        //not working in filament v4
+//        Component::configureUsing(function (Component $component): void {
+//            $component->translateLabel();
+//        });
 
         ImportColumn::configureUsing(function (ImportColumn $importColumn): void {
             $importColumn->requiredMapping();

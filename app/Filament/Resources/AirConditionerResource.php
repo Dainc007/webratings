@@ -29,7 +29,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use pxlrbt\FilamentExcel\Actions\ExportBulkAction;
+use App\Services\ExportActionService;
 
 final class AirConditionerResource extends Resource
 {
@@ -559,6 +559,7 @@ final class AirConditionerResource extends Resource
             ->headerActions([
                 ImportAction::make()
                     ->importer(AirConditionerImporter::class),
+                ExportActionService::createExportAllAction('air_conditioners'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
@@ -574,7 +575,7 @@ final class AirConditionerResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                    ExportActionService::createExportBulkAction('air_conditioners'),
                     DeleteBulkAction::make(),
                 ]),
             ]);

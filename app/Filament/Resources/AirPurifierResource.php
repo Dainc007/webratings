@@ -32,7 +32,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use pxlrbt\FilamentExcel\Actions\ExportBulkAction;
+use App\Services\ExportActionService;
 
 final class AirPurifierResource extends Resource
 {
@@ -370,6 +370,7 @@ final class AirPurifierResource extends Resource
             ->headerActions([
                 ImportAction::make('Import Products')
                     ->importer(AirPurifierImporter::class),
+                ExportActionService::createExportAllAction('air_purifiers'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
@@ -383,7 +384,7 @@ final class AirPurifierResource extends Resource
             ->recordActionsPosition(RecordActionsPosition::BeforeColumns)
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                    ExportActionService::createExportBulkAction('air_purifiers'),
                     DeleteBulkAction::make(),
                 ]),
             ]);

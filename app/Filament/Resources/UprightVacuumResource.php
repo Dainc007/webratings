@@ -28,7 +28,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use pxlrbt\FilamentExcel\Actions\ExportBulkAction;
+use App\Services\ExportActionService;
 
 final class UprightVacuumResource extends Resource
 {
@@ -493,6 +493,7 @@ final class UprightVacuumResource extends Resource
             ->headerActions([
                 ImportAction::make('Import Upright Vacuums')
                     ->importer(UprightVacuumImporter::class),
+                ExportActionService::createExportAllAction('upright_vacuums'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
@@ -508,7 +509,7 @@ final class UprightVacuumResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                    ExportActionService::createExportBulkAction('upright_vacuums'),
                     DeleteBulkAction::make(),
                 ]),
             ]);

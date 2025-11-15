@@ -31,7 +31,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use pxlrbt\FilamentExcel\Actions\ExportBulkAction;
+use App\Services\ExportActionService;
 
 final class SensorResource extends Resource
 {
@@ -439,6 +439,7 @@ final class SensorResource extends Resource
             ->headerActions([
                 ImportAction::make('Import Sensors')
                     ->importer(SensorImporter::class),
+                ExportActionService::createExportAllAction('sensors'),
                 Action::make('Settings')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
@@ -454,7 +455,7 @@ final class SensorResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                    ExportActionService::createExportBulkAction('sensors'),
                     DeleteBulkAction::make(),
                 ]),
             ]);

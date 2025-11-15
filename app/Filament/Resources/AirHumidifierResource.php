@@ -28,6 +28,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use pxlrbt\FilamentExcel\Actions\ExportBulkAction;
 
 final class AirHumidifierResource extends Resource
 {
@@ -416,6 +417,7 @@ final class AirHumidifierResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    ExportBulkAction::make(),
                     DeleteBulkAction::make(),
                 ]),
             ]);

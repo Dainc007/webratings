@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use App\Services\CustomFieldService;
 use Filament\Schemas\Components\Tabs;
@@ -371,10 +372,16 @@ final class AirHumidifierResource extends Resource
                                             ->label('Typ urządzenia'),
                                         Toggle::make('is_promo')
                                             ->label('Promocja'),
-                                        TagsInput::make('gallery')
-                                            ->placeholder('Dodaj zdjęcie')
-                                            ->separator(',')
-                                            ->label('Galeria'),
+
+                                        //todo
+                                        FileUpload::make('gallery')
+                                            ->label('Galeria zdjęć')
+                                            ->directory('air-humidifiers')
+                                            ->image(),
+//                                        TagsInput::make('gallery')
+//                                            ->placeholder('Dodaj zdjęcie')
+//                                            ->separator(',')
+//                                            ->label('Galeria'),
                                         TextInput::make('Filter_cots_humi')
                                             ->label('Koszty filtrów'),
                                         Toggle::make('disks')

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use App\Services\CustomFieldService;
 use Filament\Schemas\Components\Tabs;
@@ -473,9 +474,10 @@ final class AirConditionerResource extends Resource
                                         TextInput::make('usage')
                                             ->label('Zastosowanie'),
 
-                                        TagsInput::make('gallery')
+                                        FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
-                                            ->columnSpanFull(),
+                                            ->directory('air-conditioners')
+                                            ->image(),
                                     ]),
 
                                 Section::make('Oceny i ranking')
@@ -512,6 +514,9 @@ final class AirConditionerResource extends Resource
 
                                 Section::make('Dokumentacja')
                                     ->schema([
+                                        FileUpload::make('manual')
+                                            ->directory('instructions')
+                                            ->label('Instrukcja obsługi'),
                                         TextInput::make('manual')
                                             ->disabled()
                                             ->label('Instrukcja obsługi'),

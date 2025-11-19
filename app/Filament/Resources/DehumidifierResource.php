@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use App\Services\CustomFieldService;
 use Filament\Schemas\Components\Tabs;
@@ -253,7 +254,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Maksymalna wartość higrostatu'),
 
                                         TextInput::make('increment_of_the_hygrostat')
-                                            ->label('Krok higrostatu'),
+                                            ->label('Skok higrostatu'),
                                     ])->columns(2),
 
                                 Section::make('Wentylator')
@@ -433,13 +434,18 @@ final class DehumidifierResource extends Resource
                             ->schema([
                                 Section::make('Galeria i dokumentacja')
                                     ->schema([
-                                        TagsInput::make('gallery')
+                                        //todo implement full file upload
+                                        FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
-                                            ->columnSpanFull(),
-
-                                        TextInput::make('manual_file')
-                                            ->disabled()
-                                            ->label('Plik instrukcji'),
+                                            ->directory('dehumidifiers')
+                                            ->image()
+                                        ,
+                                        //todo
+                                        FileUpload::make('manual_file')
+                                            ->directory('instructions')
+                                        ->label('Plik instrukcji'),
+//                                        TextInput::make('manual_file')
+//                                            ->label('Plik instrukcji'),
                                     ]),
 
                                 Section::make('Oceny i ranking')

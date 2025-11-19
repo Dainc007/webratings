@@ -95,11 +95,13 @@ final class SensorResource extends Resource
                                             ->columnSpanFull(),
                                     ])->columns(2),
 
-                                Section::make('Partner links')
+                                Section::make('Partner Links')
                                     ->schema([
-                                        TextInput::make('partner_name'),
+                                        TextInput::make('partner_name')
+                                            ->label('Partner Name'),
 
                                         Textarea::make('partner_link_url')
+                                            ->label('Partner Link URL')
                                             ->columnSpanFull(),
 
                                         Select::make('partner_link_rel_2')
@@ -109,11 +111,19 @@ final class SensorResource extends Resource
                                                 'dofollow' => 'dofollow',
                                                 'sponsored' => 'sponsored',
                                                 'noopener' => 'noopener',
-                                            ]),
+                                            ])
+                                            ->label('Partner Link Rel Attributes'),
 
-                                        TextInput::make('partner_link_title'),
+                                        TextInput::make('partner_link_title')
+                                            ->label('Partner Link Title'),
+                                    ])
+                                    ->columns(2)
+                                    ->collapsible(),
 
+                                Section::make('Ceneo Links')
+                                    ->schema([
                                         Textarea::make('ceneo_url')
+                                            ->label('Ceneo URL')
                                             ->columnSpanFull(),
 
                                         Select::make('ceneo_link_rel_2')
@@ -123,13 +133,22 @@ final class SensorResource extends Resource
                                                 'dofollow' => 'dofollow',
                                                 'sponsored' => 'sponsored',
                                                 'noopener' => 'noopener',
-                                            ]),
+                                            ])
+                                            ->label('Ceneo Link Rel Attributes'),
 
-                                        TextInput::make('ceneo_link_title'),
+                                        TextInput::make('ceneo_link_title')
+                                            ->label('Ceneo Link Title'),
+                                    ])
+                                    ->columns(2)
+                                    ->collapsible(),
 
+                                Section::make('Review Link')
+                                    ->schema([
                                         Textarea::make('review_link')
+                                            ->label('Review Link URL')
                                             ->columnSpanFull(),
-                                    ])->columns(2)->collapsible(),
+                                    ])
+                                    ->collapsible(),
                             ]),
 
                         Tab::make('PM sensors')

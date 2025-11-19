@@ -127,7 +127,12 @@ final class AirConditionerResource extends Resource
 
                                         TextInput::make('partner_link_title')
                                             ->label('Tytuł linku partnera'),
+                                    ])
+                                    ->columns(2)
+                                    ->collapsible(),
 
+                                Section::make('Linki Ceneo')
+                                    ->schema([
                                         Textarea::make('ceneo_url')
                                             ->label('Link Ceneo')
                                             ->columnSpanFull(),
@@ -144,11 +149,17 @@ final class AirConditionerResource extends Resource
 
                                         TextInput::make('ceneo_link_title')
                                             ->label('Tytuł linku Ceneo'),
+                                    ])
+                                    ->columns(2)
+                                    ->collapsible(),
 
+                                Section::make('Link do recenzji')
+                                    ->schema([
                                         Textarea::make('review_link')
                                             ->label('Link do recenzji')
                                             ->columnSpanFull(),
-                                    ])->columns(2)->collapsible(),
+                                    ])
+                                    ->collapsible(),
                             ]),
 
                         Tab::make('Wydajność chłodzenia')

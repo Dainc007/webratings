@@ -72,16 +72,31 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('price')
                                             ->numeric()
                                             ->label('Cena'),
+                                    ])->columns(2),
+
+                                Section::make('Linki partnerskie')
+                                    ->schema([
                                         TextInput::make('partner_link_url')
                                             ->url()
                                             ->label('Link partnerski'),
+                                    ])
+                                    ->collapsible(),
+
+                                Section::make('Linki Ceneo')
+                                    ->schema([
                                         TextInput::make('ceneo_url')
                                             ->url()
                                             ->label('Link Ceneo'),
+                                    ])
+                                    ->collapsible(),
+
+                                Section::make('Link do recenzji')
+                                    ->schema([
                                         TextInput::make('review_link')
                                             ->url()
                                             ->label('Link do recenzji'),
-                                    ])->columns(2),
+                                    ])
+                                    ->collapsible(),
                             ]),
                         Tab::make('Wydajność')
                             ->schema([

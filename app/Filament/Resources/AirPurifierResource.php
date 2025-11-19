@@ -84,22 +84,11 @@ final class AirPurifierResource extends Resource
 
                                 Toggle::make('is_promo'),
 
-                                Section::make('Links')
+                                Section::make('Partner Links')
                                     ->schema([
                                         TextInput::make('partner_link_url')
-                                            ->maxLength(255),
-
-                                        Select::make('ceneo_link_rel_2')
-                                            ->multiple()
-                                            ->options([
-                                                'nofollow' => 'nofollow',
-                                                'dofollow' => 'dofollow',
-                                                'sponsored' => 'sponsored',
-                                                'noopener' => 'noopener',
-                                            ]),
-
-                                        TextInput::make('ceneo_url')
-                                            ->maxLength(255),
+                                            ->maxLength(255)
+                                            ->label('Partner Link URL'),
 
                                         Select::make('partner_link_rel_2')
                                             ->multiple()
@@ -108,11 +97,38 @@ final class AirPurifierResource extends Resource
                                                 'dofollow' => 'dofollow',
                                                 'sponsored' => 'sponsored',
                                                 'noopener' => 'noopener',
-                                            ]),
+                                            ])
+                                            ->label('Partner Link Rel Attributes'),
+                                    ])
+                                    ->columns(2)
+                                    ->collapsible(),
 
+                                Section::make('Ceneo Links')
+                                    ->schema([
+                                        TextInput::make('ceneo_url')
+                                            ->maxLength(255)
+                                            ->label('Ceneo URL'),
+
+                                        Select::make('ceneo_link_rel_2')
+                                            ->multiple()
+                                            ->options([
+                                                'nofollow' => 'nofollow',
+                                                'dofollow' => 'dofollow',
+                                                'sponsored' => 'sponsored',
+                                                'noopener' => 'noopener',
+                                            ])
+                                            ->label('Ceneo Link Rel Attributes'),
+                                    ])
+                                    ->columns(2)
+                                    ->collapsible(),
+
+                                Section::make('Review Link')
+                                    ->schema([
                                         TextInput::make('review_link')
-                                            ->maxLength(255),
-                                    ])->collapsible(),
+                                            ->maxLength(255)
+                                            ->label('Review Link URL'),
+                                    ])
+                                    ->collapsible(),
                             ]),
 
                         Tab::make('Performance')

@@ -76,15 +76,11 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('price_before')
                                             ->numeric()
                                             ->label('Cena przed'),
-                                    ])->columns(2),
 
-                                Section::make('Informacje o zniżce')
-                                    ->schema([
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
                                             ->columnSpanFull(),
-                                    ])
-                                    ->collapsible(),
+                                    ])->columns(2),
 
                                 Section::make('Linki partnerskie')
                                     ->schema([

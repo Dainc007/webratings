@@ -33,6 +33,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use App\Services\ExportActionService;
+use App\Enums\IonizerType;
 
 final class AirPurifierResource extends Resource
 {
@@ -161,9 +162,15 @@ final class AirPurifierResource extends Resource
                                     ->numeric()
                                     ->minValue(0),
 
+                                TextInput::make('min_rated_power_consumption')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->label('Min. pobór prądu'),
+
                                 TextInput::make('max_rated_power_consumption')
                                     ->numeric()
-                                    ->minValue(0),
+                                    ->minValue(0)
+                                    ->label('Max. pobór prądu'),
 
                                 TextInput::make('capability_points')
                                     ->numeric()
@@ -261,7 +268,9 @@ final class AirPurifierResource extends Resource
                                 Toggle::make('ionization')->live(),
                                 Section::make('Ionizer')
                                     ->schema([
-                                        TextInput::make('ionizer_type'),
+                                        Select::make('ionizer_type')
+                                            ->label('Typ Jonizatora')
+                                            ->options(IonizerType::getOptions()),
                                         Toggle::make('ionizer_switch'),
                                     ])
                                     ->visible(fn (callable $get) => $get('ionization')),

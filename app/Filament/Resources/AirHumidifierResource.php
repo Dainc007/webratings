@@ -237,6 +237,15 @@ final class AirHumidifierResource extends Resource
                                     ->separator(',')
                                     ->columnSpanFull()
                                     ->label('Funkcje'),
+                                Section::make('Funkcje smart')
+                                    ->schema([
+                                        Toggle::make('mobile_app')
+                                            ->label('Aplikacja mobilna'),
+                                        TagsInput::make('mobile_features')
+                                            ->placeholder('Dodaj funkcję')
+                                            ->separator(',')
+                                            ->label('Funkcje aplikacji'),
+                                    ])->columns(2),
                             ]),
                         Tab::make('Filtry')
                             ->schema([
@@ -302,18 +311,6 @@ final class AirHumidifierResource extends Resource
                                                     ->label('Filtr węglowy'),
                                             ]),
                                     ]),
-                            ]),
-                        Tab::make('Funkcje smart')
-                            ->schema([
-                                Section::make('Funkcje smart')
-                                    ->schema([
-                                        Toggle::make('mobile_app')
-                                            ->label('Aplikacja mobilna'),
-                                        TagsInput::make('mobile_features')
-                                            ->placeholder('Dodaj funkcję')
-                                            ->separator(',')
-                                            ->label('Funkcje aplikacji'),
-                                    ])->columns(2),
                             ]),
                         Tab::make('Zasilanie i wymiary')
                             ->schema([

@@ -78,11 +78,18 @@ final class AirPurifierResource extends Resource
                                     ->numeric()
                                     ->prefix('zł'),
 
+                                TextInput::make('price_before')
+                                    ->numeric()
+                                    ->prefix('zł')
+                                    ->label('Cena przed'),
+
+                                Textarea::make('discount_info')
+                                    ->label('Informacje o zniżce')
+                                    ->columnSpanFull(),
+
                                 DateTimePicker::make('price_date')
                                     ->default(now())
                                     ->seconds(false),
-
-                                Toggle::make('is_promo'),
 
                                 Section::make('Partner Links')
                                     ->schema([

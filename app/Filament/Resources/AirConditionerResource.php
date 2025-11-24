@@ -101,9 +101,6 @@ final class AirConditionerResource extends Resource
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
                                             ->columnSpanFull(),
-
-                                        Toggle::make('is_promo')
-                                            ->label('Promocja'),
                                     ])->columns(2),
 
                                 Section::make('Linki partnerskie')

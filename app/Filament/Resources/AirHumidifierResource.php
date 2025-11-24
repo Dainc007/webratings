@@ -72,7 +72,18 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('price')
                                             ->numeric()
                                             ->label('Cena'),
+                                        TextInput::make('price_before')
+                                            ->numeric()
+                                            ->label('Cena przed'),
                                     ])->columns(2),
+
+                                Section::make('Informacje o zniżce')
+                                    ->schema([
+                                        Textarea::make('discount_info')
+                                            ->label('Informacje o zniżce')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->collapsible(),
 
                                 Section::make('Linki partnerskie')
                                     ->schema([
@@ -385,8 +396,6 @@ final class AirHumidifierResource extends Resource
                                             ->label('Kolory'),
                                         TextInput::make('type_of_device')
                                             ->label('Typ urządzenia'),
-                                        Toggle::make('is_promo')
-                                            ->label('Promocja'),
 
                                         //todo
                                         FileUpload::make('gallery')

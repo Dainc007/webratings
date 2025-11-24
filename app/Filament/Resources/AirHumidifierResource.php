@@ -122,9 +122,6 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('max_area_ro')
                                             ->numeric()
                                             ->label('Maksymalna powierzchnia RO'),
-                                        TextInput::make('humidification_efficiency')
-                                            ->numeric()
-                                            ->label('Wydajność nawilżania'),
                                         TextInput::make('tested_efficiency')
                                             ->numeric()
                                             ->label('Wydajność testowana'),

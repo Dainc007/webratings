@@ -21,6 +21,8 @@ use App\Filament\Resources\DehumidifierResource\Pages\EditDehumidifier;
 use App\Filament\Imports\DehumidifierImporter;
 use App\Filament\Resources\DehumidifierResource\Pages;
 use App\Models\Dehumidifier;
+use App\Enums\DehumidifierType;
+use App\Enums\DehumidifierFunction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -83,9 +85,10 @@ final class DehumidifierResource extends Resource
                                             ->maxLength(255)
                                             ->label('Marka'),
 
-                                        TextInput::make('type')
-
-                                            ->label('Typ'),
+                                        Select::make('type')
+                                            ->label('Typ')
+                                            ->options(DehumidifierType::getOptions())
+                                            ->searchable(),
 
                                         TextInput::make('price')
                                             ->numeric()
@@ -375,8 +378,10 @@ final class DehumidifierResource extends Resource
 
                                 Section::make('Funkcje i wyposażenie')
                                     ->schema([
-                                        TagsInput::make('functions')
+                                        Select::make('functions')
                                             ->label('Funkcje')
+                                            ->options(DehumidifierFunction::getOptions())
+                                            ->multiple()
                                             ->columnSpanFull(),
 
                                         TagsInput::make('functions_and_equipment_dehumi')

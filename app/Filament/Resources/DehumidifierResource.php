@@ -379,8 +379,13 @@ final class DehumidifierResource extends Resource
                                 Section::make('Funkcje i wyposażenie')
                                     ->schema([
                                         Select::make('productFunctions')
+                                            ->relationship('productFunctions', 'name')
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa')
+                                                    ->required(),
+                                            ])
                                             ->label('Funkcje')
-                                            ->options(DehumidifierFunction::getOptions())
                                             ->multiple()
                                             ->columnSpanFull(),
 

@@ -123,9 +123,6 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('tested_efficiency')
                                             ->numeric()
                                             ->label('Wydajność testowana'),
-                                        TextInput::make('humidification_area')
-                                            ->numeric()
-                                            ->label('Powierzchnia nawilżania'),
                                     ])->columns(2),
                             ]),
                         Tab::make('Zbiornik na wodę')
@@ -170,6 +167,19 @@ final class AirHumidifierResource extends Resource
                                                     ->visible(fn (callable $get) => $get('timer'))
                                                     ->numeric()
                                                     ->label('Timer max'),
+                                                Toggle::make('fan_volume')
+                                                    ->label('Głośność Wentylatora')
+                                                    ->live(),
+                                                TextInput::make('min_fan_volume')
+                                                    ->visible(fn (callable $get) => $get('fan_volume'))
+                                                    ->hint('w decybelach (dB)')
+                                                    ->numeric()
+                                                    ->label('Min. głośność'),
+                                                TextInput::make('max_fan_volume')
+                                                    ->hint('w decybelach (dB)')
+                                                    ->visible(fn (callable $get) => $get('fan_volume'))
+                                                    ->numeric()
+                                                    ->label('max głośność'),
                                             ]),
                                         Grid::make(1)
                                             ->schema([

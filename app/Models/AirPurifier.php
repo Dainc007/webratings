@@ -6,9 +6,9 @@ namespace App\Models;
 
 use App\Enums\IonizerType;
 use App\Enums\Status;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 final class AirPurifier extends Model
 {

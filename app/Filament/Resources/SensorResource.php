@@ -4,24 +4,19 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use App\Services\CustomFieldService;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Grid;
-use Filament\Actions\ImportAction;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\SensorResource\Pages\ListSensors;
+use App\Filament\Imports\SensorImporter;
 use App\Filament\Resources\SensorResource\Pages\CreateSensor;
 use App\Filament\Resources\SensorResource\Pages\EditSensor;
-use App\Filament\Imports\SensorImporter;
-use App\Filament\Resources\SensorResource\Pages;
+use App\Filament\Resources\SensorResource\Pages\ListSensors;
 use App\Models\Sensor;
+use App\Services\CustomFieldService;
+use App\Services\ExportActionService;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -29,15 +24,20 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use App\Services\ExportActionService;
+use UnitEnum;
 
 final class SensorResource extends Resource
 {
     protected static ?string $model = Sensor::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cpu-chip';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cpu-chip';
 
     protected static ?string $navigationLabel = 'Sensors';
 
@@ -45,7 +45,7 @@ final class SensorResource extends Resource
 
     protected static ?string $label = 'Sensors';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
+    protected static string|UnitEnum|null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 3;
 
@@ -461,7 +461,7 @@ final class SensorResource extends Resource
                 ExportActionService::createExportAllAction('sensors'),
                 Action::make('Settings')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'sensors',
@@ -496,7 +496,7 @@ final class SensorResource extends Resource
         ];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

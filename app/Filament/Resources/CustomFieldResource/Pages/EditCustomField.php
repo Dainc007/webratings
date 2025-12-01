@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\CustomFieldResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use App\Filament\Resources\CustomFieldResource;
 use App\Services\CustomFieldService;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 final class EditCustomField extends EditRecord

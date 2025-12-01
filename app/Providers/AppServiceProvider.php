@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use Filament\Schemas\Components\Component;
-use Filament\Tables\Enums\RecordActionsPosition;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Forms\Components\Field;
 use Filament\Infolists\Components\Entry;
+use Filament\Schemas\Components\Component;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -93,10 +93,10 @@ final class AppServiceProvider extends ServiceProvider
             $action->translateLabel();
         });
 
-        //not working in filament v4
-//        Component::configureUsing(function (Component $component): void {
-//            $component->translateLabel();
-//        });
+        // not working in filament v4
+        //        Component::configureUsing(function (Component $component): void {
+        //            $component->translateLabel();
+        //        });
 
         ImportColumn::configureUsing(function (ImportColumn $importColumn): void {
             $importColumn->requiredMapping();

@@ -116,12 +116,12 @@ final class AirPurifierImporter extends Importer
                 ->requiredMapping()
                 ->boolean(),
             ImportColumn::make('colors')
-                ->castStateUsing(function ($state) {
+                ->castStateUsing(function ($state): array {
                     if (empty($state)) {
                         return [];
                     }
                     // If it's already a JSON string, decode it first
-                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                    if (is_string($state) && str_starts_with(mb_trim($state), '[')) {
                         $state = json_decode($state, true);
                     }
                     // If it's a string, split by comma
@@ -136,12 +136,12 @@ final class AirPurifierImporter extends Importer
                     return [];
                 }),
             ImportColumn::make('productFunctions')
-                ->castStateUsing(function ($state) {
+                ->castStateUsing(function ($state): array {
                     if (empty($state)) {
                         return [];
                     }
                     // If it's already a JSON string, decode it first
-                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                    if (is_string($state) && str_starts_with(mb_trim($state), '[')) {
                         $state = json_decode($state, true);
                     }
                     // If it's a string, split by comma

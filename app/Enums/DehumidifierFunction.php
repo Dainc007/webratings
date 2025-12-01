@@ -14,6 +14,19 @@ enum DehumidifierFunction: string
     case TIMER = 'timer';
     case SLEEP_MODE = 'tryb_sleep';
 
+    /**
+     * Get all dehumidifier function options for forms
+     */
+    public static function getOptions(): array
+    {
+        $options = [];
+        foreach (self::cases() as $function) {
+            $options[$function->value] = $function->getLabel();
+        }
+
+        return $options;
+    }
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -26,17 +39,4 @@ enum DehumidifierFunction: string
             self::SLEEP_MODE => 'Tryb sleep (tryb nocny)',
         };
     }
-
-    /**
-     * Get all dehumidifier function options for forms
-     */
-    public static function getOptions(): array
-    {
-        $options = [];
-        foreach (self::cases() as $function) {
-            $options[$function->value] = $function->getLabel();
-        }
-        return $options;
-    }
 }
-

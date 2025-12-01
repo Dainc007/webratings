@@ -7,7 +7,7 @@ describe('Model Import Validation Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Air Purifiers');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Verify file has data
@@ -36,7 +36,7 @@ describe('Model Import Validation Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Air Conditioners');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Verify file has data
@@ -65,7 +65,7 @@ describe('Model Import Validation Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Air Humidifiers');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Verify file has data
@@ -94,7 +94,7 @@ describe('Model Import Validation Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Dehumidifiers');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Verify file has data
@@ -123,7 +123,7 @@ describe('Model Import Validation Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Sensors');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Verify file has data
@@ -152,7 +152,7 @@ describe('Model Import Validation Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Upright Vacuums');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Verify file has data
@@ -181,7 +181,7 @@ describe('Model Import Validation Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Sensors');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Find boolean columns
@@ -199,7 +199,7 @@ describe('Model Import Validation Tests', function (): void {
 
                 foreach ($booleanColumns as $column) {
                     if (isset($data[$column]) && ! empty($data[$column])) {
-                        $value = mb_strtolower(trim($data[$column]));
+                        $value = mb_strtolower(mb_trim($data[$column]));
                         $validBooleanValues = ['true', 'false', '1', '0', 'yes', 'no', 'tak', 'nie', 'y', 'n', 't', 'f'];
 
                         expect(in_array($value, $validBooleanValues))->toBeTrue(
@@ -231,7 +231,7 @@ describe('Model Import Validation Tests', function (): void {
         foreach (getImportConfigurations() as $config) {
             $filePath = storage_path("imports/{$config['fileName']}");
             $content = file_get_contents($filePath);
-            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
             $header = str_getcsv(array_shift($lines)); // Remove and get header
 
             // Find numeric columns

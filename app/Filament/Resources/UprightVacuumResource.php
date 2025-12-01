@@ -4,37 +4,37 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use App\Services\CustomFieldService;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\ImportAction;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\UprightVacuumResource\Pages\ListUprightVacuums;
+use App\Filament\Imports\UprightVacuumImporter;
 use App\Filament\Resources\UprightVacuumResource\Pages\CreateUprightVacuum;
 use App\Filament\Resources\UprightVacuumResource\Pages\EditUprightVacuum;
-use App\Filament\Imports\UprightVacuumImporter;
-use App\Filament\Resources\UprightVacuumResource\Pages;
+use App\Filament\Resources\UprightVacuumResource\Pages\ListUprightVacuums;
 use App\Models\UprightVacuum;
+use App\Services\CustomFieldService;
+use App\Services\ExportActionService;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use App\Services\ExportActionService;
+use UnitEnum;
 
 final class UprightVacuumResource extends Resource
 {
     protected static ?string $model = UprightVacuum::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationLabel = 'Odkurzacze Pionowe';
 
@@ -42,7 +42,7 @@ final class UprightVacuumResource extends Resource
 
     protected static ?string $label = 'Odkurzacz Pionowy';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
+    protected static string|UnitEnum|null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 6;
 
@@ -504,7 +504,7 @@ final class UprightVacuumResource extends Resource
                 ExportActionService::createExportAllAction('upright_vacuums'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'upright_vacuums',
@@ -544,7 +544,7 @@ final class UprightVacuumResource extends Resource
         return ['brand_name', 'model'];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

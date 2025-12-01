@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\CustomFieldResource\Pages\ListCustomFields;
+use App\Enums\Product;
 use App\Filament\Resources\CustomFieldResource\Pages\CreateCustomField;
 use App\Filament\Resources\CustomFieldResource\Pages\EditCustomField;
-use App\Enums\Product;
-use App\Filament\Resources\CustomFieldResource\Pages;
+use App\Filament\Resources\CustomFieldResource\Pages\ListCustomFields;
 use App\Models\CustomField;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 final class CustomFieldResource extends Resource
 {
@@ -27,13 +27,13 @@ final class CustomFieldResource extends Resource
 
     protected static ?string $navigationLabel = 'Dodatkowe Pola';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog'; // lub inna ikona
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog'; // lub inna ikona
 
     protected static ?string $pluralLabel = 'Dodatkowe Pola';
 
     protected static ?string $label = 'Dodatkowe Pola';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Ustawienia';
+    protected static string|UnitEnum|null $navigationGroup = 'Ustawienia';
 
     protected static ?int $navigationSort = 5;
 
@@ -106,7 +106,7 @@ final class CustomFieldResource extends Resource
         return ['display_name', 'table_name'];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

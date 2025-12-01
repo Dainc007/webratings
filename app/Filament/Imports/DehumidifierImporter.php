@@ -84,7 +84,7 @@ final class DehumidifierImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('water_tank_capacity')
                 ->numeric(),
@@ -101,7 +101,7 @@ final class DehumidifierImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('min_value_for_hygrostat')
                 ->numeric(),
@@ -126,7 +126,7 @@ final class DehumidifierImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('mesh_filter')
                 ->boolean(),
@@ -159,7 +159,7 @@ final class DehumidifierImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode(' ', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode(' ', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('partner_link_rel_2')
                 ->castStateUsing(function ($state) {
@@ -170,7 +170,7 @@ final class DehumidifierImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('ceneo_link_rel_2')
                 ->castStateUsing(function ($state) {
@@ -181,7 +181,7 @@ final class DehumidifierImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('manual_file'),
             ImportColumn::make('capability_points')
@@ -206,7 +206,7 @@ final class DehumidifierImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('main_ranking')
                 ->castStateUsing(ImportBooleanCaster::closure()),

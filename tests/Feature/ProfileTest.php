@@ -21,7 +21,7 @@ test('profile information can be updated', function (): void {
         ->actingAs($user)
         ->patch('/profile', [
             'name' => 'Test User',
-            'email' => 'test-unique-' . time() . '@example.com',
+            'email' => 'test-unique-'.time().'@example.com',
         ]);
 
     $response

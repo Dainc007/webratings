@@ -56,7 +56,7 @@ function getImportFileRowCount(string $fileName): int
     }
 
     $content = file_get_contents($filePath);
-    $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+    $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
 
     // Subtract 1 for header row
     return count($lines) - 1;

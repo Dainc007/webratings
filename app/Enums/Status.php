@@ -13,6 +13,19 @@ enum Status: string implements HasColor, HasLabel
     case PUBLISHED = 'published';
     case ARCHIVED = 'archived';
 
+    /**
+     * Get all status options for forms
+     */
+    public static function getOptions(): array
+    {
+        $options = [];
+        foreach (self::cases() as $status) {
+            $options[$status->value] = $status->getLabel();
+        }
+
+        return $options;
+    }
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -30,16 +43,4 @@ enum Status: string implements HasColor, HasLabel
             self::ARCHIVED => 'danger',   // Red
         };
     }
-
-    /**
-     * Get all status options for forms
-     */
-    public static function getOptions(): array
-    {
-        $options = [];
-        foreach (self::cases() as $status) {
-            $options[$status->value] = $status->getLabel();
-        }
-        return $options;
-    }
-} 
+}

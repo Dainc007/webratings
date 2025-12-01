@@ -71,12 +71,12 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('mobile_app')
                 ->boolean(),
             ImportColumn::make('mobile_features')
-                ->castStateUsing(function ($state) {
+                ->castStateUsing(function ($state): array {
                     if (empty($state)) {
                         return [];
                     }
                     // If it's already a JSON string, decode it first
-                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                    if (is_string($state) && str_starts_with(mb_trim($state), '[')) {
                         $state = json_decode($state, true);
                     }
                     // If it's a string, split by comma
@@ -94,12 +94,12 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('remote_control')
                 ->boolean(),
             ImportColumn::make('productFunctions')
-                ->castStateUsing(function ($state) {
+                ->castStateUsing(function ($state): array {
                     if (empty($state)) {
                         return [];
                     }
                     // If it's already a JSON string, decode it first
-                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                    if (is_string($state) && str_starts_with(mb_trim($state), '[')) {
                         $state = json_decode($state, true);
                     }
                     // If it's a string, split by comma
@@ -122,12 +122,12 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('depth'),
             ImportColumn::make('review_link'),
             ImportColumn::make('colors')
-                ->castStateUsing(function ($state) {
+                ->castStateUsing(function ($state): array {
                     if (empty($state)) {
                         return [];
                     }
                     // If it's already a JSON string, decode it first
-                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                    if (is_string($state) && str_starts_with(mb_trim($state), '[')) {
                         $state = json_decode($state, true);
                     }
                     // If it's a string, split by comma
@@ -151,7 +151,7 @@ final class AirHumidifierImporter extends Importer
                 ->castStateUsing(ImportBooleanCaster::closure()),
             ImportColumn::make('Filter_cots_humi')
                 ->castStateUsing(function ($state): ?float {
-                    if (is_null($state) || $state === '' || mb_strtolower(trim($state)) === 'brak') {
+                    if (is_null($state) || $state === '' || mb_strtolower(mb_trim($state)) === 'brak') {
                         return null;
                     }
 
@@ -189,12 +189,12 @@ final class AirHumidifierImporter extends Importer
                 ->castStateUsing(ImportBooleanCaster::closure())
                 ->boolean(),
             ImportColumn::make('gallery')
-                ->castStateUsing(function ($state) {
+                ->castStateUsing(function ($state): array {
                     if (empty($state)) {
                         return [];
                     }
                     // If it's already a JSON string, decode it first
-                    if (is_string($state) && str_starts_with(trim($state), '[')) {
+                    if (is_string($state) && str_starts_with(mb_trim($state), '[')) {
                         $state = json_decode($state, true);
                     }
                     // If it's a string, split by comma

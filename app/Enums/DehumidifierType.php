@@ -13,6 +13,19 @@ enum DehumidifierType: string
     case WITH_PURIFIER = 'z oczyszczaczem';
     case WITH_IONIZER = 'z jonizatorem';
 
+    /**
+     * Get all dehumidifier type options for forms
+     */
+    public static function getOptions(): array
+    {
+        $options = [];
+        foreach (self::cases() as $type) {
+            $options[$type->value] = $type->getLabel();
+        }
+
+        return $options;
+    }
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -24,17 +37,4 @@ enum DehumidifierType: string
             self::WITH_IONIZER => 'Osuszacz z jonizatorem',
         };
     }
-
-    /**
-     * Get all dehumidifier type options for forms
-     */
-    public static function getOptions(): array
-    {
-        $options = [];
-        foreach (self::cases() as $type) {
-            $options[$type->value] = $type->getLabel();
-        }
-        return $options;
-    }
 }
-

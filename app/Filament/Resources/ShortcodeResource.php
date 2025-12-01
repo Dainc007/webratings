@@ -4,26 +4,24 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\ShortcodeResource\RelationManagers\ConditionsRelationManager;
-use App\Filament\Resources\ShortcodeResource\Pages\ListShortcodes;
+use App\Enums\Product;
 use App\Filament\Resources\ShortcodeResource\Pages\CreateShortcode;
 use App\Filament\Resources\ShortcodeResource\Pages\EditShortcode;
-use App\Enums\Product;
-use App\Filament\Resources\ShortcodeResource\Pages;
-use App\Filament\Resources\ShortcodeResource\RelationManagers;
+use App\Filament\Resources\ShortcodeResource\Pages\ListShortcodes;
+use App\Filament\Resources\ShortcodeResource\RelationManagers\ConditionsRelationManager;
 use App\Models\Shortcode;
-use Filament\Forms;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 final class ShortcodeResource extends Resource
 {
@@ -31,7 +29,7 @@ final class ShortcodeResource extends Resource
 
     protected static ?string $navigationLabel = 'Shortcody';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-code-bracket-square';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-code-bracket-square';
 
     protected static ?string $pluralModelLabel = 'Shortcody';
 
@@ -41,7 +39,7 @@ final class ShortcodeResource extends Resource
 
     protected static ?string $label = 'Shortcode';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Ustawienia';
+    protected static string|UnitEnum|null $navigationGroup = 'Ustawienia';
 
     protected static ?int $navigationSort = 4;
 
@@ -115,7 +113,7 @@ final class ShortcodeResource extends Resource
         return ['name', 'description'];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

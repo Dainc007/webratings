@@ -11,8 +11,8 @@ test('registration screen can be rendered', function (): void {
 });
 
 test('new users can register', function (): void {
-    $uniqueEmail = 'test-' . time() . '@example.com';
-    
+    $uniqueEmail = 'test-'.time().'@example.com';
+
     $response = $this->post('/register', [
         'name' => 'Test User',
         'email' => $uniqueEmail,
@@ -25,8 +25,8 @@ test('new users can register', function (): void {
         'name' => 'Test User',
         'email' => $uniqueEmail,
     ]);
-    
+
     // Check for successful response (either 200/201 for JSON or 302 for redirect)
-    $this->assertContains($response->getStatusCode(), [200, 201, 302], 
+    $this->assertContains($response->getStatusCode(), [200, 201, 302],
         'Registration should return success status (200/201) or redirect (302)');
 });

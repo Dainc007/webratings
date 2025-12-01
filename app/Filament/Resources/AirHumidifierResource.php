@@ -4,40 +4,39 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Schema;
-use App\Services\CustomFieldService;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\Toggle;
-use Filament\Actions\ImportAction;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\AirHumidifierResource\Pages\ListAirHumidifiers;
+use App\Filament\Imports\AirHumidifierImporter;
 use App\Filament\Resources\AirHumidifierResource\Pages\CreateAirHumidifier;
 use App\Filament\Resources\AirHumidifierResource\Pages\EditAirHumidifier;
-use App\Filament\Imports\AirHumidifierImporter;
-use App\Filament\Resources\AirHumidifierResource\Pages;
+use App\Filament\Resources\AirHumidifierResource\Pages\ListAirHumidifiers;
 use App\Models\AirHumidifier;
-use Filament\Forms;
+use App\Services\CustomFieldService;
+use App\Services\ExportActionService;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use App\Services\ExportActionService;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use UnitEnum;
 
 final class AirHumidifierResource extends Resource
 {
     protected static ?string $model = AirHumidifier::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-beaker';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
 
     protected static ?string $navigationLabel = 'Nawilżacze Powietrza';
 
@@ -45,7 +44,7 @@ final class AirHumidifierResource extends Resource
 
     protected static ?string $label = 'Nawilżacze Powietrza';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
+    protected static string|UnitEnum|null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 2;
 
@@ -431,15 +430,15 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('type_of_device')
                                             ->label('Typ urządzenia'),
 
-                                        //todo
+                                        // todo
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('air-humidifiers')
                                             ->image(),
-//                                        TagsInput::make('gallery')
-//                                            ->placeholder('Dodaj zdjęcie')
-//                                            ->separator(',')
-//                                            ->label('Galeria'),
+                                        //                                        TagsInput::make('gallery')
+                                        //                                            ->placeholder('Dodaj zdjęcie')
+                                        //                                            ->separator(',')
+                                        //                                            ->label('Galeria'),
                                         TextInput::make('Filter_cots_humi')
                                             ->label('Koszty filtrów'),
                                         Toggle::make('disks')
@@ -470,7 +469,7 @@ final class AirHumidifierResource extends Resource
                 ExportActionService::createExportAllAction('air_humidifiers'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'air_humidifiers',
@@ -505,7 +504,7 @@ final class AirHumidifierResource extends Resource
         ];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Enums\Product;
 use App\Models\Shortcode;
+use Illuminate\Database\Eloquent\Builder;
 
 final class ShortcodeService
 {

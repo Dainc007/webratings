@@ -10,7 +10,7 @@ describe('Import Tests', function (): void {
 
             // Read and parse the CSV file manually
             $content = file_get_contents($filePath);
-            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
             $header = str_getcsv(array_shift($lines)); // Remove header
 
             $importedCount = 0;
@@ -113,7 +113,7 @@ describe('Import Tests', function (): void {
             expect(mb_strlen($content))->toBeGreaterThan(0, "Import file {$config['fileName']} should not be empty");
 
             // Check file has proper CSV structure
-            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
             expect(count($lines))->toBeGreaterThan(1, "Import file {$config['fileName']} should have header and data rows");
 
             // Check header row exists
@@ -129,7 +129,7 @@ describe('Import Tests', function (): void {
 
             // Read file and count data rows (excluding header)
             $content = file_get_contents($filePath);
-            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
             $dataRowCount = count($lines) - 1; // Subtract header row
 
             expect($dataRowCount)->toBe($expectedRowCount,
@@ -141,7 +141,7 @@ describe('Import Tests', function (): void {
         foreach (getImportConfigurations() as $config) {
             $filePath = storage_path("imports/{$config['fileName']}");
             $content = file_get_contents($filePath);
-            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
             $header = str_getcsv($lines[0]);
 
             // Check for common required columns (use 'id' instead of 'remote_id')
@@ -158,7 +158,7 @@ describe('Import Tests', function (): void {
         foreach (getImportConfigurations() as $config) {
             $filePath = storage_path("imports/{$config['fileName']}");
             $content = file_get_contents($filePath);
-            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+            $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
             $header = str_getcsv(array_shift($lines)); // Remove and get header
 
             // Check first few data rows for basic integrity
@@ -211,7 +211,7 @@ describe('Import Tests', function (): void {
         $config = collect(getImportConfigurations())->firstWhere('name', 'Sensors');
         $filePath = storage_path("imports/{$config['fileName']}");
         $content = file_get_contents($filePath);
-        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(trim($line), ['', '0'], true));
+        $lines = array_filter(explode("\n", $content), fn ($line): bool => ! in_array(mb_trim($line), ['', '0'], true));
         $header = str_getcsv(array_shift($lines)); // Remove and get header
 
         // Check if boolean columns exist and have valid values
@@ -236,7 +236,7 @@ describe('Import Tests', function (): void {
 
                     foreach ($booleanColumns as $column) {
                         if (isset($data[$column]) && ! empty($data[$column])) {
-                            $value = mb_strtolower(trim($data[$column]));
+                            $value = mb_strtolower(mb_trim($data[$column]));
                             $validBooleanValues = ['true', 'false', '1', '0', 'yes', 'no', 'tak', 'nie', 'y', 'n', 't', 'f'];
 
                             expect(in_array($value, $validBooleanValues))->toBeTrue(

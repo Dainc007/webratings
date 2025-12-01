@@ -47,7 +47,7 @@ final class ImportBooleanCaster
 
         $trueValues = ['1', 1, 'true', 'yes', 'tak', 'y', 't', true];
 
-        $stateLower = is_string($state) ? mb_strtolower(trim($state)) : $state;
+        $stateLower = is_string($state) ? mb_strtolower(mb_trim($state)) : $state;
 
         return in_array($stateLower, $trueValues, true);
     }

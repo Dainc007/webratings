@@ -4,25 +4,21 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use App\Services\CustomFieldService;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-use Filament\Actions\EditAction;
-use Filament\Actions\ImportAction;
-use Filament\Actions\Action;
-use Filament\Tables\Enums\RecordActionsPosition;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\AirPurifierResource\Pages\ListAirPurifiers;
-use App\Filament\Resources\AirPurifierResource\Pages\CreateAirPurifier;
-use App\Filament\Resources\AirPurifierResource\Pages\EditAirPurifier;
+use App\Enums\IonizerType;
 use App\Enums\Status;
 use App\Filament\Imports\AirPurifierImporter;
-use App\Filament\Resources\AirPurifierResource\Pages;
+use App\Filament\Resources\AirPurifierResource\Pages\CreateAirPurifier;
+use App\Filament\Resources\AirPurifierResource\Pages\EditAirPurifier;
+use App\Filament\Resources\AirPurifierResource\Pages\ListAirPurifiers;
 use App\Models\AirPurifier;
+use App\Services\CustomFieldService;
+use App\Services\ExportActionService;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -30,16 +26,20 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
-use App\Services\ExportActionService;
-use App\Enums\IonizerType;
+use UnitEnum;
 
 final class AirPurifierResource extends Resource
 {
     protected static ?string $model = AirPurifier::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-heart';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-heart';
 
     protected static ?string $navigationLabel = 'Oczyszczacze Powietrza';
 
@@ -47,7 +47,7 @@ final class AirPurifierResource extends Resource
 
     protected static ?string $label = 'Oczyszczacze Powietrza';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
+    protected static string|UnitEnum|null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 1;
 
@@ -66,8 +66,7 @@ final class AirPurifierResource extends Resource
                                 Select::make('status')
                                     ->default('draft')
                                     ->selectablePlaceholder(false)
-                                    ->options(Status::getOptions())
-                                    ,
+                                    ->options(Status::getOptions()),
 
                                 TextInput::make('model')
                                     ->maxLength(255),
@@ -405,7 +404,7 @@ final class AirPurifierResource extends Resource
                 ExportActionService::createExportAllAction('air_purifiers'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'air_purifiers',
@@ -438,7 +437,7 @@ final class AirPurifierResource extends Resource
         ];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Enums\Product;
 use App\Services\TableColumnPreferenceService;
+use Illuminate\Database\Seeder;
 
-class TableColumnPreferenceSeeder extends Seeder
+final class TableColumnPreferenceSeeder extends Seeder
 {
     /**
      * Run the database seeds.

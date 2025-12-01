@@ -38,7 +38,7 @@ final class UprightVacuumImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('image'),
             ImportColumn::make('price')
@@ -58,7 +58,7 @@ final class UprightVacuumImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('partner_link_title'),
             ImportColumn::make('ceneo_url'),
@@ -71,7 +71,7 @@ final class UprightVacuumImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('ceneo_link_title'),
             ImportColumn::make('vacuum_cleaner_type')
@@ -83,7 +83,7 @@ final class UprightVacuumImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('suction_power_aw')
                 ->numeric(),
@@ -116,7 +116,7 @@ final class UprightVacuumImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('maximum_operation_time'),
             ImportColumn::make('battery_charging_time'),
@@ -149,7 +149,7 @@ final class UprightVacuumImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('pollution_filtration_system'),
             ImportColumn::make('cyclone_technology'),
@@ -172,7 +172,7 @@ final class UprightVacuumImporter extends Importer
                         return null;
                     }
 
-                    return json_encode(array_filter(array_map('trim', explode('","', trim($state, '[]"')))));
+                    return json_encode(array_filter(array_map('trim', explode('","', mb_trim($state, '[]"')))));
                 }),
             ImportColumn::make('for_pet_owners'),
             ImportColumn::make('for_allergy_sufferers'),

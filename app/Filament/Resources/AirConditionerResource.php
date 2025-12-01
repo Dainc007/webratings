@@ -4,39 +4,39 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Schema;
-use App\Services\CustomFieldService;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\ImportAction;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\AirConditionerResource\Pages\ListAirConditioners;
+use App\Filament\Imports\AirConditionerImporter;
 use App\Filament\Resources\AirConditionerResource\Pages\CreateAirConditioner;
 use App\Filament\Resources\AirConditionerResource\Pages\EditAirConditioner;
-use App\Filament\Imports\AirConditionerImporter;
-use App\Filament\Resources\AirConditionerResource\Pages;
+use App\Filament\Resources\AirConditionerResource\Pages\ListAirConditioners;
 use App\Models\AirConditioner;
+use App\Services\CustomFieldService;
+use App\Services\ExportActionService;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use App\Services\ExportActionService;
+use UnitEnum;
 
 final class AirConditionerResource extends Resource
 {
     protected static ?string $model = AirConditioner::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-circle';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-circle';
 
     protected static ?string $navigationLabel = 'Klimatyzatory';
 
@@ -44,7 +44,7 @@ final class AirConditionerResource extends Resource
 
     protected static ?string $label = 'Klimatyzator';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
+    protected static string|UnitEnum|null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 4;
 
@@ -608,7 +608,7 @@ final class AirConditionerResource extends Resource
                 ExportActionService::createExportAllAction('air_conditioners'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'air_conditioners',
@@ -648,7 +648,7 @@ final class AirConditionerResource extends Resource
         return ['brand_name', 'model'];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

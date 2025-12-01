@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\SensorResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use App\Filament\Resources\SensorResource;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 final class EditSensor extends EditRecord

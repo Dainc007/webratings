@@ -4,41 +4,40 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Schema;
-use App\Services\CustomFieldService;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\ImportAction;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\DehumidifierResource\Pages\ListDehumidifiers;
+use App\Enums\DehumidifierType;
+use App\Filament\Imports\DehumidifierImporter;
 use App\Filament\Resources\DehumidifierResource\Pages\CreateDehumidifier;
 use App\Filament\Resources\DehumidifierResource\Pages\EditDehumidifier;
-use App\Filament\Imports\DehumidifierImporter;
-use App\Filament\Resources\DehumidifierResource\Pages;
+use App\Filament\Resources\DehumidifierResource\Pages\ListDehumidifiers;
 use App\Models\Dehumidifier;
-use App\Enums\DehumidifierType;
-use App\Enums\DehumidifierFunction;
+use App\Services\CustomFieldService;
+use App\Services\ExportActionService;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use App\Services\ExportActionService;
+use UnitEnum;
 
 final class DehumidifierResource extends Resource
 {
     protected static ?string $model = Dehumidifier::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-eye-dropper';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-eye-dropper';
 
     protected static ?string $navigationLabel = 'Osuszacze Powietrza';
 
@@ -46,7 +45,7 @@ final class DehumidifierResource extends Resource
 
     protected static ?string $label = 'Osuszacz Powietrza';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Produkty';
+    protected static string|UnitEnum|null $navigationGroup = 'Produkty';
 
     protected static ?int $navigationSort = 5;
 
@@ -389,9 +388,9 @@ final class DehumidifierResource extends Resource
                                             ->multiple()
                                             ->columnSpanFull(),
 
-//                                        TagsInput::make('functions_and_equipment_dehumi')
-//                                            ->label('Funkcje i wyposażenie osuszacza')
-//                                            ->columnSpanFull(),
+                                        //                                        TagsInput::make('functions_and_equipment_dehumi')
+                                        //                                            ->label('Funkcje i wyposażenie osuszacza')
+                                        //                                            ->columnSpanFull(),
                                     ]),
                             ]),
 
@@ -452,18 +451,17 @@ final class DehumidifierResource extends Resource
                             ->schema([
                                 Section::make('Galeria i dokumentacja')
                                     ->schema([
-                                        //todo implement full file upload
+                                        // todo implement full file upload
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('dehumidifiers')
-                                            ->image()
-                                        ,
-                                        //todo
+                                            ->image(),
+                                        // todo
                                         FileUpload::make('manual_file')
                                             ->directory('instructions')
-                                        ->label('Plik instrukcji'),
-//                                        TextInput::make('manual_file')
-//                                            ->label('Plik instrukcji'),
+                                            ->label('Plik instrukcji'),
+                                        //                                        TextInput::make('manual_file')
+                                        //                                            ->label('Plik instrukcji'),
                                     ]),
 
                                 Section::make('Oceny i ranking')
@@ -541,7 +539,7 @@ final class DehumidifierResource extends Resource
                 ExportActionService::createExportAllAction('dehumidifiers'),
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn () => route('filament.admin.resources.table-column-preferences.index', [
+                    ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
                         'tableFilters' => [
                             'table_name' => [
                                 'value' => 'dehumidifiers',
@@ -577,7 +575,7 @@ final class DehumidifierResource extends Resource
         ];
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         return (string) self::getModel()::count();
     }

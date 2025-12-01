@@ -13,7 +13,6 @@ final class Dehumidifier extends Model
         'partner_link_rel_2' => 'array',
         'ceneo_link_rel_2' => 'array',
         'mobile_features' => 'array',
-        'productFunctions' => 'array',
         'modes_of_operation' => 'array',
         'functions_and_equipment_dehumi' => 'array',
         'gallery' => 'array',

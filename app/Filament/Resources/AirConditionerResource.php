@@ -388,12 +388,45 @@ final class AirConditionerResource extends Resource
 
                                 Section::make('Funkcje i wyposażenie')
                                     ->schema([
-                                        TagsInput::make('functions')
+                                        // Old JSON-based implementation kept for reference
+                                        // TagsInput::make('productFunctions')
+                                        //     ->label('Funkcje')
+                                        //     ->columnSpanFull(),
+
+                                        Select::make('productFunctions')
                                             ->label('Funkcje')
+                                            ->relationship('productFunctions', 'name')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa')
+                                                    ->required(),
+                                            ])
                                             ->columnSpanFull(),
 
                                         TagsInput::make('functions_and_equipment_condi')
                                             ->label('Funkcje i wyposażenie klimatyzatora')
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
+
+                        Tab::make('Kategoryzacja')
+                            ->schema([
+                                Section::make('Typy i kategorie')
+                                    ->schema([
+                                        Select::make('types')
+                                            ->label('Typy produktu')
+                                            ->relationship('types', 'name')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa')
+                                                    ->required(),
+                                            ])
                                             ->columnSpanFull(),
                                     ]),
                             ]),

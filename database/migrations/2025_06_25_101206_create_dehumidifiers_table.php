@@ -66,8 +66,8 @@ return new class extends Migration
             $table->decimal('refrigerant_amount', 8, 2)->nullable();
             $table->string('needs_to_be_completed')->nullable();
 
-            // Features and functions
-            $table->json('functions')->nullable();
+            // Features and productFunctions
+            $table->json('productFunctions')->nullable();
             $table->decimal('water_tank_capacity', 8, 2)->nullable();
             $table->decimal('minimum_fill_time', 8, 2)->nullable();
             $table->decimal('average_filling_time', 8, 2)->nullable();

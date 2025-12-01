@@ -77,7 +77,7 @@ return new class extends Migration
             $table->json('mobile_features')->nullable();
             $table->json('control_other')->nullable();
             $table->boolean('remote_control')->nullable();
-            $table->json('functions')->nullable();
+            $table->json('productFunctions')->nullable();
             $table->decimal('min_rated_power_consumption', 8, 2)->nullable();
             $table->decimal('max_rated_power_consumption', 8, 2)->nullable();
             $table->string('rated_voltage')->nullable();

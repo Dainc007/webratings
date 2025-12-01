@@ -90,7 +90,7 @@ return new class extends Migration
             $table->boolean('mobile_app')->nullable();
             $table->json('mobile_features')->nullable();
             $table->boolean('remote_control')->nullable();
-            $table->json('functions')->nullable();
+            $table->json('productFunctions')->nullable();
 
             // Refrigerant system
             $table->string('refrigerant_kind')->nullable();

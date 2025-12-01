@@ -135,7 +135,7 @@ final class AirPurifierImporter extends Importer
 
                     return [];
                 }),
-            ImportColumn::make('functions')
+            ImportColumn::make('productFunctions')
                 ->castStateUsing(function ($state) {
                     if (empty($state)) {
                         return [];

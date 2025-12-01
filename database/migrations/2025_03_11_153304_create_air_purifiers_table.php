@@ -66,7 +66,7 @@ return new class extends Migration
             $table->json('certificates')->nullable();
             $table->boolean('pm2_sensor')->default(false)->nullable();
             $table->string('colors')->nullable();
-            $table->string('functions')->nullable();
+            $table->string('productFunctions')->nullable();
             $table->boolean('lzo_tvcop_sensor')->default(false)->nullable();
             $table->boolean('temperature_sensor')->default(false)->nullable();
             $table->boolean('humidity_sensor')->default(false)->nullable();

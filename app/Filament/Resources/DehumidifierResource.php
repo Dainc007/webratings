@@ -378,15 +378,15 @@ final class DehumidifierResource extends Resource
 
                                 Section::make('Funkcje i wyposażenie')
                                     ->schema([
-                                        Select::make('functions')
+                                        Select::make('productFunctions')
                                             ->label('Funkcje')
                                             ->options(DehumidifierFunction::getOptions())
                                             ->multiple()
                                             ->columnSpanFull(),
 
-                                        TagsInput::make('functions_and_equipment_dehumi')
-                                            ->label('Funkcje i wyposażenie osuszacza')
-                                            ->columnSpanFull(),
+//                                        TagsInput::make('functions_and_equipment_dehumi')
+//                                            ->label('Funkcje i wyposażenie osuszacza')
+//                                            ->columnSpanFull(),
                                     ]),
                             ]),
 

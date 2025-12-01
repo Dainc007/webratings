@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 final class Dehumidifier extends Model
 {
@@ -12,7 +13,7 @@ final class Dehumidifier extends Model
         'partner_link_rel_2' => 'array',
         'ceneo_link_rel_2' => 'array',
         'mobile_features' => 'array',
-        'functions' => 'array',
+        'productFunctions' => 'array',
         'modes_of_operation' => 'array',
         'functions_and_equipment_dehumi' => 'array',
         'gallery' => 'array',
@@ -34,4 +35,14 @@ final class Dehumidifier extends Model
         'price_before' => 'decimal:2',
         'profitability_points' => 'decimal:2',
     ];
+
+    public function types(): MorphToMany
+    {
+        return $this->morphToMany(ProductType::class, 'model', 'model_has_product_types');
+    }
+
+    public function productFunctions(): MorphToMany
+    {
+        return $this->morphToMany(ProductFunction::class, 'model', 'model_has_product_functions');
+    }
 }

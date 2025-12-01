@@ -25,6 +25,7 @@ use App\Filament\Imports\AirHumidifierImporter;
 use App\Filament\Resources\AirHumidifierResource\Pages;
 use App\Models\AirHumidifier;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -229,10 +230,24 @@ final class AirHumidifierResource extends Resource
                                                     ->label('Pilot max'),
                                             ]),
                                     ]),
-                                TagsInput::make('functions')
-                                    ->separator(',')
-                                    ->columnSpanFull()
-                                    ->label('Funkcje'),
+                                // Old JSON-based implementation kept for reference
+                                // TagsInput::make('productFunctions')
+                                //     ->separator(',')
+                                //     ->columnSpanFull()
+                                //     ->label('Funkcje'),
+
+                                Select::make('productFunctions')
+                                    ->label('Funkcje')
+                                    ->relationship('productFunctions', 'name')
+                                    ->multiple()
+                                    ->preload()
+                                    ->searchable()
+                                    ->createOptionForm([
+                                        TextInput::make('name')
+                                            ->label('Nazwa')
+                                            ->required(),
+                                    ])
+                                    ->columnSpanFull(),
                                 Section::make('Funkcje smart')
                                     ->schema([
                                         Toggle::make('mobile_app')
@@ -242,6 +257,24 @@ final class AirHumidifierResource extends Resource
                                             ->separator(',')
                                             ->label('Funkcje aplikacji'),
                                     ])->columns(2),
+                            ]),
+                        Tab::make('Kategoryzacja')
+                            ->schema([
+                                Section::make('Typy i kategorie')
+                                    ->schema([
+                                        Select::make('types')
+                                            ->label('Typy produktu')
+                                            ->relationship('types', 'name')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa')
+                                                    ->required(),
+                                            ])
+                                            ->columnSpanFull(),
+                                    ]),
                             ]),
                         Tab::make('Filtry')
                             ->schema([

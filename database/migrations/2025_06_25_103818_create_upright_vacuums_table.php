@@ -66,7 +66,7 @@ return new class extends Migration
             $table->decimal('battery_voltage', 8, 2)->nullable();
             $table->integer('battery_capacity')->nullable();
 
-            // Cleaning functions
+            // Cleaning productFunctions
             $table->string('mopping_function')->nullable();
             $table->string('active_washing_function')->nullable();
             $table->string('self_cleaning_function')->nullable();

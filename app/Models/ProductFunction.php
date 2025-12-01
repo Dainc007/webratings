@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Database\Factories\ProductTypeFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphedByMany;
 use App\Models\AirConditioner;
 use App\Models\AirHumidifier;
 use App\Models\AirPurifier;
 use App\Models\Dehumidifier;
 use App\Models\Sensor;
 use App\Models\UprightVacuum;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphedByMany;
-use Illuminate\Database\Eloquent\Model;
 
-final class ProductType extends Model
+final class ProductFunction extends Model
 {
-    /** @use HasFactory<ProductTypeFactory> */
     use HasFactory;
 
     protected $fillable = ['name'];
@@ -34,31 +32,31 @@ final class ProductType extends Model
     // Inverse polymorphic many-to-many to all product models
     public function airPurifiers(): MorphedByMany
     {
-        return $this->morphedByMany(AirPurifier::class, 'model', 'model_has_product_types');
+        return $this->morphedByMany(AirPurifier::class, 'model', 'model_has_product_functions');
     }
 
     public function airHumidifiers(): MorphedByMany
     {
-        return $this->morphedByMany(AirHumidifier::class, 'model', 'model_has_product_types');
+        return $this->morphedByMany(AirHumidifier::class, 'model', 'model_has_product_functions');
     }
 
     public function airConditioners(): MorphedByMany
     {
-        return $this->morphedByMany(AirConditioner::class, 'model', 'model_has_product_types');
+        return $this->morphedByMany(AirConditioner::class, 'model', 'model_has_product_functions');
     }
 
     public function dehumidifiers(): MorphedByMany
     {
-        return $this->morphedByMany(Dehumidifier::class, 'model', 'model_has_product_types');
+        return $this->morphedByMany(Dehumidifier::class, 'model', 'model_has_product_functions');
     }
 
     public function sensors(): MorphedByMany
     {
-        return $this->morphedByMany(Sensor::class, 'model', 'model_has_product_types');
+        return $this->morphedByMany(Sensor::class, 'model', 'model_has_product_functions');
     }
 
     public function uprightVacuums(): MorphedByMany
     {
-        return $this->morphedByMany(UprightVacuum::class, 'model', 'model_has_product_types');
+        return $this->morphedByMany(UprightVacuum::class, 'model', 'model_has_product_functions');
     }
 }

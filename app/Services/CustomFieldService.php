@@ -71,8 +71,22 @@ final class CustomFieldService
 
             if ($column['column_name'] === 'status') {
                 $field->badge()
-                    ->formatStateUsing(fn (string $state): string => Status::from($state)->getLabel())
-                    ->color(fn (string $state): string => Status::from($state)->getColor());
+                    ->formatStateUsing(function (Status|string|null $state): string {
+                        if ($state === null) {
+                            return '';
+                        }
+                        $status = $state instanceof Status ? $state : Status::from($state);
+
+                        return $status->getLabel();
+                    })
+                    ->color(function (Status|string|null $state): string {
+                        if ($state === null) {
+                            return 'gray';
+                        }
+                        $status = $state instanceof Status ? $state : Status::from($state);
+
+                        return $status->getColor();
+                    });
             }
 
             $field->when(

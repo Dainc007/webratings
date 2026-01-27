@@ -23,6 +23,19 @@ uses(RefreshDatabase::class)->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
+| Filament Remote Tests
+|--------------------------------------------------------------------------
+|
+| Filament remote tests do NOT use RefreshDatabase since they test
+| against a remote server. They use the FilamentRemoteTestCase as base.
+|
+*/
+
+pest()->extend(Tests\Filament\FilamentRemoteTestCase::class)
+    ->in('Filament');
+
+/*
+|--------------------------------------------------------------------------
 | Expectations
 |--------------------------------------------------------------------------
 |

@@ -22,7 +22,8 @@ final class AirHumidifier extends Model
         'mobile_features' => 'array',
         'gallery' => 'array',
         'control_other' => 'array',
-        'productFunctions' => 'array',
+        // Note: productFunctions is a MorphToMany relationship, not a JSON column cast
+        // The JSON column in the database is legacy - the relationship is used instead
     ];
 
     public function types(): MorphToMany

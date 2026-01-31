@@ -20,6 +20,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -134,6 +135,17 @@ final class AirPurifierResource extends Resource
                                         TextInput::make('review_link')
                                             ->maxLength(255)
                                             ->label('Review Link URL'),
+                                    ])
+                                    ->collapsible(),
+
+                                Section::make('Galeria')
+                                    ->schema([
+                                        FileUpload::make('gallery')
+                                            ->label('Galeria zdjęć')
+                                            ->directory('air-purifiers')
+                                            ->image()
+                                            ->multiple()
+                                            ->columnSpanFull(),
                                     ])
                                     ->collapsible(),
                             ]),

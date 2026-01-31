@@ -183,7 +183,7 @@ final class AirPurifierResource extends Resource
                         Tab::make('Humidification')
                             ->columns(4)
                             ->schema([
-                                Toggle::make('has_humidification'),
+                                Toggle::make('has_humidification')->live(),
 
                                 Select::make('humidification_type')
                                     ->options([

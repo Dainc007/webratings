@@ -105,6 +105,21 @@ final class AirHumidifierResource extends Resource
                                             ->label('Link do recenzji'),
                                     ])
                                     ->collapsible(),
+
+                                Section::make('Ranking')
+                                    ->schema([
+                                        TextInput::make('capability')
+                                            ->label('Możliwości'),
+                                        TextInput::make('ranking')
+                                            ->label('Ranking'),
+                                        TextInput::make('profitability')
+                                            ->label('Opłacalność'),
+                                        Toggle::make('ranking_hidden')
+                                            ->label('Ukryj w rankingu'),
+                                        Toggle::make('main_ranking')
+                                            ->label('Ranking główny'),
+                                    ])->columns(2)
+                                    ->collapsible(),
                             ]),
                         Tab::make('Wydajność')
                             ->schema([
@@ -395,28 +410,6 @@ final class AirHumidifierResource extends Resource
                                             ->label('Dla dzieci'),
                                         Toggle::make('big_area')
                                             ->label('Duża powierzchnia'),
-                                    ])->columns(2),
-                            ]),
-                        Tab::make('Ranking')
-                            ->schema([
-                                Section::make('Ranking')
-                                    ->schema([
-                                        TextInput::make('capability_points')
-                                            ->numeric()
-                                            ->label('Punkty za możliwości'),
-                                        TextInput::make('capability')
-                                            ->label('Możliwości'),
-                                        TextInput::make('profitability_points')
-                                            ->numeric()
-                                            ->label('Punkty za opłacalność'),
-                                        TextInput::make('ranking')
-                                            ->label('Ranking'),
-                                        TextInput::make('profitability')
-                                            ->label('Opłacalność'),
-                                        Toggle::make('ranking_hidden')
-                                            ->label('Ukryj w rankingu'),
-                                        Toggle::make('main_ranking')
-                                            ->label('Ranking główny'),
                                     ])->columns(2),
                             ]),
                         Tab::make('Dodatkowe')

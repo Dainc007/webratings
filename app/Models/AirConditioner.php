@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 final class AirConditioner extends Model
 {
+    /**
+     * Allow all attributes to be mass assignable.
+     * Filament handles permission/validation.
+     *
+     * @var array<string>
+     */
+    protected $guarded = [];
+
     protected $casts = [
         'partner_link_rel_2' => 'array',
         'ceneo_link_rel_2' => 'array',

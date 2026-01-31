@@ -14,6 +14,14 @@ final class AirPurifier extends Model
 {
     use HasFactory;
 
+    /**
+     * Allow all attributes to be mass assignable.
+     * Filament handles permission/validation.
+     *
+     * @var array<string>
+     */
+    protected $guarded = [];
+
     protected $casts = [
         'status' => Status::class,
         'colors' => 'array',

@@ -9,10 +9,20 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 final class AirHumidifier extends Model
 {
+    /**
+     * Allow all attributes to be mass assignable.
+     * Filament handles permission/validation.
+     *
+     * @var array<string>
+     */
+    protected $guarded = [];
+
     protected $casts = [
         'colors' => 'array',
         'mobile_features' => 'array',
         'gallery' => 'array',
+        'control_other' => 'array',
+        'productFunctions' => 'array',
     ];
 
     public function types(): MorphToMany

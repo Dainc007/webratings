@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 final class Dehumidifier extends Model
 {
+    /**
+     * Allow all attributes to be mass assignable.
+     * Filament handles permission/validation.
+     *
+     * @var array<string>
+     */
+    protected $guarded = [];
+
     protected $casts = [
         'partner_link_rel_2' => 'array',
         'ceneo_link_rel_2' => 'array',
@@ -19,13 +27,13 @@ final class Dehumidifier extends Model
         'colors' => 'array',
         'date_created' => 'datetime',
         'date_updated' => 'datetime',
-        'higrostat' => 'boolean',
+        'higrostat' => 'array', // JSON column in database, used with TagsInput
         'mesh_filter' => 'boolean',
         'hepa_filter' => 'boolean',
         'carbon_filter' => 'boolean',
         'ionization' => 'boolean',
         'uvc' => 'boolean',
-        'uv_light_generator' => 'boolean',
+        'uv_light_generator' => 'array', // JSON column in database
         'mobile_app' => 'boolean',
         'ranking_hidden' => 'boolean',
         'main_ranking' => 'boolean',

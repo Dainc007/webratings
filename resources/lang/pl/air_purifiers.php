@@ -54,7 +54,7 @@ return [
     'certificates' => 'Certyfikaty',
     'pm2_sensor' => 'Czujnik PM2.5',
     'colors' => 'Kolory',
-    'functions' => 'Funkcje',
+    'productFunctions' => 'Funkcje',
     'lzo_tvcop_sensor' => 'Czujnik LZO/TVCOP',
     'temperature_sensor' => 'Czujnik temperatury',
     'humidity_sensor' => 'Czujnik wilgotności',

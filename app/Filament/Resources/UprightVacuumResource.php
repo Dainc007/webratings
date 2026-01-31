@@ -310,6 +310,8 @@ final class UprightVacuumResource extends Resource
                                             ->label('Samoczyszczenie podkładek'),
 
                                         TextInput::make('mopping_time_max')
+                                            ->numeric()
+                                            ->suffix('min')
                                             ->label('Maksymalny czas mopowania'),
 
                                         Select::make('type_of_washing')

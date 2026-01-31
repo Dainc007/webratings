@@ -510,17 +510,9 @@ final class AirConditionerResource extends Resource
 
                                 Section::make('Oceny i ranking')
                                     ->schema([
-                                        TextInput::make('capability_points')
-                                            ->numeric()
-                                            ->label('Punkty za możliwości'),
-
                                         TextInput::make('capability')
                                             ->numeric()
                                             ->label('Ocena możliwości'),
-
-                                        TextInput::make('profitability_points')
-                                            ->numeric()
-                                            ->label('Punkty za opłacalność'),
 
                                         TextInput::make('profitability')
                                             ->numeric()

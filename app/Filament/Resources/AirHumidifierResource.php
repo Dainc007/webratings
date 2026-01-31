@@ -181,6 +181,16 @@ final class AirHumidifierResource extends Resource
                                             ->numeric()
                                             ->label('Max głośność'),
                                     ])->columns(2),
+
+                                Section::make('Pobór mocy')
+                                    ->schema([
+                                        TextInput::make('min_rated_power_consumption')
+                                            ->numeric()
+                                            ->label('Minimalny pobór mocy'),
+                                        TextInput::make('max_rated_power_consumption')
+                                            ->numeric()
+                                            ->label('Maksymalny pobór mocy'),
+                                    ])->columns(2),
                             ]),
                         Tab::make('Zbiornik na wodę')
                             ->schema([
@@ -368,16 +378,10 @@ final class AirHumidifierResource extends Resource
                                             ]),
                                     ]),
                             ]),
-                        Tab::make('Zasilanie i wymiary')
+                        Tab::make('Wymiary')
                             ->schema([
-                                Section::make('Zasilanie i wymiary')
+                                Section::make('Wymiary')
                                     ->schema([
-                                        TextInput::make('min_rated_power_consumption')
-                                            ->numeric()
-                                            ->label('Minimalny pobór mocy'),
-                                        TextInput::make('max_rated_power_consumption')
-                                            ->numeric()
-                                            ->label('Maksymalny pobór mocy'),
                                         TextInput::make('rated_voltage')
                                             ->numeric()
                                             ->label('Napięcie znamionowe'),

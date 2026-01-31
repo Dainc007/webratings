@@ -166,6 +166,17 @@ final class AirConditionerResource extends Resource
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),
+
+                                Section::make('Galeria')
+                                    ->schema([
+                                        FileUpload::make('gallery')
+                                            ->label('Galeria zdjęć')
+                                            ->directory('air-conditioners')
+                                            ->image()
+                                            ->multiple()
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->collapsible(),
                             ]),
 
                         Tab::make('Wydajność chłodzenia')
@@ -495,11 +506,6 @@ final class AirConditionerResource extends Resource
                                         TagsInput::make('colors')
                                             ->label('Dostępne kolory')
                                             ->columnSpanFull(),
-
-                                        FileUpload::make('gallery')
-                                            ->label('Galeria zdjęć')
-                                            ->directory('air-conditioners')
-                                            ->image(),
                                     ]),
 
                                 Section::make('Oceny i ranking')

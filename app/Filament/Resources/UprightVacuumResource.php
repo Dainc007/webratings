@@ -297,16 +297,16 @@ final class UprightVacuumResource extends Resource
                             ->schema([
                                 Section::make('Funkcje mopowania')
                                     ->schema([
-                                        TextInput::make('mopping_function')
+                                        Toggle::make('mopping_function')
                                             ->label('Funkcja mopowania'),
 
-                                        TextInput::make('active_washing_function')
+                                        Toggle::make('active_washing_function')
                                             ->label('Aktywna funkcja mycia'),
 
-                                        TextInput::make('self_cleaning_function')
+                                        Toggle::make('self_cleaning_function')
                                             ->label('Funkcja samoczyszczenia'),
 
-                                        TextInput::make('self_cleaning_underlays')
+                                        Toggle::make('self_cleaning_underlays')
                                             ->label('Samoczyszczenie podkładek'),
 
                                         TextInput::make('mopping_time_max')

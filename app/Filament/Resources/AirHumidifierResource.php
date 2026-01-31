@@ -135,6 +135,15 @@ final class AirHumidifierResource extends Resource
                                                     ->required(),
                                             ])
                                             ->columnSpanFull(),
+
+                                        Select::make('type_of_device')
+                                            ->label('Typ urządzenia')
+                                            ->options([
+                                                'ultradźwiękowy' => 'Ultradźwiękowy',
+                                                'ewaporacyjny' => 'Ewaporacyjny',
+                                                'parowy' => 'Parowy',
+                                            ])
+                                            ->searchable(),
                                     ])
                                     ->collapsible(),
                             ]),
@@ -419,8 +428,6 @@ final class AirHumidifierResource extends Resource
                                             ->placeholder('Dodaj kolor')
                                             ->separator(',')
                                             ->label('Kolory'),
-                                        TextInput::make('type_of_device')
-                                            ->label('Typ urządzenia'),
 
                                         // todo
                                         FileUpload::make('gallery')

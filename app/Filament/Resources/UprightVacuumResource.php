@@ -251,8 +251,13 @@ final class UprightVacuumResource extends Resource
 
                                 Section::make('Bateria')
                                     ->schema([
-                                        TextInput::make('battery_change')
-                                            ->label('Wymiana baterii'),
+                                        Select::make('battery_change')
+                                            ->label('Wymiana baterii')
+                                            ->options([
+                                                'tak' => 'Tak - możliwa wymiana',
+                                                'nie' => 'Nie - bateria wbudowana',
+                                                'ograniczona' => 'Ograniczona - wymaga serwisu',
+                                            ]),
 
                                         TextInput::make('maximum_operation_time')
                                             ->label('Maksymalny czas pracy'),

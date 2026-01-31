@@ -281,8 +281,15 @@ final class UprightVacuumResource extends Resource
                                         TextInput::make('operation_time_eco')
                                             ->label('Czas pracy - tryb eco'),
 
-                                        TextInput::make('displaying_battery_status')
-                                            ->label('Wyświetlanie stanu baterii'),
+                                        Select::make('displaying_battery_status')
+                                            ->label('Wyświetlanie stanu baterii')
+                                            ->options([
+                                                'diody_led' => 'Diody LED',
+                                                'wyswietlacz_lcd' => 'Wyświetlacz LCD',
+                                                'wyswietlacz_led' => 'Wyświetlacz LED',
+                                                'procent' => 'Procent na wyświetlaczu',
+                                                'brak' => 'Brak wskaźnika',
+                                            ]),
                                     ])->columns(2),
                             ]),
 

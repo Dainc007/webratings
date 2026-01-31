@@ -239,12 +239,14 @@ final class UprightVacuumResource extends Resource
                                                 'Akumulatorowe' => 'Akumulatorowe',
                                                 'Sieciowe' => 'Sieciowe',
                                             ])
-                                            ->label('Typ zasilania'),
+                                            ->label('Typ zasilania')
+                                            ->live(),
 
                                         TextInput::make('cable_length')
                                             ->numeric()
                                             ->suffix('m')
-                                            ->label('Długość kabla'),
+                                            ->label('Długość kabla')
+                                            ->visible(fn (callable $get) => in_array('Sieciowe', $get('power_supply') ?? [])),
                                     ])->columns(2),
 
                                 Section::make('Bateria')

@@ -83,7 +83,16 @@ final class AirConditionerResource extends Resource
                                             ->maxLength(255)
                                             ->label('Marka'),
 
-                                        TextInput::make('type'),
+                                        Select::make('type')
+                                            ->label('Typ')
+                                            ->options([
+                                                'przenosny' => 'Przenośny',
+                                                'split' => 'Split',
+                                                'multisplit' => 'Multisplit',
+                                                'monoblok' => 'Monoblok',
+                                                'okienny' => 'Okienny',
+                                            ])
+                                            ->searchable(),
 
                                         TextInput::make('price')
                                             ->numeric()

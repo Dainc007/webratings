@@ -438,8 +438,6 @@ final class AirHumidifierResource extends Resource
                                         //                                            ->placeholder('Dodaj zdjęcie')
                                         //                                            ->separator(',')
                                         //                                            ->label('Galeria'),
-                                        TextInput::make('Filter_cots_humi')
-                                            ->label('Koszty filtrów'),
                                         Toggle::make('disks')
                                             ->label('Dyski'),
                                     ])->columns(2),

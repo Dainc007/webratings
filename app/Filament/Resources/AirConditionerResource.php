@@ -377,13 +377,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Pilot zdalnego sterowania'),
 
                                         Toggle::make('mobile_app')
-                                            ->live()
                                             ->label('Aplikacja mobilna'),
-
-                                        TagsInput::make('mobile_features')
-                                            ->visible(fn (callable $get) => $get('mobile_app'))
-                                            ->label('Funkcje aplikacji mobilnej')
-                                            ->columnSpanFull(),
                                     ])->columns(2),
 
                                 Section::make('Funkcje i wyposażenie')

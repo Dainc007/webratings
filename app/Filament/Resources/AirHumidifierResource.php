@@ -120,6 +120,23 @@ final class AirHumidifierResource extends Resource
                                             ->label('Ranking główny'),
                                     ])->columns(2)
                                     ->collapsible(),
+
+                                Section::make('Typy i kategorie')
+                                    ->schema([
+                                        Select::make('types')
+                                            ->label('Typy produktu')
+                                            ->relationship('types', 'name')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa')
+                                                    ->required(),
+                                            ])
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->collapsible(),
                             ]),
                         Tab::make('Wydajność')
                             ->schema([
@@ -281,24 +298,6 @@ final class AirHumidifierResource extends Resource
                                             ->separator(',')
                                             ->label('Funkcje aplikacji'),
                                     ])->columns(2),
-                            ]),
-                        Tab::make('Kategoryzacja')
-                            ->schema([
-                                Section::make('Typy i kategorie')
-                                    ->schema([
-                                        Select::make('types')
-                                            ->label('Typy produktu')
-                                            ->relationship('types', 'name')
-                                            ->multiple()
-                                            ->preload()
-                                            ->searchable()
-                                            ->createOptionForm([
-                                                TextInput::make('name')
-                                                    ->label('Nazwa')
-                                                    ->required(),
-                                            ])
-                                            ->columnSpanFull(),
-                                    ]),
                             ]),
                         Tab::make('Filtry')
                             ->schema([

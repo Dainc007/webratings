@@ -269,7 +269,8 @@ final class AirPurifierResource extends Resource
                                     ->collapsible()
                                     ->visible(fn (callable $get) => $get('carbon_filter')),
 
-                                Toggle::make('mesh_filter'),
+                                Toggle::make('mesh_filter')
+                                    ->label('Filtr wstępny'),
 
                                 Textarea::make('filter_costs'),
                             ]),

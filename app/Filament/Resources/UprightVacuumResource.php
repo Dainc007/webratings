@@ -312,8 +312,15 @@ final class UprightVacuumResource extends Resource
                                         TextInput::make('mopping_time_max')
                                             ->label('Maksymalny czas mopowania'),
 
-                                        TextInput::make('type_of_washing')
-                                            ->label('Typ mycia'),
+                                        Select::make('type_of_washing')
+                                            ->label('Typ mycia')
+                                            ->multiple()
+                                            ->options([
+                                                'suche' => 'Suche',
+                                                'mokre' => 'Mokre',
+                                                'parowe' => 'Parowe',
+                                                'hybrydowe' => 'Hybrydowe (suche + mokre)',
+                                            ]),
                                     ])->columns(2),
 
                                 Section::make('Zbiorniki')

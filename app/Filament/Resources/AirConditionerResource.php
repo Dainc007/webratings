@@ -415,25 +415,6 @@ final class AirConditionerResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Kategoryzacja')
-                            ->schema([
-                                Section::make('Typy i kategorie')
-                                    ->schema([
-                                        Select::make('types')
-                                            ->label('Typy produktu')
-                                            ->relationship('types', 'name')
-                                            ->multiple()
-                                            ->preload()
-                                            ->searchable()
-                                            ->createOptionForm([
-                                                TextInput::make('name')
-                                                    ->label('Nazwa')
-                                                    ->required(),
-                                            ])
-                                            ->columnSpanFull(),
-                                    ]),
-                            ]),
-
                         Tab::make('Specyfikacja techniczna')
                             ->schema([
                                 Section::make('Chłodziwo')

@@ -249,22 +249,26 @@ final class DehumidifierResource extends Resource
                             ->schema([
                                 Section::make('Higrostat')
                                     ->schema([
-                                        TagsInput::make('higrostat')
+                                        Toggle::make('higrostat')
                                             ->label('Higrostat')
+                                            ->live()
                                             ->columnSpanFull(),
 
                                         TextInput::make('min_value_for_hygrostat')
                                             ->numeric()
                                             ->suffix('%')
-                                            ->label('Minimalna wartość higrostatu'),
+                                            ->label('Minimalna wartość higrostatu')
+                                            ->visible(fn (callable $get) => $get('higrostat')),
 
                                         TextInput::make('max_value_for_hygrostat')
                                             ->numeric()
                                             ->suffix('%')
-                                            ->label('Maksymalna wartość higrostatu'),
+                                            ->label('Maksymalna wartość higrostatu')
+                                            ->visible(fn (callable $get) => $get('higrostat')),
 
                                         TextInput::make('increment_of_the_hygrostat')
-                                            ->label('Skok higrostatu'),
+                                            ->label('Skok higrostatu')
+                                            ->visible(fn (callable $get) => $get('higrostat')),
                                     ])->columns(2),
 
                                 Section::make('Wentylator')

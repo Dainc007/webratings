@@ -214,7 +214,19 @@ final class AirPurifierResource extends Resource
 
                                 Toggle::make('hygrometer'),
 
-                                Toggle::make('hygrostat'),
+                                Toggle::make('hygrostat')->live(),
+
+                                TextInput::make('hygrostat_min')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->label('Higrostat min')
+                                    ->visible(fn (callable $get) => $get('hygrostat')),
+
+                                TextInput::make('hygrostat_max')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->label('Higrostat max')
+                                    ->visible(fn (callable $get) => $get('hygrostat')),
                             ]),
 
                         Tab::make('Filters')

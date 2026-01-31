@@ -79,8 +79,17 @@ final class UprightVacuumResource extends Resource
                                             ->maxLength(255)
                                             ->label('Marka'),
 
-                                        TextInput::make('type')
-                                            ->label('Typ odkurzacza'),
+                                        Select::make('type')
+                                            ->label('Typ odkurzacza')
+                                            ->options([
+                                                'pionowy' => 'Pionowy',
+                                                'reczny' => 'Ręczny',
+                                                '2w1' => '2w1 (pionowy + ręczny)',
+                                                'myjacy' => 'Myjący',
+                                                'workowy' => 'Workowy',
+                                                'bezworkowy' => 'Bezworkowy',
+                                            ])
+                                            ->searchable(),
 
                                         TextInput::make('price')
                                             ->numeric()

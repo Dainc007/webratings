@@ -41,6 +41,9 @@ abstract class FilamentRemoteTestCase extends TestCase
 
         $this->loadConfiguration();
         $this->initializeHttpClient();
+
+        // Reset authentication state for each test
+        $this->isAuthenticated = false;
     }
 
     /**

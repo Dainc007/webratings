@@ -224,16 +224,7 @@ final class AirHumidifierResource extends Resource
                                         Grid::make(1)
                                             ->schema([
                                                 Toggle::make('auto_mode')
-                                                    ->live()
                                                     ->label('Tryb automatyczny'),
-                                                TextInput::make('auto_mode_min')
-                                                    ->visible(fn (callable $get) => $get('auto_mode'))
-                                                    ->numeric()
-                                                    ->label('Tryb auto min'),
-                                                TextInput::make('auto_mode_max')
-                                                    ->visible(fn (callable $get) => $get('auto_mode'))
-                                                    ->numeric()
-                                                    ->label('Tryb auto max'),
                                                 Toggle::make('night_mode')
                                                     ->live()
                                                     ->label('Tryb nocny'),

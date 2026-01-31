@@ -164,6 +164,23 @@ final class AirHumidifierResource extends Resource
                                             ->numeric()
                                             ->label('Wydajność testowana'),
                                     ])->columns(2),
+
+                                Section::make('Głośność wentylatora')
+                                    ->schema([
+                                        Toggle::make('fan_volume')
+                                            ->label('Głośność Wentylatora')
+                                            ->live(),
+                                        TextInput::make('min_fan_volume')
+                                            ->visible(fn (callable $get) => $get('fan_volume'))
+                                            ->hint('w decybelach (dB)')
+                                            ->numeric()
+                                            ->label('Min. głośność'),
+                                        TextInput::make('max_fan_volume')
+                                            ->hint('w decybelach (dB)')
+                                            ->visible(fn (callable $get) => $get('fan_volume'))
+                                            ->numeric()
+                                            ->label('Max głośność'),
+                                    ])->columns(2),
                             ]),
                         Tab::make('Zbiornik na wodę')
                             ->schema([
@@ -207,19 +224,6 @@ final class AirHumidifierResource extends Resource
                                                     ->visible(fn (callable $get) => $get('timer'))
                                                     ->numeric()
                                                     ->label('Timer max'),
-                                                Toggle::make('fan_volume')
-                                                    ->label('Głośność Wentylatora')
-                                                    ->live(),
-                                                TextInput::make('min_fan_volume')
-                                                    ->visible(fn (callable $get) => $get('fan_volume'))
-                                                    ->hint('w decybelach (dB)')
-                                                    ->numeric()
-                                                    ->label('Min. głośność'),
-                                                TextInput::make('max_fan_volume')
-                                                    ->hint('w decybelach (dB)')
-                                                    ->visible(fn (callable $get) => $get('fan_volume'))
-                                                    ->numeric()
-                                                    ->label('max głośność'),
                                             ]),
                                         Grid::make(1)
                                             ->schema([

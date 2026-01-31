@@ -496,9 +496,6 @@ final class AirConditionerResource extends Resource
                                             ->label('Dostępne kolory')
                                             ->columnSpanFull(),
 
-                                        TextInput::make('usage')
-                                            ->label('Zastosowanie'),
-
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('air-conditioners')

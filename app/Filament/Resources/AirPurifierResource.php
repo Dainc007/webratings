@@ -205,52 +205,74 @@ final class AirPurifierResource extends Resource
                             ]),
 
                         Tab::make('Nawilżanie')
-                            ->columns(4)
                             ->schema([
-                                Toggle::make('has_humidification')->live(),
+                                Section::make('Nawilżanie')
+                                    ->schema([
+                                        Toggle::make('has_humidification')
+                                            ->label('Posiada nawilżanie')
+                                            ->live(),
 
-                                Select::make('humidification_type')
-                                    ->options([
-                                        'vapor' => 'Vapor',
-                                        'ultrasonic' => 'Ultrasonic',
-                                        'evaporative' => 'Evaporative',
+                                        Select::make('humidification_type')
+                                            ->label('Typ nawilżania')
+                                            ->options([
+                                                'vapor' => 'Parowe',
+                                                'ultrasonic' => 'Ultradźwiękowe',
+                                                'evaporative' => 'Ewaporacyjne',
+                                            ])
+                                            ->visible(fn (callable $get) => $get('has_humidification')),
+
+                                        Toggle::make('humidification_switch')
+                                            ->label('Możliwość wyłączenia')
+                                            ->visible(fn (callable $get) => $get('has_humidification')),
+
+                                        TextInput::make('humidification_area')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->nullable()
+                                            ->label('Powierzchnia nawilżania')
+                                            ->suffix('m²')
+                                            ->visible(fn (callable $get) => $get('has_humidification')),
+
+                                        TextInput::make('water_tank_capacity')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->label('Pojemność zbiornika na wodę')
+                                            ->suffix('l')
+                                            ->visible(fn (callable $get) => $get('has_humidification')),
+
+                                        TextInput::make('humidification_efficiency')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->label('Wydajność nawilżania')
+                                            ->suffix('ml/h')
+                                            ->visible(fn (callable $get) => $get('has_humidification')),
                                     ])
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                    ->columns(2),
 
-                                Toggle::make('humidification_switch')
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                Section::make('Higrostat')
+                                    ->schema([
+                                        Toggle::make('hygrometer')
+                                            ->label('Higrometr'),
 
-                                TextInput::make('humidification_efficiency')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                        Toggle::make('hygrostat')
+                                            ->label('Higrostat')
+                                            ->live(),
 
-                                TextInput::make('humidification_area')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->nullable()
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
+                                        TextInput::make('hygrostat_min')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->label('Higrostat min')
+                                            ->suffix('%')
+                                            ->visible(fn (callable $get) => $get('hygrostat')),
 
-                                TextInput::make('water_tank_capacity')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->visible(fn (callable $get) => $get('has_humidification')),
-
-                                Toggle::make('hygrometer'),
-
-                                Toggle::make('hygrostat')->live(),
-
-                                TextInput::make('hygrostat_min')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->label('Higrostat min')
-                                    ->visible(fn (callable $get) => $get('hygrostat')),
-
-                                TextInput::make('hygrostat_max')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->label('Higrostat max')
-                                    ->visible(fn (callable $get) => $get('hygrostat')),
+                                        TextInput::make('hygrostat_max')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->label('Higrostat max')
+                                            ->suffix('%')
+                                            ->visible(fn (callable $get) => $get('hygrostat')),
+                                    ])
+                                    ->columns(2),
                             ]),
 
                         Tab::make('Filtry')
@@ -417,7 +439,8 @@ final class AirPurifierResource extends Resource
                         Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
-                            ),
+                            )
+                            ->visible(fn () => count($customFieldSchema) > 0),
                     ])
                     ->persistTabInQueryString()
                     ->columnSpanFull(),

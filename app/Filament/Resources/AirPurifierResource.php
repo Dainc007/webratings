@@ -103,6 +103,11 @@ final class AirPurifierResource extends Resource
                                             ->numeric()
                                             ->nullable()
                                             ->label('Punkty za opłacalność'),
+
+                                        TextInput::make('popularity')
+                                            ->numeric()
+                                            ->nullable()
+                                            ->label('Popularność'),
                                     ])
                                     ->columns(2),
 
@@ -174,6 +179,11 @@ final class AirPurifierResource extends Resource
                                 TextInput::make('max_area_ro')
                                     ->numeric()
                                     ->minValue(0),
+
+                                TextInput::make('number_of_fan_speeds')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->label('Liczba prędkości oczyszczania'),
 
                                 TextInput::make('min_loudness')
                                     ->numeric()

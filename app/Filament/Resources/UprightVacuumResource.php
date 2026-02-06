@@ -432,7 +432,7 @@ final class UprightVacuumResource extends Resource
                                             ->label('Dodatkowe wyposażenie')
                                             ->columnSpanFull(),
 
-                                        TextInput::make('continuous_work')
+                                        Toggle::make('continuous_work')
                                             ->label('Praca ciągła'),
                                     ])->columns(2),
                             ]),
@@ -441,7 +441,7 @@ final class UprightVacuumResource extends Resource
                             ->schema([
                                 Section::make('Wyświetlacz')
                                     ->schema([
-                                        TextInput::make('display')
+                                        Toggle::make('display')
                                             ->label('Wyświetlacz'),
 
                                         Select::make('display_type')
@@ -484,15 +484,15 @@ final class UprightVacuumResource extends Resource
                                         TextInput::make('weight_hand')
                                             ->numeric()
                                             ->suffix('kg')
-                                            ->label('Waga części ręcznej'),
+                                            ->label('Waga w ręce'),
                                     ])->columns(2),
 
                                 Section::make('Przeznaczenie')
                                     ->schema([
-                                        TextInput::make('for_pet_owners')
+                                        Toggle::make('for_pet_owners')
                                             ->label('Dla właścicieli zwierząt'),
 
-                                        TextInput::make('for_allergy_sufferers')
+                                        Toggle::make('for_allergy_sufferers')
                                             ->label('Dla alergików'),
                                     ])->columns(2),
 

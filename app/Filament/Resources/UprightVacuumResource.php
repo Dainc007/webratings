@@ -351,34 +351,41 @@ final class UprightVacuumResource extends Resource
                             ->schema([
                                 Section::make('System filtracji')
                                     ->schema([
-                                        TextInput::make('pollution_filtration_system')
-                                            ->label('System filtracji zanieczyszczeń'),
+                                        Select::make('pollution_filtration_system')
+                                            ->label('System filtracji zanieczyszczeń')
+                                            ->options([
+                                                'cyklonowy' => 'Cyklonowy',
+                                                'wielocyklonowy' => 'Wielocyklonowy',
+                                                'workowy' => 'Workowy',
+                                                'wodny' => 'Wodny',
+                                                'inny' => 'Inny',
+                                            ]),
 
-                                        TextInput::make('cyclone_technology')
+                                        Toggle::make('cyclone_technology')
                                             ->label('Technologia cyklonowa'),
 
-                                        TextInput::make('mesh_filter')
+                                        Toggle::make('mesh_filter')
                                             ->label('Filtr siatkowy'),
 
-                                        TextInput::make('hepa_filter')
+                                        Toggle::make('hepa_filter')
                                             ->label('Filtr HEPA'),
 
-                                        TextInput::make('epa_filter')
+                                        Toggle::make('epa_filter')
                                             ->label('Filtr EPA'),
                                     ])->columns(2),
 
                                 Section::make('Dodatkowe technologie')
                                     ->schema([
-                                        TextInput::make('uv_technology')
+                                        Toggle::make('uv_technology')
                                             ->label('Technologia UV'),
 
-                                        TextInput::make('led_backlight')
+                                        Toggle::make('led_backlight')
                                             ->label('Podświetlenie LED'),
 
-                                        TextInput::make('detecting_dirt_on_the_floor')
+                                        Toggle::make('detecting_dirt_on_the_floor')
                                             ->label('Wykrywanie brudu na podłodze'),
 
-                                        TextInput::make('detecting_carpet')
+                                        Toggle::make('detecting_carpet')
                                             ->label('Wykrywanie dywanu'),
                                     ])->columns(2),
                             ]),
@@ -387,32 +394,39 @@ final class UprightVacuumResource extends Resource
                             ->schema([
                                 Section::make('Szczotki')
                                     ->schema([
-                                        TextInput::make('electric_brush')
+                                        Toggle::make('electric_brush')
                                             ->label('Elektroszczotka'),
 
-                                        TextInput::make('turbo_brush')
+                                        Toggle::make('turbo_brush')
                                             ->label('Turboszczotka'),
 
-                                        TextInput::make('carpet_and_floor_brush')
+                                        Toggle::make('carpet_and_floor_brush')
                                             ->label('Szczotka do dywanów i podłóg'),
 
-                                        TextInput::make('attachment_for_pets')
+                                        Toggle::make('attachment_for_pets')
                                             ->label('Końcówka dla zwierząt'),
 
-                                        TextInput::make('bendable_pipe')
+                                        Toggle::make('bendable_pipe')
                                             ->label('Giętka rura'),
 
-                                        TextInput::make('telescopic_tube')
+                                        Toggle::make('telescopic_tube')
                                             ->label('Rura teleskopowa'),
                                     ])->columns(2),
 
                                 Section::make('Wyposażenie dodatkowe')
                                     ->schema([
-                                        TextInput::make('hand_vacuum_cleaner')
+                                        Toggle::make('hand_vacuum_cleaner')
                                             ->label('Odkurzacz ręczny'),
 
-                                        TextInput::make('charging_station')
-                                            ->label('Stacja ładująca'),
+                                        Select::make('charging_station')
+                                            ->label('Stacja ładująca')
+                                            ->options([
+                                                'brak' => 'Brak',
+                                                'scienna' => 'Ścienna',
+                                                'stojaca' => 'Stojąca',
+                                                'stacja_dokujaca' => 'Stacja dokująca',
+                                                'podstawka' => 'Podstawka ładująca',
+                                            ]),
 
                                         TagsInput::make('additional_equipment')
                                             ->label('Dodatkowe wyposażenie')
@@ -484,17 +498,9 @@ final class UprightVacuumResource extends Resource
 
                                 Section::make('Oceny i ranking')
                                     ->schema([
-                                        TextInput::make('capability_points')
-                                            ->numeric()
-                                            ->label('Punkty za możliwości'),
-
                                         TextInput::make('capability')
                                             ->numeric()
                                             ->label('Ocena możliwości'),
-
-                                        TextInput::make('profitability_points')
-                                            ->numeric()
-                                            ->label('Punkty za opłacalność'),
 
                                         TextInput::make('profitability')
                                             ->numeric()

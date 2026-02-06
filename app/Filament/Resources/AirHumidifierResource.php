@@ -371,7 +371,7 @@ final class AirHumidifierResource extends Resource
                                                     ->label('Klasa filtra HEPA'),
                                                 Toggle::make('mesh_filter')
                                                     ->live()
-                                                    ->label('Filtr siatkowy'),
+                                                    ->label('Filtr wstępny'),
                                                 Toggle::make('carbon_filter')
                                                     ->live()
                                                     ->label('Filtr węglowy'),
@@ -444,7 +444,8 @@ final class AirHumidifierResource extends Resource
                         Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
-                            ),
+                            )
+                            ->visible(fn () => count($customFieldSchema) > 0),
                     ])
                     ->persistTabInQueryString()
                     ->columnSpanFull(),

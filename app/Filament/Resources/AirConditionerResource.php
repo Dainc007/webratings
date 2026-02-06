@@ -332,7 +332,7 @@ final class AirConditionerResource extends Resource
                                 Section::make('Filtry podstawowe')
                                     ->schema([
                                         Toggle::make('mesh_filter')
-                                            ->label('Filtr siatkowy'),
+                                            ->label('Filtr wstępny'),
                                     ])->columns(1),
 
                                 Section::make('Filtr HEPA')
@@ -569,7 +569,8 @@ final class AirConditionerResource extends Resource
                         Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
-                            ),
+                            )
+                            ->visible(fn () => count($customFieldSchema) > 0),
                     ]),
             ]);
     }

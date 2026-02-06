@@ -365,7 +365,7 @@ final class UprightVacuumResource extends Resource
                                             ->label('Technologia cyklonowa'),
 
                                         Toggle::make('mesh_filter')
-                                            ->label('Filtr siatkowy'),
+                                            ->label('Filtr wstępny'),
 
                                         Toggle::make('hepa_filter')
                                             ->label('Filtr HEPA'),
@@ -524,7 +524,8 @@ final class UprightVacuumResource extends Resource
                         Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
-                            ),
+                            )
+                            ->visible(fn () => count($customFieldSchema) > 0),
                     ]),
             ]);
     }

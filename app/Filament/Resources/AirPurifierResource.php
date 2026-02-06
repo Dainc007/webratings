@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\IonizerType;
 use App\Enums\Status;
+use App\Filament\Components\FormFieldSearch;
 use App\Filament\Imports\AirPurifierImporter;
 use App\Filament\Resources\AirPurifierResource\Pages\CreateAirPurifier;
 use App\Filament\Resources\AirPurifierResource\Pages\EditAirPurifier;
@@ -60,6 +61,7 @@ final class AirPurifierResource extends Resource
 
         return $schema
             ->components([
+                FormFieldSearch::make(),
                 Tabs::make('Air Purifier Form')
                     ->tabs([
                         Tab::make('Podstawowe informacje')

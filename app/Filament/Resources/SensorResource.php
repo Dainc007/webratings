@@ -440,7 +440,8 @@ final class SensorResource extends Resource
                         Tab::make('custom_fields')
                             ->schema(
                                 $customFieldSchema
-                            ),
+                            )
+                            ->visible(fn () => count($customFieldSchema) > 0),
                     ])
                     ->persistTabInQueryString()
                     ->columnSpanFull(),

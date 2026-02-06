@@ -8,6 +8,7 @@ use App\Models\AirConditioner;
 use App\Models\AirHumidifier;
 use App\Models\AirPurifier;
 use App\Models\Dehumidifier;
+use App\Models\Sensor;
 use App\Models\UprightVacuum;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -91,8 +92,7 @@ class ResourceFormFixesTest extends TestCase
     }
 
     /**
-     * Poprawka: capability_points/profitability_points w Performance tab,
-     * main_ranking/ranking_hidden w Classification tab.
+     * Poprawka: capability_points/profitability_points przeniesione do Podstawowe informacje.
      */
     public function test_air_purifier_ranking_fields(): void
     {
@@ -110,6 +110,62 @@ class ResourceFormFixesTest extends TestCase
         $this->assertEquals(90, $airPurifier->profitability_points);
         $this->assertTrue((bool) $airPurifier->main_ranking);
         $this->assertFalse((bool) $airPurifier->ranking_hidden);
+    }
+
+    /**
+     * Poprawka: Wszystkie zakładki oczyszczaczy powinny być po polsku.
+     */
+    public function test_air_purifier_tab_names_are_in_polish(): void
+    {
+        $resourceFile = file_get_contents(app_path('Filament/Resources/AirPurifierResource.php'));
+
+        $englishTabs = ['Basic Information', "'Performance'", "'Humidification'",
+            "'Features'", "'Physical Attributes'", "'Classification'", "'Timestamps'"];
+
+        foreach ($englishTabs as $englishTab) {
+            $this->assertStringNotContainsString(
+                $englishTab,
+                $resourceFile,
+                "Tab {$englishTab} should be translated to Polish"
+            );
+        }
+
+        $polishTabs = ['Podstawowe informacje', 'Wydajność', 'Nawilżanie', 'Filtry',
+            'Funkcje', 'Wymiary', 'Klasyfikacja', 'Daty'];
+
+        foreach ($polishTabs as $polishTab) {
+            $this->assertStringContainsString(
+                $polishTab,
+                $resourceFile,
+                "Tab '{$polishTab}' should exist in AirPurifierResource"
+            );
+        }
+    }
+
+    /**
+     * Poprawka: Dodanie brakujących pól: liczba prędkości oczyszczania, popularność.
+     */
+    public function test_air_purifier_number_of_fan_speeds_and_popularity(): void
+    {
+        $airPurifier = AirPurifier::create([
+            'status' => 'draft',
+            'model' => 'Speeds Popularity Test ' . time(),
+            'brand_name' => 'Test Brand',
+            'number_of_fan_speeds' => 5,
+            'popularity' => 42,
+        ]);
+
+        $this->assertEquals(5, $airPurifier->number_of_fan_speeds);
+        $this->assertEquals(42, $airPurifier->popularity);
+    }
+
+    /**
+     * Poprawka: Migracja dodająca number_of_fan_speeds i popularity istnieje.
+     */
+    public function test_air_purifier_missing_fields_migration_exists(): void
+    {
+        $migrationPath = database_path('migrations/2026_02_07_000000_add_number_of_fan_speeds_and_popularity_to_air_purifiers_table.php');
+        $this->assertFileExists($migrationPath);
     }
 
     // ==========================================
@@ -567,6 +623,89 @@ class ResourceFormFixesTest extends TestCase
         $this->assertEquals(70, $vacuum->capability);
         $this->assertEquals(80, $vacuum->profitability);
         $this->assertTrue((bool) $vacuum->main_ranking);
+    }
+
+    /**
+     * Poprawka: continuous_work zmienione z TextInput na Toggle (jest/brak).
+     */
+    public function test_upright_vacuum_continuous_work_is_toggle(): void
+    {
+        $vacuum = UprightVacuum::create([
+            'status' => 'draft',
+            'model' => 'Continuous Work Test ' . time(),
+            'brand_name' => 'Test Brand',
+            'continuous_work' => true,
+        ]);
+
+        $this->assertTrue((bool) $vacuum->continuous_work);
+    }
+
+    /**
+     * Poprawka: display zmienione z TextInput na Toggle (jest/brak).
+     */
+    public function test_upright_vacuum_display_is_toggle(): void
+    {
+        $vacuum = UprightVacuum::create([
+            'status' => 'draft',
+            'model' => 'Display Test ' . time(),
+            'brand_name' => 'Test Brand',
+            'display' => true,
+        ]);
+
+        $this->assertTrue((bool) $vacuum->display);
+    }
+
+    /**
+     * Poprawka: for_pet_owners i for_allergy_sufferers zmienione z TextInput na Toggle.
+     */
+    public function test_upright_vacuum_purpose_fields_are_toggles(): void
+    {
+        $vacuum = UprightVacuum::create([
+            'status' => 'draft',
+            'model' => 'Purpose Toggle Test ' . time(),
+            'brand_name' => 'Test Brand',
+            'for_pet_owners' => true,
+            'for_allergy_sufferers' => false,
+        ]);
+
+        $this->assertTrue((bool) $vacuum->for_pet_owners);
+        $this->assertFalse((bool) $vacuum->for_allergy_sufferers);
+    }
+
+    // ==========================================
+    // CZUJNIKI (Sensor)
+    // ==========================================
+
+    /**
+     * Poprawka: Wszystkie zakładki czujników powinny być po polsku.
+     */
+    public function test_sensor_tab_names_are_in_polish(): void
+    {
+        $resourceFile = file_get_contents(app_path('Filament/Resources/SensorResource.php'));
+
+        $englishTabs = ["'Basic information'", "'PM sensors'", "'Chemical sensors'",
+            "'Environmental sensors'", "'Power connectivity'", "'Device features'",
+            "'Dimensions performance'", "'Metadata'"];
+
+        foreach ($englishTabs as $englishTab) {
+            $this->assertStringNotContainsString(
+                $englishTab,
+                $resourceFile,
+                "Tab {$englishTab} should be translated to Polish"
+            );
+        }
+
+        $polishTabs = ['Podstawowe informacje', 'Czujniki PM', 'Czujniki chemiczne',
+            'Czujniki środowiskowe', 'Zasilanie i łączność', 'Funkcje urządzenia',
+            'Wymiary i wydajność', 'Metadane'];
+
+        foreach ($polishTabs as $polishTab) {
+            $this->assertStringContainsString(
+                $polishTab,
+                $resourceFile,
+                "Tab '{$polishTab}' should exist in SensorResource"
+            );
+        }
     }
 
     // ==========================================

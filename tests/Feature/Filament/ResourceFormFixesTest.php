@@ -677,6 +677,62 @@ class ResourceFormFixesTest extends TestCase
     // ==========================================
 
     /**
+     * Poprawka: mesh_filter label zmieniony na 'Filtr wstępny' we wszystkich zasobach.
+     */
+    public function test_mesh_filter_renamed_to_filtr_wstepny_in_all_resources(): void
+    {
+        $resourceFiles = [
+            'AirPurifierResource.php',
+            'AirHumidifierResource.php',
+            'AirConditionerResource.php',
+            'DehumidifierResource.php',
+            'UprightVacuumResource.php',
+        ];
+
+        foreach ($resourceFiles as $file) {
+            $content = file_get_contents(app_path("Filament/Resources/{$file}"));
+
+            if (str_contains($content, 'mesh_filter')) {
+                $this->assertStringNotContainsString(
+                    "'Filtr siatkowy'",
+                    $content,
+                    "{$file}: mesh_filter should use label 'Filtr wstępny' not 'Filtr siatkowy'"
+                );
+                $this->assertStringContainsString(
+                    'Filtr wstępny',
+                    $content,
+                    "{$file}: mesh_filter should have label 'Filtr wstępny'"
+                );
+            }
+        }
+    }
+
+    /**
+     * Poprawka: custom_fields tab powinien być widoczny tylko gdy istnieją custom fields.
+     */
+    public function test_custom_fields_tab_is_conditionally_visible(): void
+    {
+        $resourceFiles = [
+            'AirPurifierResource.php',
+            'AirHumidifierResource.php',
+            'AirConditionerResource.php',
+            'DehumidifierResource.php',
+            'UprightVacuumResource.php',
+            'SensorResource.php',
+        ];
+
+        foreach ($resourceFiles as $file) {
+            $content = file_get_contents(app_path("Filament/Resources/{$file}"));
+
+            $this->assertStringContainsString(
+                'count($customFieldSchema) > 0',
+                $content,
+                "{$file}: custom_fields tab should have conditional visibility"
+            );
+        }
+    }
+
+    /**
      * Poprawka: Wszystkie zakładki czujników powinny być po polsku.
      */
     public function test_sensor_tab_names_are_in_polish(): void

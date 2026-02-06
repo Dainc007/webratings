@@ -52,19 +52,24 @@ final class FormFieldConfigurationResource extends Resource
                     ->searchable(),
                 SelectColumn::make('tab_key')
                     ->label('Zakładka')
-                    ->options(fn () => FormTabConfiguration::query()
-                        ->distinct()
+                    ->options(fn ($record) => FormTabConfiguration::query()
+                        ->where('table_name', $record->table_name ?? 'air_purifiers')
+                        ->orderBy('sort_order')
                         ->pluck('tab_label', 'tab_key')
-                        ->toArray()),
+                        ->toArray())
+                    ->searchable(),
                 SelectColumn::make('section_key')
                     ->label('Sekcja')
-                    ->options(fn () => array_merge(
+                    ->options(fn ($record) => array_merge(
                         ['' => '-- Bez sekcji --'],
                         FormSectionConfiguration::query()
-                            ->distinct()
+                            ->where('table_name', $record->table_name ?? 'air_purifiers')
+                            ->where('tab_key', $record->tab_key ?? 'basic_info')
+                            ->orderBy('sort_order')
                             ->pluck('section_label', 'section_key')
                             ->toArray()
-                    )),
+                    ))
+                    ->searchable(),
                 TextColumn::make('sort_order')
                     ->label('Kolejność'),
                 ToggleColumn::make('is_visible')

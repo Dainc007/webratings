@@ -59,9 +59,9 @@ final class SensorResource extends Resource
             ->components([
                 Tabs::make('Sensor form')
                     ->tabs([
-                        Tab::make('Basic information')
+                        Tab::make('Podstawowe informacje')
                             ->schema([
-                                Section::make('Basic information')
+                                Section::make('Podstawowe informacje')
                                     ->schema([
                                         Select::make('status')
                                             ->selectablePlaceholder(false)
@@ -95,7 +95,7 @@ final class SensorResource extends Resource
                                             ->columnSpanFull(),
                                     ])->columns(2),
 
-                                Section::make('Partner Links')
+                                Section::make('Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_name')
                                             ->label('Partner Name'),
@@ -120,7 +120,7 @@ final class SensorResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Ceneo Links')
+                                Section::make('Ceneo')
                                     ->schema([
                                         Textarea::make('ceneo_url')
                                             ->label('Ceneo URL')
@@ -142,7 +142,7 @@ final class SensorResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Review Link')
+                                Section::make('Link do recenzji')
                                     ->schema([
                                         Textarea::make('review_link')
                                             ->label('Review Link URL')
@@ -151,7 +151,7 @@ final class SensorResource extends Resource
                                     ->collapsible(),
                             ]),
 
-                        Tab::make('PM sensors')
+                        Tab::make('Czujniki PM')
                             ->schema([
                                 Section::make(__('sensors.sections.pm1_sensor'))
                                     ->schema([
@@ -199,7 +199,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Chemical sensors')
+                        Tab::make('Czujniki chemiczne')
                             ->schema([
                                 Section::make(__('sensors.sections.lzo_sensor'))
                                     ->schema([
@@ -262,7 +262,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Environmental sensors')
+                        Tab::make('Czujniki środowiskowe')
                             ->schema([
                                 Section::make(__('sensors.sections.temperature_sensor'))
                                     ->schema([
@@ -305,7 +305,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Power connectivity')
+                        Tab::make('Zasilanie i łączność')
                             ->schema([
                                 Section::make(__('sensors.sections.power'))
                                     ->schema([
@@ -332,7 +332,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Device features')
+                        Tab::make('Funkcje urządzenia')
                             ->schema([
                                 Section::make(__('sensors.sections.features'))
                                     ->schema([
@@ -355,7 +355,7 @@ final class SensorResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Dimensions performance')
+                        Tab::make('Wymiary i wydajność')
                             ->schema([
                                 Section::make(__('sensors.sections.physical_dimensions'))
                                     ->schema([
@@ -410,7 +410,7 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Metadata')
+                        Tab::make('Metadane')
                             ->schema([
                                 Section::make(__('sensors.sections.system_identifiers'))
                                     ->schema([

@@ -62,7 +62,7 @@ final class AirPurifierResource extends Resource
             ->components([
                 Tabs::make('Air Purifier Form')
                     ->tabs([
-                        Tab::make('Basic Information')
+                        Tab::make('Podstawowe informacje')
                             ->schema([
                                 Select::make('status')
                                     ->default('draft')
@@ -92,7 +92,21 @@ final class AirPurifierResource extends Resource
                                     ->default(now())
                                     ->seconds(false),
 
-                                Section::make('Partner Links')
+                                Section::make('Oceny i ranking')
+                                    ->schema([
+                                        TextInput::make('capability_points')
+                                            ->numeric()
+                                            ->nullable()
+                                            ->label('Punkty za możliwości'),
+
+                                        TextInput::make('profitability_points')
+                                            ->numeric()
+                                            ->nullable()
+                                            ->label('Punkty za opłacalność'),
+                                    ])
+                                    ->columns(2),
+
+                                Section::make('Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_link_url')
                                             ->maxLength(255)
@@ -111,7 +125,7 @@ final class AirPurifierResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Ceneo Links')
+                                Section::make('Ceneo')
                                     ->schema([
                                         TextInput::make('ceneo_url')
                                             ->maxLength(255)
@@ -130,13 +144,9 @@ final class AirPurifierResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Review Link')
-                                    ->schema([
-                                        TextInput::make('review_link')
-                                            ->maxLength(255)
-                                            ->label('Review Link URL'),
-                                    ])
-                                    ->collapsible(),
+                                TextInput::make('review_link')
+                                    ->maxLength(255)
+                                    ->label('Link do recenzji'),
 
                                 Section::make('Galeria')
                                     ->schema([
@@ -150,7 +160,7 @@ final class AirPurifierResource extends Resource
                                     ->collapsible(),
                             ]),
 
-                        Tab::make('Performance')
+                        Tab::make('Wydajność')
                             ->columns(4)
                             ->schema([
                                 TextInput::make('max_performance')
@@ -182,19 +192,9 @@ final class AirPurifierResource extends Resource
                                     ->numeric()
                                     ->minValue(0)
                                     ->label('Max. pobór prądu'),
-
-                                TextInput::make('capability_points')
-                                    ->numeric()
-                                    ->nullable()
-                                    ->label('Punkty za możliwości'),
-
-                                TextInput::make('profitability_points')
-                                    ->numeric()
-                                    ->nullable()
-                                    ->label('Punkty za opłacalność'),
                             ]),
 
-                        Tab::make('Humidification')
+                        Tab::make('Nawilżanie')
                             ->columns(4)
                             ->schema([
                                 Toggle::make('has_humidification')->live(),
@@ -243,7 +243,7 @@ final class AirPurifierResource extends Resource
                                     ->visible(fn (callable $get) => $get('hygrostat')),
                             ]),
 
-                        Tab::make('Filters')
+                        Tab::make('Filtry')
                             ->schema([
                                 Toggle::make('evaporative_filter')->live(),
                                 Section::make('Filtr ewaporacyjny')
@@ -289,10 +289,10 @@ final class AirPurifierResource extends Resource
                                 Textarea::make('filter_costs'),
                             ]),
 
-                        Tab::make('Features')
+                        Tab::make('Funkcje')
                             ->schema([
                                 Toggle::make('ionization')->live(),
-                                Section::make('Ionizer')
+                                Section::make('Jonizator')
                                     ->schema([
                                         Select::make('ionizer_type')
                                             ->label('Typ Jonizatora')
@@ -301,7 +301,7 @@ final class AirPurifierResource extends Resource
                                     ])
                                     ->visible(fn (callable $get) => $get('ionization')),
 
-                                Section::make('Other Features')
+                                Section::make('Inne funkcje')
                                     ->schema([
                                         Toggle::make('uvc'),
 
@@ -310,7 +310,7 @@ final class AirPurifierResource extends Resource
                                         Toggle::make('remote_control'),
 
                                         TagsInput::make('functions_and_equipment')
-                                            ->placeholder('Add function')
+                                            ->placeholder('Dodaj funkcję')
                                             ->separator(','),
 
                                         Toggle::make('heating_and_cooling_function'),
@@ -318,7 +318,7 @@ final class AirPurifierResource extends Resource
                                         Toggle::make('cooling_function'),
                                     ])->collapsible(),
 
-                                Section::make('Sensors')
+                                Section::make('Czujniki')
                                     ->schema([
                                         Toggle::make('pm2_sensor'),
 
@@ -332,11 +332,11 @@ final class AirPurifierResource extends Resource
                                     ])->collapsible(),
 
                                 TagsInput::make('certificates')
-                                    ->placeholder('Add certificate')
+                                    ->placeholder('Dodaj certyfikat')
                                     ->separator(','),
                             ]),
 
-                        Tab::make('Physical Attributes')
+                        Tab::make('Wymiary')
                             ->columns(4)
                             ->schema([
                                 TextInput::make('width')
@@ -361,10 +361,10 @@ final class AirPurifierResource extends Resource
                                     ->separator(','),
                             ]),
 
-                        Tab::make('Classification')
+                        Tab::make('Klasyfikacja')
                             ->schema([
                                 TagsInput::make('type_of_device')
-                                    ->placeholder('Add device type')
+                                    ->placeholder('Dodaj typ urządzenia')
                                     ->separator(','),
 
                                 Toggle::make('main_ranking'),
@@ -389,7 +389,7 @@ final class AirPurifierResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Timestamps')
+                        Tab::make('Daty')
                             ->schema([
                                 DateTimePicker::make('date_created')
                                     ->disabled(),

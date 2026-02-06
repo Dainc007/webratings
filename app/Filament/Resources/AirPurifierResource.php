@@ -185,11 +185,13 @@ final class AirPurifierResource extends Resource
 
                                 TextInput::make('capability_points')
                                     ->numeric()
-                                    ->nullable(),
+                                    ->nullable()
+                                    ->label('Punkty za możliwości'),
 
                                 TextInput::make('profitability_points')
                                     ->numeric()
-                                    ->nullable(),
+                                    ->nullable()
+                                    ->label('Punkty za opłacalność'),
                             ]),
 
                         Tab::make('Humidification')

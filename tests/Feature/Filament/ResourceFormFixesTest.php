@@ -114,21 +114,11 @@ class ResourceFormFixesTest extends TestCase
 
     /**
      * Poprawka: Wszystkie zakładki oczyszczaczy powinny być po polsku.
+     * Tab names are now stored in the DB seeder (FormTabConfigurationSeeder).
      */
     public function test_air_purifier_tab_names_are_in_polish(): void
     {
-        $resourceFile = file_get_contents(app_path('Filament/Resources/AirPurifierResource.php'));
-
-        $englishTabs = ['Basic Information', "'Performance'", "'Humidification'",
-            "'Features'", "'Physical Attributes'", "'Classification'", "'Timestamps'"];
-
-        foreach ($englishTabs as $englishTab) {
-            $this->assertStringNotContainsString(
-                $englishTab,
-                $resourceFile,
-                "Tab {$englishTab} should be translated to Polish"
-            );
-        }
+        $seederFile = file_get_contents(database_path('seeders/FormTabConfigurationSeeder.php'));
 
         $polishTabs = ['Podstawowe informacje', 'Wydajność', 'Nawilżanie', 'Filtry',
             'Funkcje', 'Wymiary', 'Klasyfikacja', 'Daty'];
@@ -136,8 +126,8 @@ class ResourceFormFixesTest extends TestCase
         foreach ($polishTabs as $polishTab) {
             $this->assertStringContainsString(
                 $polishTab,
-                $resourceFile,
-                "Tab '{$polishTab}' should exist in AirPurifierResource"
+                $seederFile,
+                "Tab '{$polishTab}' should exist in FormTabConfigurationSeeder for air_purifiers"
             );
         }
     }
@@ -709,47 +699,26 @@ class ResourceFormFixesTest extends TestCase
 
     /**
      * Poprawka: custom_fields tab powinien być widoczny tylko gdy istnieją custom fields.
+     * Conditional visibility is now handled in FormLayoutService::buildForm().
      */
     public function test_custom_fields_tab_is_conditionally_visible(): void
     {
-        $resourceFiles = [
-            'AirPurifierResource.php',
-            'AirHumidifierResource.php',
-            'AirConditionerResource.php',
-            'DehumidifierResource.php',
-            'UprightVacuumResource.php',
-            'SensorResource.php',
-        ];
+        $serviceFile = file_get_contents(app_path('Services/FormLayoutService.php'));
 
-        foreach ($resourceFiles as $file) {
-            $content = file_get_contents(app_path("Filament/Resources/{$file}"));
-
-            $this->assertStringContainsString(
-                'count($customFieldSchema) > 0',
-                $content,
-                "{$file}: custom_fields tab should have conditional visibility"
-            );
-        }
+        $this->assertStringContainsString(
+            'count($customFieldSchema) > 0',
+            $serviceFile,
+            'FormLayoutService::buildForm() should handle custom_fields tab conditional visibility'
+        );
     }
 
     /**
      * Poprawka: Wszystkie zakładki czujników powinny być po polsku.
+     * Tab names are now stored in the DB seeder (FormTabConfigurationSeeder).
      */
     public function test_sensor_tab_names_are_in_polish(): void
     {
-        $resourceFile = file_get_contents(app_path('Filament/Resources/SensorResource.php'));
-
-        $englishTabs = ["'Basic information'", "'PM sensors'", "'Chemical sensors'",
-            "'Environmental sensors'", "'Power connectivity'", "'Device features'",
-            "'Dimensions performance'", "'Metadata'"];
-
-        foreach ($englishTabs as $englishTab) {
-            $this->assertStringNotContainsString(
-                $englishTab,
-                $resourceFile,
-                "Tab {$englishTab} should be translated to Polish"
-            );
-        }
+        $seederFile = file_get_contents(database_path('seeders/FormTabConfigurationSeeder.php'));
 
         $polishTabs = ['Podstawowe informacje', 'Czujniki PM', 'Czujniki chemiczne',
             'Czujniki środowiskowe', 'Zasilanie i łączność', 'Funkcje urządzenia',
@@ -758,8 +727,8 @@ class ResourceFormFixesTest extends TestCase
         foreach ($polishTabs as $polishTab) {
             $this->assertStringContainsString(
                 $polishTab,
-                $resourceFile,
-                "Tab '{$polishTab}' should exist in SensorResource"
+                $seederFile,
+                "Tab '{$polishTab}' should exist in FormTabConfigurationSeeder for sensors"
             );
         }
     }

@@ -16,6 +16,9 @@ final class DatabaseSeeder extends Seeder
         $this->call([
             TableColumnPreferenceSeeder::class,
             ProductTaxonomiesSeeder::class,
+            FormTabConfigurationSeeder::class,
+            FormSectionConfigurationSeeder::class,
+            FormFieldConfigurationSeeder::class,
         ]);
     }
 }

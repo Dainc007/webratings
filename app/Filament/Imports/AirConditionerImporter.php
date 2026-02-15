@@ -140,7 +140,7 @@ final class AirConditionerImporter extends Importer
                 }),
             ImportColumn::make('remote_control')
                 ->boolean(),
-            ImportColumn::make('productFunctions')
+            ImportColumn::make('product_functions_legacy')
                 ->castStateUsing(function ($state) {
                     if (is_null($state) || $state === '' || $state === 'null') {
                         return null;

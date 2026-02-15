@@ -235,7 +235,7 @@ class FormFieldSearchTest extends TestCase
         $response = $this->get(AirPurifierResource::getUrl('create'));
 
         $response->assertSuccessful();
-        $response->assertSee('Search form fields...', escape: false);
+        $response->assertSee('Wpisz nazwę pola którego szukasz...', escape: false);
     }
 
     /**
@@ -246,7 +246,7 @@ class FormFieldSearchTest extends TestCase
         $response = $this->get(AirHumidifierResource::getUrl('create'));
 
         $response->assertSuccessful();
-        $response->assertSee('Search form fields...', escape: false);
+        $response->assertSee('Wpisz nazwę pola którego szukasz...', escape: false);
     }
 
     /**
@@ -257,7 +257,7 @@ class FormFieldSearchTest extends TestCase
         $response = $this->get(SensorResource::getUrl('create'));
 
         $response->assertSuccessful();
-        $response->assertSee('Search form fields...', escape: false);
+        $response->assertSee('Wpisz nazwę pola którego szukasz...', escape: false);
     }
 
     /**
@@ -268,7 +268,7 @@ class FormFieldSearchTest extends TestCase
         $response = $this->get(DehumidifierResource::getUrl('create'));
 
         $response->assertSuccessful();
-        $response->assertSee('Search form fields...', escape: false);
+        $response->assertSee('Wpisz nazwę pola którego szukasz...', escape: false);
     }
 
     /**
@@ -279,7 +279,7 @@ class FormFieldSearchTest extends TestCase
         $response = $this->get(AirConditionerResource::getUrl('create'));
 
         $response->assertSuccessful();
-        $response->assertSee('Search form fields...', escape: false);
+        $response->assertSee('Wpisz nazwę pola którego szukasz...', escape: false);
     }
 
     /**
@@ -290,7 +290,7 @@ class FormFieldSearchTest extends TestCase
         $response = $this->get(UprightVacuumResource::getUrl('create'));
 
         $response->assertSuccessful();
-        $response->assertSee('Search form fields...', escape: false);
+        $response->assertSee('Wpisz nazwę pola którego szukasz...', escape: false);
     }
 
     // ==========================================

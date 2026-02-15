@@ -75,7 +75,7 @@ final class DehumidifierImporter extends Importer
             ImportColumn::make('refrigerant_amount')
                 ->numeric(),
             ImportColumn::make('needs_to_be_completed'),
-            ImportColumn::make('productFunctions')
+            ImportColumn::make('product_functions_legacy')
                 ->castStateUsing(function ($state) {
                     if (is_null($state) || $state === '' || $state === 'null') {
                         return null;

@@ -57,7 +57,7 @@ class ResourceFormTest extends TestCase
                 'partner_link_rel_2' => ['nofollow', 'sponsored'],
                 'ceneo_link_rel_2' => ['nofollow'],
                 'modes_of_operation' => ['auto', 'manual'],
-                'higrostat' => ['enabled'],
+                'higrostat' => true,
             ])
             ->call('create')
             ->assertHasNoFormErrors();
@@ -72,7 +72,7 @@ class ResourceFormTest extends TestCase
         $this->assertIsArray($dehumidifier->partner_link_rel_2);
         $this->assertIsArray($dehumidifier->ceneo_link_rel_2);
         $this->assertIsArray($dehumidifier->modes_of_operation);
-        $this->assertIsArray($dehumidifier->higrostat);
+        $this->assertTrue((bool) $dehumidifier->higrostat);
     }
 
     /**
@@ -89,7 +89,7 @@ class ResourceFormTest extends TestCase
                 'partner_link_rel_2' => [],
                 'ceneo_link_rel_2' => [],
                 'modes_of_operation' => [],
-                'higrostat' => [],
+                'higrostat' => false,
             ])
             ->call('create')
             ->assertHasNoFormErrors();

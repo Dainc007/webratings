@@ -27,7 +27,7 @@ final class Dehumidifier extends Model
         'colors' => 'array',
         'date_created' => 'datetime',
         'date_updated' => 'datetime',
-        'higrostat' => 'array', // JSON column in database, used with TagsInput
+        'higrostat' => 'boolean', // Changed from array to boolean: form now uses Toggle
         'mesh_filter' => 'boolean',
         'hepa_filter' => 'boolean',
         'carbon_filter' => 'boolean',

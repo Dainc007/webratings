@@ -93,7 +93,7 @@ final class AirHumidifierImporter extends Importer
             ImportColumn::make('control_other'),
             ImportColumn::make('remote_control')
                 ->boolean(),
-            ImportColumn::make('productFunctions')
+            ImportColumn::make('product_functions_legacy')
                 ->castStateUsing(function ($state): array {
                     if (empty($state)) {
                         return [];

@@ -7,14 +7,14 @@
     }}
 >
     <div x-data="formFieldSearch" x-on:click.outside="close()">
-        {{-- Search Input - using Filament's native fi-input-wrp structure --}}
-        <div class="fi-input-wrp">
-            <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-inline">
-                <svg class="fi-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        {{-- Search Input --}}
+        <div class="flex items-center rounded-lg border border-gray-300 bg-white shadow-sm transition duration-75 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-white/10 dark:bg-white/5">
+            <div class="flex items-center ps-3 text-gray-400 dark:text-gray-500">
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
             </div>
-            <div class="fi-input-wrp-content-ctn">
+            <div class="min-w-0 flex-1">
                 <input
                     x-ref="searchInput"
                     type="search"
@@ -27,11 +27,11 @@
                     x-on:keydown.enter.prevent="selectCurrent()"
                     x-on:keydown.escape="close(); $refs.searchInput.blur()"
                     placeholder="Search form fields..."
-                    class="fi-input fi-input-has-inline-prefix"
+                    class="block w-full border-none bg-transparent py-2 pe-3 ps-2 text-sm text-gray-950 placeholder-gray-400 outline-none focus:ring-0 dark:text-white dark:placeholder-gray-500"
                 />
             </div>
-            <div class="fi-input-wrp-suffix fi-inline">
-                <span class="fi-input-wrp-label">/</span>
+            <div class="flex items-center pe-3">
+                <span class="rounded border border-gray-300 px-1.5 py-0.5 font-mono text-xs text-gray-400 dark:border-gray-600 dark:text-gray-500">/</span>
             </div>
         </div>
 
@@ -345,7 +345,7 @@
                 if (!this.query) return text;
                 var escaped = this.query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 var regex = new RegExp('(' + escaped + ')', 'gi');
-                return text.replace(regex, '<mark class="bg-yellow-200 rounded px-0.5 dark:bg-yellow-500/20">$1</mark>');
+                return text.replace(regex, '<mark class="bg-yellow-200 text-yellow-900 rounded px-0.5 dark:bg-yellow-500/20 dark:text-yellow-200">$1</mark>');
             },
         }));
     }

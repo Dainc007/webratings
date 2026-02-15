@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Filament\Components\FormFieldSearch;
 use App\Filament\Imports\AirConditionerImporter;
 use App\Filament\Resources\AirConditionerResource\Pages\CreateAirConditioner;
 use App\Filament\Resources\AirConditionerResource\Pages\EditAirConditioner;
@@ -56,6 +57,7 @@ final class AirConditionerResource extends Resource
 
         return $schema
             ->components([
+                FormFieldSearch::make(),
                 Tabs::make('Formularz Klimatyzatora')
                     ->columnSpanFull()
                     ->tabs([

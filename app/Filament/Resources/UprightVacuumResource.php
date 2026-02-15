@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Filament\Components\FormFieldSearch;
 use App\Filament\Imports\UprightVacuumImporter;
 use App\Filament\Resources\UprightVacuumResource\Pages\CreateUprightVacuum;
 use App\Filament\Resources\UprightVacuumResource\Pages\EditUprightVacuum;
@@ -52,6 +53,7 @@ final class UprightVacuumResource extends Resource
 
         return $schema
             ->components([
+                FormFieldSearch::make(),
                 Tabs::make('Formularz Odkurzacza Pionowego')
                     ->columnSpanFull()
                     ->tabs([

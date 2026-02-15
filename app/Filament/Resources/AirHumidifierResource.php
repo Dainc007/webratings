@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Filament\Components\FormFieldSearch;
 use App\Filament\Imports\AirHumidifierImporter;
 use App\Filament\Resources\AirHumidifierResource\Pages\CreateAirHumidifier;
 use App\Filament\Resources\AirHumidifierResource\Pages\EditAirHumidifier;
@@ -56,6 +57,7 @@ final class AirHumidifierResource extends Resource
 
         return $schema
             ->components([
+                FormFieldSearch::make(),
                 Tabs::make('Formularz Nawilżacza Powietrza')
                     ->tabs([
                         Tab::make('Podstawowe informacje')

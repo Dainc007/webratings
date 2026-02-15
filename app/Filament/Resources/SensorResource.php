@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Filament\Components\FormFieldSearch;
 use App\Filament\Imports\SensorImporter;
 use App\Filament\Resources\SensorResource\Pages\CreateSensor;
 use App\Filament\Resources\SensorResource\Pages\EditSensor;
@@ -57,6 +58,7 @@ final class SensorResource extends Resource
 
         return $schema
             ->components([
+                FormFieldSearch::make(),
                 Tabs::make('Sensor form')
                     ->tabs([
                         Tab::make('Podstawowe informacje')

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Enums\DehumidifierType;
+use App\Filament\Components\FormFieldSearch;
 use App\Filament\Imports\DehumidifierImporter;
 use App\Filament\Resources\DehumidifierResource\Pages\CreateDehumidifier;
 use App\Filament\Resources\DehumidifierResource\Pages\EditDehumidifier;
@@ -57,6 +58,7 @@ final class DehumidifierResource extends Resource
 
         return $schema
             ->components([
+                FormFieldSearch::make(),
                 Tabs::make('Formularz Osuszacza')
                     ->columnSpanFull()
                     ->tabs([

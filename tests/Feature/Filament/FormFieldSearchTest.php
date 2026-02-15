@@ -80,15 +80,49 @@ class FormFieldSearchTest extends TestCase
     }
 
     /**
-     * The view contains proper dark mode CSS classes for the dropdown.
+     * The dedicated CSS file exists in public directory.
      */
-    public function test_form_field_search_view_has_dark_mode_classes(): void
+    public function test_form_field_search_css_file_exists(): void
+    {
+        $cssPath = public_path('css/filament/form-field-search.css');
+
+        $this->assertFileExists($cssPath);
+    }
+
+    /**
+     * The CSS file contains dark mode rules using .dark selector.
+     */
+    public function test_form_field_search_css_has_dark_mode_rules(): void
+    {
+        $cssContent = file_get_contents(public_path('css/filament/form-field-search.css'));
+
+        $this->assertStringContainsString('.dark .ffs-input-box', $cssContent);
+        $this->assertStringContainsString('.dark .ffs-dropdown', $cssContent);
+        $this->assertStringContainsString('.dark .ffs-input', $cssContent);
+        $this->assertStringContainsString('.dark .ffs-result-label', $cssContent);
+        $this->assertStringContainsString('.dark .ffs-highlight', $cssContent);
+    }
+
+    /**
+     * The CSS asset is registered in AdminPanelProvider.
+     */
+    public function test_form_field_search_css_is_registered_in_panel(): void
+    {
+        $providerContent = file_get_contents(app_path('Providers/Filament/AdminPanelProvider.php'));
+
+        $this->assertStringContainsString("Css::make('form-field-search')", $providerContent);
+        $this->assertStringContainsString('form-field-search.css', $providerContent);
+    }
+
+    /**
+     * The Blade view does NOT contain inline <style> blocks (CSS is in dedicated file).
+     */
+    public function test_form_field_search_view_has_no_inline_styles(): void
     {
         $viewContent = file_get_contents(resource_path('views/filament/components/form-field-search.blade.php'));
 
-        $this->assertStringContainsString('dark:bg-gray-900', $viewContent);
-        $this->assertStringContainsString('dark:text-gray-200', $viewContent);
-        $this->assertStringContainsString('dark:ring-white/10', $viewContent);
+        $this->assertStringNotContainsString('<style>', $viewContent);
+        $this->assertStringNotContainsString('</style>', $viewContent);
     }
 
     /**

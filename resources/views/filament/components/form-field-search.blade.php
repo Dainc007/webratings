@@ -3,18 +3,18 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-form-field-search relative'])
+            ->class(['fi-form-field-search'])
     }}
 >
-    <div x-data="formFieldSearch" x-on:click.outside="close()">
+    <div class="ffs-wrapper" x-data="formFieldSearch" x-on:click.outside="close()">
         {{-- Search Input --}}
-        <div class="flex items-center rounded-lg border border-gray-300 bg-white shadow-sm transition duration-75 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-white/10 dark:bg-white/5">
-            <div class="flex items-center ps-3 text-gray-400 dark:text-gray-500">
-                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <div class="ffs-input-box">
+            <div class="ffs-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
             </div>
-            <div class="min-w-0 flex-1">
+            <div class="ffs-input-ctn">
                 <input
                     x-ref="searchInput"
                     type="search"
@@ -27,11 +27,11 @@
                     x-on:keydown.enter.prevent="selectCurrent()"
                     x-on:keydown.escape="close(); $refs.searchInput.blur()"
                     placeholder="Search form fields..."
-                    class="block w-full border-none bg-transparent py-2 pe-3 ps-2 text-sm text-gray-950 placeholder-gray-400 outline-none focus:ring-0 dark:text-white dark:placeholder-gray-500"
+                    class="ffs-input"
                 />
             </div>
-            <div class="flex items-center pe-3">
-                <span class="rounded border border-gray-300 px-1.5 py-0.5 font-mono text-xs text-gray-400 dark:border-gray-600 dark:text-gray-500">/</span>
+            <div class="ffs-kbd-hint">
+                <span>/</span>
             </div>
         </div>
 
@@ -39,40 +39,37 @@
         <div
             x-show="isOpen"
             x-transition:enter="transition ease-out duration-100"
-            x-transition:enter-start="opacity-0 -translate-y-1"
-            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
             x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-1"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
             x-cloak
-            class="absolute z-50 mt-1 w-full overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+            class="ffs-dropdown"
         >
-            <ul x-ref="resultsList" class="max-h-64 overflow-y-auto py-1" role="listbox" style="margin: 0; padding: 0.25rem 0; list-style: none;">
+            <ul x-ref="resultsList" class="ffs-results" role="listbox">
                 <template x-for="(result, index) in results" :key="result.id">
                     <li
                         role="option"
                         :aria-selected="selectedIndex === index"
                         x-on:click="navigateToResult(result)"
                         x-on:mouseenter="selectedIndex = index"
-                        :class="selectedIndex === index
-                            ? 'bg-gray-50 dark:bg-white/5'
-                            : ''"
-                        class="flex cursor-pointer items-center justify-between gap-3 px-3 py-2 text-sm transition-colors"
+                        :class="selectedIndex === index ? 'ffs-result-item ffs-selected' : 'ffs-result-item'"
                     >
-                        <span class="min-w-0 truncate text-gray-700 dark:text-gray-200" x-html="highlightMatch(result.label)"></span>
-                        <div class="flex shrink-0 items-center gap-1.5">
+                        <span class="ffs-result-label" x-html="highlightMatch(result.label)"></span>
+                        <div class="ffs-badge">
                             <span
                                 x-show="result.type === 'tab'"
-                                class="rounded-md bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-600 dark:bg-primary-400/10 dark:text-primary-400"
+                                class="ffs-badge-tab"
                             >Tab</span>
                             <span
                                 x-show="result.type === 'section'"
-                                class="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                                class="ffs-badge-section"
                             >Section</span>
                             <span
                                 x-show="result.tab && result.type === 'field'"
                                 x-text="result.tab"
-                                class="rounded-md bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-600 dark:bg-primary-400/10 dark:text-primary-400"
+                                class="ffs-badge-tab"
                             ></span>
                         </div>
                     </li>
@@ -80,18 +77,18 @@
             </ul>
 
             {{-- Footer --}}
-            <div class="flex items-center gap-3 border-t border-gray-100 px-3 py-1.5 text-[11px] text-gray-400 dark:border-white/5 dark:text-gray-500">
-                <span class="inline-flex items-center gap-1">
-                    <kbd class="rounded border border-gray-300 px-1 font-mono dark:border-gray-600">&uarr;</kbd>
-                    <kbd class="rounded border border-gray-300 px-1 font-mono dark:border-gray-600">&darr;</kbd>
+            <div class="ffs-footer">
+                <span>
+                    <kbd>&uarr;</kbd>
+                    <kbd>&darr;</kbd>
                     navigate
                 </span>
-                <span class="inline-flex items-center gap-1">
-                    <kbd class="rounded border border-gray-300 px-1 font-mono dark:border-gray-600">&crarr;</kbd>
+                <span>
+                    <kbd>&crarr;</kbd>
                     select
                 </span>
-                <span class="inline-flex items-center gap-1">
-                    <kbd class="rounded border border-gray-300 px-1 font-mono dark:border-gray-600">esc</kbd>
+                <span>
+                    <kbd>esc</kbd>
                     close
                 </span>
             </div>
@@ -247,13 +244,11 @@
                 if (!el) return;
 
                 if (result.type === 'tab') {
-                    // For tabs: just click the tab button directly
                     el.click();
 
                     this.isOpen = false;
                     this.query = '';
 
-                    // Scroll to the top of the tab content
                     setTimeout(function() {
                         var tabsContainer = el.closest('.fi-sc-tabs');
                         if (tabsContainer) {
@@ -264,14 +259,11 @@
                 }
 
                 // For fields and sections:
-
-                // 1. Switch to the correct tab
                 var tabPanel = el.closest('[role="tabpanel"]');
                 if (tabPanel) {
                     tabPanel.dispatchEvent(new CustomEvent('expand', { bubbles: false }));
                 }
 
-                // 2. Expand collapsed sections
                 var current = el.parentElement;
                 while (current) {
                     if (current.tagName === 'SECTION' && current.classList.contains('fi-collapsible')) {
@@ -280,11 +272,9 @@
                     current = current.parentElement;
                 }
 
-                // 3. Close search
                 this.isOpen = false;
                 this.query = '';
 
-                // 4. Scroll and highlight
                 setTimeout(function() {
                     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -297,7 +287,6 @@
                         el.style.borderRadius = '';
                     }, 2000);
 
-                    // Focus input for fields
                     if (result.type === 'field') {
                         var input = el.querySelector('input, select, textarea');
                         if (input && typeof input.focus === 'function') {
@@ -345,7 +334,7 @@
                 if (!this.query) return text;
                 var escaped = this.query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 var regex = new RegExp('(' + escaped + ')', 'gi');
-                return text.replace(regex, '<mark class="bg-yellow-200 text-yellow-900 rounded px-0.5 dark:bg-yellow-500/20 dark:text-yellow-200">$1</mark>');
+                return text.replace(regex, '<span class="ffs-highlight">$1</span>');
             },
         }));
     }

@@ -26,6 +26,7 @@ final class UprightVacuum extends Model
         'display_type' => 'array',
         'additional_equipment' => 'array',
         'charging_station' => 'array',
+        'type_of_washing' => 'array',
     ];
 
     public function types(): MorphToMany

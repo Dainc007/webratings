@@ -422,6 +422,7 @@ final class UprightVacuumResource extends Resource
 
                                         Select::make('charging_station')
                                             ->label('Stacja ładująca')
+                                            ->multiple()
                                             ->options([
                                                 'brak' => 'Brak',
                                                 'scienna' => 'Ścienna',

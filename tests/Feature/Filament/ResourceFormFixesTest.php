@@ -476,22 +476,33 @@ class ResourceFormFixesTest extends TestCase
     }
 
     /**
-     * Poprawka: type_of_washing zmieniony na Select::multiple().
+     * Poprawka: type_of_washing zmieniony na Select::multiple() z castem array.
      */
     public function test_upright_vacuum_type_of_washing_multi_select(): void
     {
         $validTypes = ['suche', 'mokre', 'parowe', 'hybrydowe'];
 
+        // Test storing a single value as array
         foreach ($validTypes as $type) {
             $vacuum = UprightVacuum::create([
                 'status' => 'draft',
                 'model' => "Washing Type {$type} Test " . time(),
                 'brand_name' => 'Test Brand',
-                'type_of_washing' => $type,
+                'type_of_washing' => [$type],
             ]);
 
-            $this->assertEquals($type, $vacuum->type_of_washing);
+            $this->assertEquals([$type], $vacuum->type_of_washing);
         }
+
+        // Test storing multiple values
+        $vacuum = UprightVacuum::create([
+            'status' => 'draft',
+            'model' => 'Washing Multi Test ' . time(),
+            'brand_name' => 'Test Brand',
+            'type_of_washing' => ['suche', 'mokre'],
+        ]);
+
+        $this->assertEquals(['suche', 'mokre'], $vacuum->type_of_washing);
     }
 
     /**
@@ -567,22 +578,33 @@ class ResourceFormFixesTest extends TestCase
     }
 
     /**
-     * Poprawka: charging_station zmienione na Select z opcjami.
+     * Poprawka: charging_station zmienione na Select::multiple() z opcjami.
      */
     public function test_upright_vacuum_charging_station_select(): void
     {
         $options = ['brak', 'scienna', 'stojaca', 'stacja_dokujaca', 'podstawka'];
 
+        // Test storing single values as arrays (since the field is now multiple)
         foreach ($options as $option) {
             $vacuum = UprightVacuum::create([
                 'status' => 'draft',
                 'model' => "Charging {$option} Test " . time(),
                 'brand_name' => 'Test Brand',
-                'charging_station' => $option,
+                'charging_station' => [$option],
             ]);
 
-            $this->assertEquals($option, $vacuum->charging_station);
+            $this->assertEquals([$option], $vacuum->charging_station);
         }
+
+        // Test storing multiple values
+        $vacuum = UprightVacuum::create([
+            'status' => 'draft',
+            'model' => 'Charging Multi Test ' . time(),
+            'brand_name' => 'Test Brand',
+            'charging_station' => ['scienna', 'stojaca'],
+        ]);
+
+        $this->assertEquals(['scienna', 'stojaca'], $vacuum->charging_station);
     }
 
     /**
@@ -776,5 +798,75 @@ class ResourceFormFixesTest extends TestCase
     {
         $migrationPath = database_path('migrations/2026_02_06_000000_fix_postgresql_sequences.php');
         $this->assertFileExists($migrationPath);
+    }
+
+    // ==========================================
+    // Edit Page Hydration Tests
+    // ==========================================
+
+    /**
+     * Regression test: edit page for UprightVacuum with array data must not crash.
+     *
+     * This covers the "Array to string conversion" bug caused by a mismatch
+     * between model $casts (array) and Select fields without ->multiple().
+     * The error only manifests on edit pages when hydrating form state.
+     */
+    public function test_upright_vacuum_edit_page_renders_with_array_fields(): void
+    {
+        $vacuum = UprightVacuum::create([
+            'status' => 'draft',
+            'model' => 'Edit Hydration Test ' . time(),
+            'brand_name' => 'Test Brand',
+            'charging_station' => ['scienna', 'stojaca'],
+            'type_of_washing' => ['suche', 'mokre'],
+            'vacuum_cleaner_type' => ['bezworkowy'],
+            'power_supply' => ['Akumulatorowe'],
+            'display_type' => ['LCD'],
+        ]);
+
+        $response = $this->get("/admin/upright-vacuums/{$vacuum->id}/edit");
+
+        $response->assertSuccessful();
+    }
+
+    /**
+     * Verify that all array-cast fields on UprightVacuum have ->multiple() on
+     * their Select components (if they use Select), to prevent hydration crashes.
+     */
+    public function test_upright_vacuum_array_casts_match_multiple_selects(): void
+    {
+        $resourceContent = file_get_contents(
+            app_path('Filament/Resources/UprightVacuumResource.php')
+        );
+
+        $model = new UprightVacuum;
+        $casts = $model->getCasts();
+
+        // Fields that use Select (not TagsInput/FileUpload) and have array cast
+        $selectArrayFields = ['charging_station', 'type_of_washing', 'vacuum_cleaner_type',
+            'power_supply', 'display_type', 'partner_link_rel_2', 'ceneo_link_rel_2'];
+
+        foreach ($selectArrayFields as $field) {
+            // Verify field has array cast
+            $this->assertArrayHasKey(
+                $field,
+                $casts,
+                "Field '{$field}' should have a cast defined in UprightVacuum model"
+            );
+            $this->assertEquals(
+                'array',
+                $casts[$field],
+                "Field '{$field}' should be cast as 'array' in UprightVacuum model"
+            );
+
+            // Verify Select has ->multiple() - check that between Select::make('field') and the next
+            // Select::make( or closing bracket, there is a ->multiple() call
+            $pattern = "/Select::make\('{$field}'\).*?->multiple\(\)/s";
+            $this->assertMatchesRegularExpression(
+                $pattern,
+                $resourceContent,
+                "Select::make('{$field}') must have ->multiple() since the model casts it as array"
+            );
+        }
     }
 }

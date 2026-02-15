@@ -26,7 +26,7 @@
                     x-on:keydown.arrow-up.prevent="moveUp()"
                     x-on:keydown.enter.prevent="selectCurrent()"
                     x-on:keydown.escape="close(); $refs.searchInput.blur()"
-                    placeholder="Search form fields..."
+                    placeholder="Wpisz nazwę pola którego szukasz..."
                     class="ffs-input"
                 />
             </div>

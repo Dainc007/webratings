@@ -80,13 +80,24 @@ class FormFieldSearchTest extends TestCase
     }
 
     /**
-     * The dedicated CSS file exists in public directory.
+     * The CSS source file exists in resources directory.
      */
-    public function test_form_field_search_css_file_exists(): void
+    public function test_form_field_search_css_source_exists(): void
     {
-        $cssPath = public_path('css/filament/form-field-search.css');
+        $cssPath = resource_path('css/filament/form-field-search.css');
 
         $this->assertFileExists($cssPath);
+    }
+
+    /**
+     * The CSS file is published to public by filament:assets.
+     */
+    public function test_form_field_search_css_is_published_to_public(): void
+    {
+        // filament:assets copies to public/css/app/{id}.css by default
+        $publicPath = public_path('css/app/form-field-search.css');
+
+        $this->assertFileExists($publicPath);
     }
 
     /**
@@ -94,7 +105,7 @@ class FormFieldSearchTest extends TestCase
      */
     public function test_form_field_search_css_has_dark_mode_rules(): void
     {
-        $cssContent = file_get_contents(public_path('css/filament/form-field-search.css'));
+        $cssContent = file_get_contents(resource_path('css/filament/form-field-search.css'));
 
         $this->assertStringContainsString('.dark .ffs-input-box', $cssContent);
         $this->assertStringContainsString('.dark .ffs-dropdown', $cssContent);
@@ -104,13 +115,14 @@ class FormFieldSearchTest extends TestCase
     }
 
     /**
-     * The CSS asset is registered in AdminPanelProvider.
+     * The CSS asset is registered in AdminPanelProvider with source path.
      */
     public function test_form_field_search_css_is_registered_in_panel(): void
     {
         $providerContent = file_get_contents(app_path('Providers/Filament/AdminPanelProvider.php'));
 
-        $this->assertStringContainsString("Css::make('form-field-search')", $providerContent);
+        $this->assertStringContainsString("Css::make('form-field-search'", $providerContent);
+        $this->assertStringContainsString('resource_path(', $providerContent);
         $this->assertStringContainsString('form-field-search.css', $providerContent);
     }
 

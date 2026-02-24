@@ -108,6 +108,27 @@ final class DehumidifierResource extends Resource
                                             ->label('Informacje o zniżce')
                                             ->columnSpanFull(),
                                     ])->columns(2),
+                                    Section::make('Oceny i ranking')
+                                    ->schema([
+                                        TextInput::make('capability')
+                                            ->numeric()
+                                            ->label('Ocena możliwości'),
+
+                                        TextInput::make('profitability')
+                                            ->numeric()
+                                            ->label('Ocena opłacalności'),
+
+                                        TextInput::make('ranking')
+                                            ->numeric()
+                                            ->label('Pozycja w rankingu'),
+
+                                        Toggle::make('ranking_hidden')
+                                            ->label('Ukryj w rankingu'),
+
+                                        Toggle::make('main_ranking')
+                                            ->label('Główny ranking'),
+                                    ])->columns(2)
+                                    ->collapsible(),
 
                                 Section::make('Linki partnerskie')
                                     ->schema([
@@ -162,28 +183,6 @@ final class DehumidifierResource extends Resource
                                             ->label('Link do recenzji')
                                             ->columnSpanFull(),
                                     ])
-                                    ->collapsible(),
-
-                                Section::make('Oceny i ranking')
-                                    ->schema([
-                                        TextInput::make('capability')
-                                            ->numeric()
-                                            ->label('Ocena możliwości'),
-
-                                        TextInput::make('profitability')
-                                            ->numeric()
-                                            ->label('Ocena opłacalności'),
-
-                                        TextInput::make('ranking')
-                                            ->numeric()
-                                            ->label('Pozycja w rankingu'),
-
-                                        Toggle::make('ranking_hidden')
-                                            ->label('Ukryj w rankingu'),
-
-                                        Toggle::make('main_ranking')
-                                            ->label('Główny ranking'),
-                                    ])->columns(2)
                                     ->collapsible(),
                             ]),
 

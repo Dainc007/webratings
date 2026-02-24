@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
@@ -18,12 +19,11 @@ final class AirHumidifier extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'status' => Status::class,
         'colors' => 'array',
         'mobile_features' => 'array',
         'gallery' => 'array',
         'control_other' => 'array',
-        // Note: productFunctions is a MorphToMany relationship, not a JSON column cast
-        // The JSON column in the database is legacy - the relationship is used instead
     ];
 
     public function types(): MorphToMany

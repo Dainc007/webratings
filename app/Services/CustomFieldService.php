@@ -71,28 +71,42 @@ final class CustomFieldService
 
             if ($column['column_name'] === 'status') {
                 $field->badge()
-                    ->formatStateUsing(function (Status|string|null $state): string {
+                    ->formatStateUsing(function (mixed $state): string {
                         if ($state === null) {
                             return '';
                         }
-                        $status = $state instanceof Status ? $state : Status::from($state);
+                        $status = $state instanceof Status ? $state : Status::from((string) $state);
 
                         return $status->getLabel();
                     })
-                    ->color(function (Status|string|null $state): string {
+                    ->color(function (mixed $state): string {
                         if ($state === null) {
                             return 'gray';
                         }
-                        $status = $state instanceof Status ? $state : Status::from($state);
+                        $status = $state instanceof Status ? $state : Status::from((string) $state);
 
                         return $status->getColor();
+                    })
+                    ->searchable(query: function ($query, string $search): void {
+                        $matchingValues = collect(Status::cases())
+                            ->filter(fn (Status $s) => str_contains(
+                                mb_strtolower($s->getLabel()),
+                                mb_strtolower($search)
+                            ))
+                            ->map(fn (Status $s) => $s->value)
+                            ->values()
+                            ->all();
+
+                        $query->whereIn('status', $matchingValues);
                     });
             }
 
-            $field->when(
-                Schema::hasColumn($tableName, $column['column_name']),
-                fn (): TextColumn|TextInputColumn => $field->searchable()
-            );
+            if ($column['column_name'] !== 'status') {
+                $field->when(
+                    Schema::hasColumn($tableName, $column['column_name']),
+                    fn (): TextColumn|TextInputColumn => $field->searchable()
+                );
+            }
 
             $availableColumns[] = $field;
         }

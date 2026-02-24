@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Enums\Status;
 use App\Filament\Components\FormFieldSearch;
 use App\Filament\Imports\AirHumidifierImporter;
 use App\Filament\Resources\AirHumidifierResource\Pages\CreateAirHumidifier;
@@ -66,7 +67,10 @@ final class AirHumidifierResource extends Resource
                                     ->schema([
                                         TextInput::make('remote_id')
                                             ->label('ID zdalne'),
-                                        TextInput::make('status')
+                                        Select::make('status')
+                                            ->default('draft')
+                                            ->selectablePlaceholder(false)
+                                            ->options(Status::getOptions())
                                             ->label('Status'),
                                         TextInput::make('model')
                                             ->label('Model'),
@@ -144,6 +148,7 @@ final class AirHumidifierResource extends Resource
                                                 'ultradźwiękowy' => 'Ultradźwiękowy',
                                                 'ewaporacyjny' => 'Ewaporacyjny',
                                                 'parowy' => 'Parowy',
+                                                'nawilżacz z oczyszczaczem' => 'Nawilżacz z oczyszczaczem',
                                             ])
                                             ->searchable(),
                                     ])

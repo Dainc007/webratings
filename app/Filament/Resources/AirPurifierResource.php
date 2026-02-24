@@ -66,33 +66,37 @@ final class AirPurifierResource extends Resource
                     ->tabs([
                         Tab::make('Podstawowe informacje')
                             ->schema([
-                                Select::make('status')
-                                    ->default('draft')
-                                    ->selectablePlaceholder(false)
-                                    ->options(Status::getOptions()),
+                                Section::make('Podstawowe informacje')
+                                    ->schema([
+                                        Select::make('status')
+                                            ->default('draft')
+                                            ->selectablePlaceholder(false)
+                                            ->options(Status::getOptions()),
 
-                                TextInput::make('model')
-                                    ->maxLength(255),
+                                        TextInput::make('model')
+                                            ->maxLength(255),
 
-                                TextInput::make('brand_name')
-                                    ->maxLength(255),
+                                        TextInput::make('brand_name')
+                                            ->maxLength(255),
 
-                                TextInput::make('price')
-                                    ->numeric()
-                                    ->prefix('zł'),
+                                        TextInput::make('price')
+                                            ->numeric()
+                                            ->prefix('zł'),
 
-                                TextInput::make('price_before')
-                                    ->numeric()
-                                    ->prefix('zł')
-                                    ->label('Cena przed'),
+                                        TextInput::make('price_before')
+                                            ->numeric()
+                                            ->prefix('zł')
+                                            ->label('Cena przed'),
 
-                                Textarea::make('discount_info')
-                                    ->label('Informacje o zniżce')
-                                    ->columnSpanFull(),
+                                        DateTimePicker::make('price_date')
+                                            ->default(now())
+                                            ->seconds(false),
 
-                                DateTimePicker::make('price_date')
-                                    ->default(now())
-                                    ->seconds(false),
+                                        Textarea::make('discount_info')
+                                            ->label('Informacje o zniżce')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
 
                                 Section::make('Oceny i ranking')
                                     ->schema([

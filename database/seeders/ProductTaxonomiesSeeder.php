@@ -29,9 +29,11 @@ final class ProductTaxonomiesSeeder extends Seeder
         }
 
         // Seed humidifier-specific product types
+        // Values must be lowercase to match the ProductType name mutator (mb_strtolower),
+        // otherwise firstOrCreate won't find existing records on PostgreSQL (case-sensitive).
         $humidifierTypes = [
-            'Oczyszczacz powietrza z nawilżaczem',
-            'Nawilżacz powietrza z oczyszczaczem',
+            'oczyszczacz powietrza z nawilżaczem',
+            'nawilżacz powietrza z oczyszczaczem',
         ];
 
         foreach ($humidifierTypes as $typeName) {

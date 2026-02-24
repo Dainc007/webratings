@@ -2,30 +2,31 @@
 
 declare(strict_types=1);
 
-use App\Models\ProductType;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    private array $types = [
+        'oczyszczacz powietrza z nawilżaczem',
+        'nawilżacz powietrza z oczyszczaczem',
+    ];
+
     public function up(): void
     {
-        $types = [
-            'Oczyszczacz powietrza z nawilżaczem',
-            'Nawilżacz powietrza z oczyszczaczem',
-        ];
+        $now = now();
 
-        foreach ($types as $typeName) {
-            ProductType::firstOrCreate([
-                'name' => $typeName,
+        foreach ($this->types as $name) {
+            DB::table('product_types')->insertOrIgnore([
+                'name' => $name,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
         }
     }
 
     public function down(): void
     {
-        ProductType::whereIn('name', [
-            'oczyszczacz powietrza z nawilżaczem',
-            'nawilżacz powietrza z oczyszczaczem',
-        ])->delete();
+        DB::table('product_types')->whereIn('name', $this->types)->delete();
     }
 };

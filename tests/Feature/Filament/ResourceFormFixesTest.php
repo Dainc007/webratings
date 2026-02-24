@@ -385,7 +385,7 @@ class ResourceFormFixesTest extends TestCase
     }
 
     /**
-     * Poprawka: power_supply z ->live() kontroluje widoczność cable_length.
+     * Poprawka: power_supply (CheckboxList) z ->live() kontroluje stan cable_length.
      */
     public function test_upright_vacuum_power_supply_array(): void
     {
@@ -401,7 +401,7 @@ class ResourceFormFixesTest extends TestCase
     }
 
     /**
-     * Poprawka: cable_length widoczny tylko przy zasilaniu Sieciowe.
+     * Poprawka: cable_length aktywny tylko przy zasilaniu Sieciowe.
      */
     public function test_upright_vacuum_cable_length_with_sieciowe(): void
     {
@@ -678,20 +678,20 @@ class ResourceFormFixesTest extends TestCase
     }
 
     /**
-     * Poprawka: for_pet_owners i for_allergy_sufferers zmienione z TextInput na Toggle.
+     * Poprawka: for_pet_owners i for_allergy_sufferers zmienione na Select TAK/NIE.
      */
-    public function test_upright_vacuum_purpose_fields_are_toggles(): void
+    public function test_upright_vacuum_purpose_fields_are_selects(): void
     {
         $vacuum = UprightVacuum::create([
             'status' => 'draft',
-            'model' => 'Purpose Toggle Test ' . time(),
+            'model' => 'Purpose Select Test ' . time(),
             'brand_name' => 'Test Brand',
-            'for_pet_owners' => true,
-            'for_allergy_sufferers' => false,
+            'for_pet_owners' => 'tak',
+            'for_allergy_sufferers' => 'nie',
         ]);
 
-        $this->assertTrue((bool) $vacuum->for_pet_owners);
-        $this->assertFalse((bool) $vacuum->for_allergy_sufferers);
+        $this->assertEquals('tak', $vacuum->for_pet_owners);
+        $this->assertEquals('nie', $vacuum->for_allergy_sufferers);
     }
 
     // ==========================================
@@ -830,8 +830,8 @@ class ResourceFormFixesTest extends TestCase
     }
 
     /**
-     * Verify that all array-cast fields on UprightVacuum have ->multiple() on
-     * their Select components (if they use Select), to prevent hydration crashes.
+     * Verify that all array-cast fields on UprightVacuum use a multi-value
+     * component (Select::multiple or CheckboxList) to prevent hydration crashes.
      */
     public function test_upright_vacuum_array_casts_match_multiple_selects(): void
     {
@@ -842,30 +842,32 @@ class ResourceFormFixesTest extends TestCase
         $model = new UprightVacuum;
         $casts = $model->getCasts();
 
-        // Fields that use Select (not TagsInput/FileUpload) and have array cast
         $selectArrayFields = ['charging_station', 'type_of_washing', 'vacuum_cleaner_type',
-            'power_supply', 'display_type', 'partner_link_rel_2', 'ceneo_link_rel_2'];
+            'display_type', 'partner_link_rel_2', 'ceneo_link_rel_2'];
+
+        $checkboxListFields = ['power_supply'];
 
         foreach ($selectArrayFields as $field) {
-            // Verify field has array cast
-            $this->assertArrayHasKey(
-                $field,
-                $casts,
-                "Field '{$field}' should have a cast defined in UprightVacuum model"
-            );
-            $this->assertEquals(
-                'array',
-                $casts[$field],
-                "Field '{$field}' should be cast as 'array' in UprightVacuum model"
-            );
+            $this->assertArrayHasKey($field, $casts);
+            $this->assertEquals('array', $casts[$field]);
 
-            // Verify Select has ->multiple() - check that between Select::make('field') and the next
-            // Select::make( or closing bracket, there is a ->multiple() call
             $pattern = "/Select::make\('{$field}'\).*?->multiple\(\)/s";
             $this->assertMatchesRegularExpression(
                 $pattern,
                 $resourceContent,
                 "Select::make('{$field}') must have ->multiple() since the model casts it as array"
+            );
+        }
+
+        foreach ($checkboxListFields as $field) {
+            $this->assertArrayHasKey($field, $casts);
+            $this->assertEquals('array', $casts[$field]);
+
+            $pattern = "/CheckboxList::make\('{$field}'\)/s";
+            $this->assertMatchesRegularExpression(
+                $pattern,
+                $resourceContent,
+                "CheckboxList::make('{$field}') expected since the model casts it as array"
             );
         }
     }

@@ -18,6 +18,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -85,11 +86,11 @@ final class UprightVacuumResource extends Resource
                                             ->label('Typ odkurzacza')
                                             ->options([
                                                 'pionowy' => 'Pionowy',
-                                                'reczny' => 'Ręczny',
-                                                '2w1' => '2w1 (pionowy + ręczny)',
-                                                'myjacy' => 'Myjący',
-                                                'workowy' => 'Workowy',
-                                                'bezworkowy' => 'Bezworkowy',
+                                                'pionowy_mycie' => 'Pionowy z funkcją mycia',
+                                                'pionowy_led' => 'Pionowy z funkcją podświetlenia LED',
+                                                'pionowy_elektroszczotka' => 'Pionowy z elektroszczotką',
+                                                'odkurzacz_myjacy' => 'Odkurzacz myjący',
+                                                'mop_elektryczny' => 'Mop elektryczny',
                                             ])
                                             ->searchable(),
 
@@ -235,20 +236,21 @@ final class UprightVacuumResource extends Resource
                             ->schema([
                                 Section::make('Zasilanie')
                                     ->schema([
-                                        Select::make('power_supply')
-                                            ->multiple()
+                                        CheckboxList::make('power_supply')
                                             ->options([
                                                 'Akumulatorowe' => 'Akumulatorowe',
                                                 'Sieciowe' => 'Sieciowe',
                                             ])
                                             ->label('Typ zasilania')
+                                            ->columns(2)
                                             ->live(),
 
                                         TextInput::make('cable_length')
                                             ->numeric()
                                             ->suffix('m')
                                             ->label('Długość kabla')
-                                            ->visible(fn (callable $get) => in_array('Sieciowe', $get('power_supply') ?? [])),
+                                            ->disabled(fn (callable $get) => ! in_array('Sieciowe', $get('power_supply') ?? []))
+                                            ->dehydrated(),
                                     ])->columns(2),
 
                                 Section::make('Bateria')
@@ -433,6 +435,13 @@ final class UprightVacuumResource extends Resource
 
                                         TagsInput::make('additional_equipment')
                                             ->label('Dodatkowe wyposażenie')
+                                            ->suggestions([
+                                                'Mini elektroszczotka',
+                                                'Miękka szczotka',
+                                                'Końcówka 2w1 do kurzu',
+                                                'Ssawka szczelinowa',
+                                                'Elastyczny adapter',
+                                            ])
                                             ->columnSpanFull(),
 
                                         Toggle::make('continuous_work')
@@ -492,11 +501,19 @@ final class UprightVacuumResource extends Resource
 
                                 Section::make('Przeznaczenie')
                                     ->schema([
-                                        Toggle::make('for_pet_owners')
-                                            ->label('Dla właścicieli zwierząt'),
+                                        Select::make('for_pet_owners')
+                                            ->label('Dla właścicieli zwierząt')
+                                            ->options([
+                                                'tak' => 'Tak',
+                                                'nie' => 'Nie',
+                                            ]),
 
-                                        Toggle::make('for_allergy_sufferers')
-                                            ->label('Dla alergików'),
+                                        Select::make('for_allergy_sufferers')
+                                            ->label('Dla alergików')
+                                            ->options([
+                                                'tak' => 'Tak',
+                                                'nie' => 'Nie',
+                                            ]),
                                     ])->columns(2),
 
                                 Section::make('Oceny i ranking')

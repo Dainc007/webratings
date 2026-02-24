@@ -41,5 +41,20 @@ final class ProductTaxonomiesSeeder extends Seeder
                 'name' => $typeName,
             ]);
         }
+
+        // Seed air conditioner product functions
+        // Values lowercase to match ProductFunction name mutator (mb_strtolower)
+        $acFunctions = [
+            'urządzenie 2w1', 'urządzenie 3w1', 'urządzenie 4w1', 'urządzenie 5w1',
+            '2 kolory', 'filtr hepa', 'uszczelka na okno gratis', 'funkcja swing',
+            'praca na balkonie', 'wi-fi', 'filtr węglowy', 'tryb automatyczny',
+            'funkcja grzania',
+        ];
+
+        foreach ($acFunctions as $name) {
+            ProductFunction::firstOrCreate([
+                'name' => $name,
+            ]);
+        }
     }
 }

@@ -89,10 +89,14 @@ final class AirConditionerResource extends Resource
                                             ->label('Typ')
                                             ->options([
                                                 'przenosny' => 'Przenośny',
+                                                'przenosny_bez_rury' => 'Przenośny bez rury',
+                                                'przenosny_z_rura' => 'Przenośny z rurą',
+                                                'przenosny_z_oczyszczaniem' => 'Przenośny z funkcją oczyszczania',
                                                 'split' => 'Split',
                                                 'multisplit' => 'Multisplit',
-                                                'monoblok' => 'Monoblok',
-                                                'okienny' => 'Okienny',
+                                                'przypodlogowe' => 'Przypodłogowe',
+                                                'kasetonowe' => 'Kasetonowe',
+                                                'kanalowe' => 'Kanałowe',
                                             ])
                                             ->searchable(),
 

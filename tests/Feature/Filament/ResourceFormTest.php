@@ -215,6 +215,43 @@ class ResourceFormTest extends TestCase
     }
 
     /**
+     * Verify notifications are sent after creating a humidifier with empty form (status prefilled).
+     */
+    public function test_create_humidifier_with_empty_form_sends_notification(): void
+    {
+        $component = Livewire::test(
+            \App\Filament\Resources\AirHumidifierResource\Pages\CreateAirHumidifier::class
+        )
+            ->fillForm([
+                'status' => 'draft',
+            ])
+            ->call('create');
+
+        $component->assertHasNoFormErrors();
+        $component->assertNotified();
+
+        $this->assertDatabaseHas('air_humidifiers', [
+            'status' => 'draft',
+        ]);
+    }
+
+    /**
+     * Simulate clicking "Create" without touching ANY field - exactly as the user would.
+     */
+    public function test_create_humidifier_without_touching_form_sends_notification(): void
+    {
+        $component = Livewire::test(
+            \App\Filament\Resources\AirHumidifierResource\Pages\CreateAirHumidifier::class
+        )
+            ->call('create');
+
+        $component->assertHasNoFormErrors();
+        $component->assertNotified();
+
+        $this->assertEquals(1, \App\Models\AirHumidifier::count());
+    }
+
+    /**
      * Test editing an Air Purifier.
      */
     public function test_can_edit_air_purifier(): void

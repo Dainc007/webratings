@@ -86,5 +86,16 @@ final class ProductTaxonomiesSeeder extends Seeder
                 'name' => $name,
             ]);
         }
+
+        $dehumidifierFunctions = [
+            'filtr hepa', 'filtr węglowy', 'swing', 'pompa wody',
+            'timer', 'jonizator powietrza', 'termometr', 'higrometr',
+        ];
+
+        foreach ($dehumidifierFunctions as $name) {
+            ProductFunction::firstOrCreate([
+                'name' => $name,
+            ]);
+        }
     }
 }

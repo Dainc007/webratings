@@ -117,10 +117,6 @@ final class DehumidifierResource extends Resource
                                             ->numeric()
                                             ->prefix('PLN')
                                             ->label('Cena przed'),
-
-                                        TextInput::make('image')
-                                            ->disabled(),
-
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
                                             ->columnSpanFull(),
@@ -134,6 +130,10 @@ final class DehumidifierResource extends Resource
                                         TextInput::make('profitability')
                                             ->numeric()
                                             ->label('Ocena opłacalności'),
+
+                                        TextInput::make('popularity')
+                                            ->numeric()
+                                            ->label('Popularność'),
 
                                         TextInput::make('ranking')
                                             ->numeric()
@@ -355,8 +355,24 @@ final class DehumidifierResource extends Resource
 
                                 Section::make('Tryby pracy')
                                     ->schema([
-                                        TagsInput::make('modes_of_operation')
+                                        Select::make('modes_of_operation')
                                             ->label('Tryby pracy')
+                                            ->multiple()
+                                            ->searchable()
+                                            ->options([
+                                                'piwnica' => 'Basement (piwnica)',
+                                                'sypialnia' => 'Bedroom (sypialnia)',
+                                                'praca_ciagla' => 'Continous (praca ciągła)',
+                                                'osuszanie_prania' => 'Osuszanie prania',
+                                                'swing' => 'Swing',
+                                                'tryb_automatyczny' => 'Tryb automatyczny',
+                                            ])
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa trybu')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string => $data['name'])
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -440,13 +456,15 @@ final class DehumidifierResource extends Resource
                                     ->schema([
                                         Select::make('productFunctions')
                                             ->relationship('productFunctions', 'name')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
                                             ->createOptionForm([
                                                 TextInput::make('name')
                                                     ->label('Nazwa')
                                                     ->required(),
                                             ])
                                             ->label('Funkcje')
-                                            ->multiple()
                                             ->columnSpanFull(),
 
                                         //                                        TagsInput::make('functions_and_equipment_dehumi')
@@ -459,12 +477,17 @@ final class DehumidifierResource extends Resource
                             ->schema([
                                 Section::make('Chłodziwo')
                                     ->schema([
-                                        TextInput::make('refrigerant_kind')
-                                            ->label('Rodzaj chłodziwa'),
+                                        Select::make('refrigerant_kind')
+                                            ->label('Rodzaj chłodziwa')
+                                            ->options([
+                                                'R290' => 'R290',
+                                                'R410a' => 'R410a',
+                                                'R32' => 'R32',
+                                            ]),
 
                                         TextInput::make('refrigerant_amount')
                                             ->numeric()
-                                            ->suffix('kg')
+                                            ->suffix('g')
                                             ->label('Ilość chłodziwa'),
 
                                         TextInput::make('needs_to_be_completed')

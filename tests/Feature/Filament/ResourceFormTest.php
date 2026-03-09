@@ -56,7 +56,7 @@ class ResourceFormTest extends TestCase
                 'brand_name' => 'Test Brand',
                 'partner_link_rel_2' => ['nofollow', 'sponsored'],
                 'ceneo_link_rel_2' => ['nofollow'],
-                'modes_of_operation' => ['auto', 'manual'],
+                'modes_of_operation' => ['piwnica', 'sypialnia'],
                 'higrostat' => true,
             ])
             ->call('create')

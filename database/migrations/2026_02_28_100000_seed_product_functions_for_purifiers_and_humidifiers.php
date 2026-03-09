@@ -21,6 +21,8 @@ return new class extends Migration
             'zakres prezentowanej wilgotności (w %)',
             'programator czasu pracy (wyłączenia)',
             'wskaźnik temperatury', 'brak funkcji dodatkowych',
+            'filtr hepa', 'filtr węglowy', 'swing', 'pompa wody',
+            'jonizator powietrza', 'termometr', 'higrometr',
         ];
 
         $now = now();

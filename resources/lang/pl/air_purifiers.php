@@ -25,7 +25,7 @@ return [
     'water_tank_capacity' => 'Pojemność zbiornika wody',
     'hygrometer' => 'Higrometr',
     'hygrostat' => 'Higrostat',
-    'evaporative_filter' => 'Filtr odparowujący',
+    'evaporative_filter' => 'Filtr ewaporacyjny',
     'evaporative_filter_life' => 'Żywotność filtra odparowującego',
     'evaporative_filter_price' => 'Cena filtra odparowującego',
     'ionizer_type' => 'Typ jonizatora',
@@ -156,8 +156,8 @@ return [
         // Filters
         'filters' => [
             'evaporative' => [
-                'section_title' => 'Filtr odparowujący',
-                'has_filter' => 'Posiada filtr odparowujący',
+                'section_title' => 'Filtr ewaporacyjny',
+                'has_filter' => 'Posiada filtr ewaporacyjny',
                 'filter_life' => 'Żywotność filtra (miesiące)',
                 'filter_price' => 'Cena filtra (PLN)',
             ],

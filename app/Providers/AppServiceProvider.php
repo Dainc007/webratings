@@ -83,7 +83,9 @@ final class AppServiceProvider extends ServiceProvider
             $filter->translateLabel();
         });
         Field::configureUsing(function (Field $field): void {
-            $field->translateLabel();
+            $field
+                ->translateLabel()
+                ->hintIcon('heroicon-o-information-circle', tooltip: "db: {$field->getName()}");
         });
         Entry::configureUsing(function (Entry $entry): void {
             $entry->translateLabel();

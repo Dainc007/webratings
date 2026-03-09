@@ -12,6 +12,7 @@ use App\Filament\Resources\AirPurifierResource\Pages\CreateAirPurifier;
 use App\Filament\Resources\AirPurifierResource\Pages\EditAirPurifier;
 use App\Filament\Resources\AirPurifierResource\Pages\ListAirPurifiers;
 use App\Models\AirPurifier;
+use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\ExportActionService;
 use BackedEnum;
@@ -76,8 +77,24 @@ final class AirPurifierResource extends Resource
                                         TextInput::make('model')
                                             ->maxLength(255),
 
-                                        TextInput::make('brand_name')
-                                            ->maxLength(255),
+                                        Select::make('brand_name')
+                                            ->searchable()
+                                            ->getSearchResultsUsing(fn (string $search): array =>
+                                                Brand::where('name', 'like', '%' . mb_strtolower($search) . '%')
+                                                    ->limit(50)
+                                                    ->get()
+                                                    ->pluck('name', 'name')
+                                                    ->toArray()
+                                            )
+                                            ->getOptionLabelUsing(fn (?string $value): ?string => $value)
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa marki')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string =>
+                                                Brand::firstOrCreate(['name' => $data['name']])->name
+                                            ),
 
                                         TextInput::make('price')
                                             ->numeric()
@@ -471,7 +488,7 @@ final class AirPurifierResource extends Resource
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
-                        'tableFilters' => [
+                        'filters' => [
                             'table_name' => [
                                 'value' => 'air_purifiers',
                             ],

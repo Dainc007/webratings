@@ -10,6 +10,7 @@ use App\Filament\Resources\SensorResource\Pages\CreateSensor;
 use App\Filament\Resources\SensorResource\Pages\EditSensor;
 use App\Filament\Resources\SensorResource\Pages\ListSensors;
 use App\Models\Sensor;
+use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\ExportActionService;
 use BackedEnum;
@@ -78,9 +79,25 @@ final class SensorResource extends Resource
                                             ->required()
                                             ->maxLength(255),
 
-                                        TextInput::make('brand_name')
+                                        Select::make('brand_name')
                                             ->required()
-                                            ->maxLength(255),
+                                            ->searchable()
+                                            ->getSearchResultsUsing(fn (string $search): array =>
+                                                Brand::where('name', 'like', '%' . mb_strtolower($search) . '%')
+                                                    ->limit(50)
+                                                    ->get()
+                                                    ->pluck('name', 'name')
+                                                    ->toArray()
+                                            )
+                                            ->getOptionLabelUsing(fn (?string $value): ?string => $value)
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa marki')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string =>
+                                                Brand::firstOrCreate(['name' => $data['name']])->name
+                                            ),
 
                                         TextInput::make('price')
                                             ->numeric()
@@ -465,7 +482,7 @@ final class SensorResource extends Resource
                 Action::make('Settings')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
-                        'tableFilters' => [
+                        'filters' => [
                             'table_name' => [
                                 'value' => 'sensors',
                             ],

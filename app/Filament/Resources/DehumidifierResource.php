@@ -11,6 +11,7 @@ use App\Filament\Resources\DehumidifierResource\Pages\CreateDehumidifier;
 use App\Filament\Resources\DehumidifierResource\Pages\EditDehumidifier;
 use App\Filament\Resources\DehumidifierResource\Pages\ListDehumidifiers;
 use App\Models\Dehumidifier;
+use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\ExportActionService;
 use BackedEnum;
@@ -81,10 +82,26 @@ final class DehumidifierResource extends Resource
                                             ->maxLength(255)
                                             ->label('Model'),
 
-                                        TextInput::make('brand_name')
+                                        Select::make('brand_name')
+                                            ->label('Marka')
                                             ->required()
-                                            ->maxLength(255)
-                                            ->label('Marka'),
+                                            ->searchable()
+                                            ->getSearchResultsUsing(fn (string $search): array =>
+                                                Brand::where('name', 'like', '%' . mb_strtolower($search) . '%')
+                                                    ->limit(50)
+                                                    ->get()
+                                                    ->pluck('name', 'name')
+                                                    ->toArray()
+                                            )
+                                            ->getOptionLabelUsing(fn (?string $value): ?string => $value)
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa marki')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string =>
+                                                Brand::firstOrCreate(['name' => $data['name']])->name
+                                            ),
 
                                         Select::make('type')
                                             ->label('Typ')
@@ -181,6 +198,17 @@ final class DehumidifierResource extends Resource
                                     ->schema([
                                         Textarea::make('review_link')
                                             ->label('Link do recenzji')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->collapsible(),
+
+                                Section::make('Galeria')
+                                    ->schema([
+                                        FileUpload::make('gallery')
+                                            ->label('Galeria zdjęć')
+                                            ->directory('dehumidifiers')
+                                            ->image()
+                                            ->multiple()
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),
@@ -476,19 +504,11 @@ final class DehumidifierResource extends Resource
 
                         Tab::make('Dodatkowe informacje')
                             ->schema([
-                                Section::make('Galeria i dokumentacja')
+                                Section::make('Dokumentacja')
                                     ->schema([
-                                        // todo implement full file upload
-                                        FileUpload::make('gallery')
-                                            ->label('Galeria zdjęć')
-                                            ->directory('dehumidifiers')
-                                            ->image(),
-                                        // todo
                                         FileUpload::make('manual_file')
                                             ->directory('instructions')
                                             ->label('Plik instrukcji'),
-                                        //                                        TextInput::make('manual_file')
-                                        //                                            ->label('Plik instrukcji'),
                                     ]),
 
                                 Section::make('Dane systemowe')
@@ -539,7 +559,7 @@ final class DehumidifierResource extends Resource
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
-                        'tableFilters' => [
+                        'filters' => [
                             'table_name' => [
                                 'value' => 'dehumidifiers',
                             ],

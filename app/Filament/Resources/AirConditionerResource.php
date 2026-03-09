@@ -10,6 +10,7 @@ use App\Filament\Resources\AirConditionerResource\Pages\CreateAirConditioner;
 use App\Filament\Resources\AirConditionerResource\Pages\EditAirConditioner;
 use App\Filament\Resources\AirConditionerResource\Pages\ListAirConditioners;
 use App\Models\AirConditioner;
+use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\ExportActionService;
 use BackedEnum;
@@ -80,10 +81,26 @@ final class AirConditionerResource extends Resource
                                             ->maxLength(255)
                                             ->label('Model'),
 
-                                        TextInput::make('brand_name')
+                                        Select::make('brand_name')
+                                            ->label('Marka')
                                             ->required()
-                                            ->maxLength(255)
-                                            ->label('Marka'),
+                                            ->searchable()
+                                            ->getSearchResultsUsing(fn (string $search): array =>
+                                                Brand::where('name', 'like', '%' . mb_strtolower($search) . '%')
+                                                    ->limit(50)
+                                                    ->get()
+                                                    ->pluck('name', 'name')
+                                                    ->toArray()
+                                            )
+                                            ->getOptionLabelUsing(fn (?string $value): ?string => $value)
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa marki')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string =>
+                                                Brand::firstOrCreate(['name' => $data['name']])->name
+                                            ),
 
                                         Select::make('type')
                                             ->label('Typ')
@@ -595,7 +612,7 @@ final class AirConditionerResource extends Resource
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
-                        'tableFilters' => [
+                        'filters' => [
                             'table_name' => [
                                 'value' => 'air_conditioners',
                             ],

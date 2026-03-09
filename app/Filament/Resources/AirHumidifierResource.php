@@ -11,6 +11,7 @@ use App\Filament\Resources\AirHumidifierResource\Pages\CreateAirHumidifier;
 use App\Filament\Resources\AirHumidifierResource\Pages\EditAirHumidifier;
 use App\Filament\Resources\AirHumidifierResource\Pages\ListAirHumidifiers;
 use App\Models\AirHumidifier;
+use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\ExportActionService;
 use BackedEnum;
@@ -74,8 +75,25 @@ final class AirHumidifierResource extends Resource
                                             ->label('Status'),
                                         TextInput::make('model')
                                             ->label('Model'),
-                                        TextInput::make('brand_name')
-                                            ->label('Marka'),
+                                        Select::make('brand_name')
+                                            ->label('Marka')
+                                            ->searchable()
+                                            ->getSearchResultsUsing(fn (string $search): array =>
+                                                Brand::where('name', 'like', '%' . mb_strtolower($search) . '%')
+                                                    ->limit(50)
+                                                    ->get()
+                                                    ->pluck('name', 'name')
+                                                    ->toArray()
+                                            )
+                                            ->getOptionLabelUsing(fn (?string $value): ?string => $value)
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa marki')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string =>
+                                                Brand::firstOrCreate(['name' => $data['name']])->name
+                                            ),
                                         TextInput::make('price')
                                             ->numeric()
                                             ->label('Cena'),
@@ -125,6 +143,17 @@ final class AirHumidifierResource extends Resource
                                         Toggle::make('main_ranking')
                                             ->label('Ranking główny'),
                                     ])->columns(2)
+                                    ->collapsible(),
+
+                                Section::make('Galeria')
+                                    ->schema([
+                                        FileUpload::make('gallery')
+                                            ->label('Galeria zdjęć')
+                                            ->directory('air-humidifiers')
+                                            ->image()
+                                            ->multiple()
+                                            ->columnSpanFull(),
+                                    ])
                                     ->collapsible(),
 
                                 Section::make('Typy i kategorie')
@@ -435,15 +464,6 @@ final class AirHumidifierResource extends Resource
                                             ->separator(',')
                                             ->label('Kolory'),
 
-                                        // todo
-                                        FileUpload::make('gallery')
-                                            ->label('Galeria zdjęć')
-                                            ->directory('air-humidifiers')
-                                            ->image(),
-                                        //                                        TagsInput::make('gallery')
-                                        //                                            ->placeholder('Dodaj zdjęcie')
-                                        //                                            ->separator(',')
-                                        //                                            ->label('Galeria'),
                                         Toggle::make('disks')
                                             ->label('Dyski'),
                                     ])->columns(2),
@@ -474,7 +494,7 @@ final class AirHumidifierResource extends Resource
                 Action::make('Ustawienia')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn (): string => route('filament.admin.resources.table-column-preferences.index', [
-                        'tableFilters' => [
+                        'filters' => [
                             'table_name' => [
                                 'value' => 'air_humidifiers',
                             ],

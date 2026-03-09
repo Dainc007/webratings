@@ -20,6 +20,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -111,7 +112,18 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('partner_link_url')
                                             ->url()
                                             ->label('Link partnerski'),
+
+                                        Select::make('partner_link_rel_2')
+                                            ->multiple()
+                                            ->options([
+                                                'nofollow' => 'nofollow',
+                                                'dofollow' => 'dofollow',
+                                                'sponsored' => 'sponsored',
+                                                'noopener' => 'noopener',
+                                            ])
+                                            ->label('Partner Link Rel Attributes'),
                                     ])
+                                    ->columns(2)
                                     ->collapsible(),
 
                                 Section::make('Linki Ceneo')
@@ -138,6 +150,9 @@ final class AirHumidifierResource extends Resource
                                             ->label('Ranking'),
                                         TextInput::make('profitability')
                                             ->label('Opłacalność'),
+                                        TextInput::make('popularity')
+                                            ->numeric()
+                                            ->label('Popularność'),
                                         Toggle::make('ranking_hidden')
                                             ->label('Ukryj w rankingu'),
                                         Toggle::make('main_ranking')
@@ -244,8 +259,13 @@ final class AirHumidifierResource extends Resource
                                         TextInput::make('water_tank_min_time')
                                             ->numeric()
                                             ->label('Minimalny czas pracy zbiornika'),
-                                        TextInput::make('water_tank_fill_type')
-                                            ->label('Typ napełniania zbiornika'),
+                                        Select::make('water_tank_fill_type')
+                                            ->label('Typ napełniania zbiornika')
+                                            ->options([
+                                                'zdjecie_pokrywy' => 'Zdjęcie pokrywy',
+                                                'zdjecie_pokrywy_okienko' => 'Zdjęcie pokrywy + okienko',
+                                                'nalewanie_od_gory' => 'Nalewanie od góry',
+                                            ]),
                                     ])->columns(2),
                             ]),
                         Tab::make('Sterowanie')
@@ -293,16 +313,7 @@ final class AirHumidifierResource extends Resource
                                                     ->numeric()
                                                     ->label('Tryb nocny max'),
                                                 Toggle::make('child_lock')
-                                                    ->live()
                                                     ->label('Blokada rodzicielska'),
-                                                TextInput::make('child_lock_min')
-                                                    ->visible(fn (callable $get) => $get('child_lock'))
-                                                    ->numeric()
-                                                    ->label('Blokada rodzicielska min'),
-                                                TextInput::make('child_lock_max')
-                                                    ->visible(fn (callable $get) => $get('child_lock'))
-                                                    ->numeric()
-                                                    ->label('Blokada rodzicielska max'),
                                                 Toggle::make('display')
                                                     ->live()
                                                     ->label('Wyświetlacz'),
@@ -349,10 +360,13 @@ final class AirHumidifierResource extends Resource
                                     ->schema([
                                         Toggle::make('mobile_app')
                                             ->label('Aplikacja mobilna'),
-                                        TagsInput::make('mobile_features')
-                                            ->placeholder('Dodaj funkcję')
-                                            ->separator(',')
-                                            ->label('Funkcje aplikacji'),
+                                        CheckboxList::make('mobile_features')
+                                            ->label('Obsługiwany zakres Wi-Fi')
+                                            ->options([
+                                                'Wi-Fi 2,4 GHz' => 'Wi-Fi 2,4 GHz',
+                                                'Wi-Fi 5 GHz' => 'Wi-Fi 5 GHz',
+                                            ])
+                                            ->columns(2),
                                     ])->columns(2),
                             ]),
                         Tab::make('Filtry')
@@ -401,6 +415,22 @@ final class AirHumidifierResource extends Resource
                                                     ->numeric()
                                                     ->label('Cena filtra ceramicznego'),
                                             ]),
+                                        Section::make('Filtr węglowy')
+                                            ->schema([
+                                                Toggle::make('carbon_filter')
+                                                    ->live()
+                                                    ->label('Filtr węglowy'),
+                                                TextInput::make('carbon_filter_price')
+                                                    ->visible(fn (callable $get) => $get('carbon_filter'))
+                                                    ->numeric()
+                                                    ->prefix('PLN')
+                                                    ->label('Koszt filtra węglowego'),
+                                                TextInput::make('carbon_filter_service_life')
+                                                    ->visible(fn (callable $get) => $get('carbon_filter'))
+                                                    ->numeric()
+                                                    ->suffix('miesięcy')
+                                                    ->label('Żywotność filtra węglowego'),
+                                            ]),
                                         Section::make('Inne filtry')
                                             ->schema([
                                                 Toggle::make('uv_lamp')
@@ -414,9 +444,6 @@ final class AirHumidifierResource extends Resource
                                                 Toggle::make('mesh_filter')
                                                     ->live()
                                                     ->label('Filtr wstępny'),
-                                                Toggle::make('carbon_filter')
-                                                    ->live()
-                                                    ->label('Filtr węglowy'),
                                             ]),
                                     ]),
                             ]),

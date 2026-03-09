@@ -56,5 +56,35 @@ final class ProductTaxonomiesSeeder extends Seeder
                 'name' => $name,
             ]);
         }
+
+        $apFunctions = [
+            'tryb auto', 'jonizator plazmowy', 'sterowanie smartfonem',
+            'pilot', '4 kolory', '3 lata gwarancji',
+        ];
+
+        foreach ($apFunctions as $name) {
+            ProductFunction::firstOrCreate([
+                'name' => $name,
+            ]);
+        }
+
+        $humidifierFunctions = [
+            'higrostat', 'timer', 'lampka nocna', 'aromaterapia',
+            'sterowanie smartfonem', 'lampa uv',
+            'automatyczne wył. przy pustym zbiorniku',
+            'optyczny wskaźnik napełnienia zbiornika',
+            'sygnalizacja pustego zbiornika', 'funkcja osuszania filtra',
+            'blokada rodzicielska', 'sygnalizacja zużycia filtra',
+            'kółka jezdne', 'wskaźnik poziomu nawilżenia',
+            'zakres prezentowanej wilgotności (w %)',
+            'programator czasu pracy (wyłączenia)',
+            'wskaźnik temperatury', 'brak funkcji dodatkowych',
+        ];
+
+        foreach ($humidifierFunctions as $name) {
+            ProductFunction::firstOrCreate([
+                'name' => $name,
+            ]);
+        }
     }
 }

@@ -55,7 +55,7 @@ return [
     'pm2_sensor' => 'Czujnik PM2.5',
     'colors' => 'Kolory',
     'productFunctions' => 'Funkcje',
-    'lzo_tvcop_sensor' => 'Czujnik LZO/TVCOP',
+    'lzo_tvcop_sensor' => 'Czujnik LZO/TVOC',
     'temperature_sensor' => 'Czujnik temperatury',
     'humidity_sensor' => 'Czujnik wilgotności',
     'light_sensor' => 'Czujnik światła',
@@ -202,7 +202,7 @@ return [
             'sensors' => [
                 'section_title' => 'Czujniki',
                 'pm2_sensor' => 'Czujnik PM2.5',
-                'lzo_tvcop_sensor' => 'Czujnik LZO/TVCOP',
+                'lzo_tvcop_sensor' => 'Czujnik LZO/TVOC',
                 'temperature_sensor' => 'Czujnik temperatury',
                 'humidity_sensor' => 'Czujnik wilgotności',
                 'light_sensor' => 'Czujnik światła',

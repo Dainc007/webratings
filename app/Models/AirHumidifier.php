@@ -24,6 +24,7 @@ final class AirHumidifier extends Model
         'mobile_features' => 'array',
         'gallery' => 'array',
         'control_other' => 'array',
+        'partner_link_rel_2' => 'array',
     ];
 
     public function types(): MorphToMany

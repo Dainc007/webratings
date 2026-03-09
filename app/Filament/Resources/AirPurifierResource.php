@@ -370,9 +370,18 @@ final class AirPurifierResource extends Resource
 
                                         Toggle::make('remote_control'),
 
-                                        TagsInput::make('functions_and_equipment')
-                                            ->placeholder('Dodaj funkcję')
-                                            ->separator(','),
+                                        Select::make('productFunctions')
+                                            ->label('Funkcje i wyposażenie')
+                                            ->relationship('productFunctions', 'name')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa')
+                                                    ->required(),
+                                            ])
+                                            ->columnSpanFull(),
 
                                         Toggle::make('heating_and_cooling_function'),
 
@@ -392,9 +401,23 @@ final class AirPurifierResource extends Resource
                                         Toggle::make('light_sensor'),
                                     ])->collapsible(),
 
-                                TagsInput::make('certificates')
-                                    ->placeholder('Dodaj certyfikat')
-                                    ->separator(','),
+                                Select::make('certificates')
+                                    ->label('Certyfikaty')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->options([
+                                        'ECARF' => 'ECARF',
+                                        'Allergy UK' => 'Allergy UK',
+                                        'AHAM' => 'AHAM',
+                                        'TÜV' => 'TÜV',
+                                        'CE' => 'CE',
+                                    ])
+                                    ->createOptionForm([
+                                        TextInput::make('name')
+                                            ->label('Nazwa certyfikatu')
+                                            ->required(),
+                                    ])
+                                    ->createOptionUsing(fn (array $data): string => $data['name']),
                             ]),
 
                         Tab::make('Wymiary')

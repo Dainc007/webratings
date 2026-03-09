@@ -490,7 +490,7 @@ final class DehumidifierResource extends Resource
                                             ->suffix('g')
                                             ->label('Ilość chłodziwa'),
 
-                                        TextInput::make('needs_to_be_completed')
+                                        Toggle::make('needs_to_be_completed')
                                             ->label('Wymaga uzupełnienia'),
                                     ])->columns(2),
 

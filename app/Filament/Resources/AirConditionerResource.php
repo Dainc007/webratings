@@ -206,6 +206,38 @@ final class AirConditionerResource extends Resource
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),
+
+                                Section::make('Oceny i ranking')
+                                    ->schema([
+                                        TextInput::make('capability')
+                                            ->numeric()
+                                            ->label('Ocena możliwości'),
+
+                                        TextInput::make('profitability')
+                                            ->numeric()
+                                            ->label('Ocena opłacalności'),
+
+                                        TextInput::make('ranking')
+                                            ->numeric()
+                                            ->label('Pozycja w rankingu'),
+
+                                        Toggle::make('ranking_hidden')
+                                            ->label('Ukryj w rankingu'),
+
+                                        Toggle::make('main_ranking')
+                                            ->label('Główny ranking'),
+
+                                        Toggle::make('small')
+                                            ->label('Mały'),
+                                    ])->columns(2),
+
+                                Section::make('Dokumentacja')
+                                    ->schema([
+                                        FileUpload::make('manual')
+                                            ->directory('instructions')
+                                            ->label('Instrukcja obsługi'),
+                                    ])
+                                    ->collapsible(),
                             ]),
 
                         Tab::make('Wydajność chłodzenia')
@@ -214,7 +246,7 @@ final class AirConditionerResource extends Resource
                                     ->schema([
                                         TextInput::make('maximum_cooling_power')
                                             ->numeric()
-                                            ->suffix('BTU/h')
+                                            ->suffix('kW')
                                             ->label('Maksymalna moc chłodzenia'),
 
                                         TextInput::make('max_cooling_area_manufacturer')
@@ -248,9 +280,6 @@ final class AirConditionerResource extends Resource
                                             ->numeric()
                                             ->suffix('W')
                                             ->label('Zużycie energii przy chłodzeniu'),
-
-                                        Toggle::make('mode_cooling')
-                                            ->label('Tryb chłodzenia'),
                                     ])->columns(2),
                             ]),
 
@@ -260,7 +289,7 @@ final class AirConditionerResource extends Resource
                                     ->schema([
                                         TextInput::make('maximum_heating_power')
                                             ->numeric()
-                                            ->suffix('BTU/h')
+                                            ->suffix('kW')
                                             ->label('Maksymalna moc grzania'),
 
                                         TextInput::make('max_heating_area_manufacturer')
@@ -335,8 +364,8 @@ final class AirConditionerResource extends Resource
                                             ->numeric()
                                             ->label('Liczba prędkości wentylatora'),
 
-                                        TextInput::make('swing')
-                                            ->label('Swing (kierowanie powietrzem)'),
+                                        Toggle::make('swing')
+                                            ->label('Funkcja swing'),
 
                                         TextInput::make('temperature_range')
                                             ->label('Zakres temperatur'),
@@ -459,15 +488,26 @@ final class AirConditionerResource extends Resource
                             ->schema([
                                 Section::make('Chłodziwo')
                                     ->schema([
-                                        TextInput::make('refrigerant_kind')
-                                            ->label('Rodzaj chłodziwa'),
+                                        Select::make('refrigerant_kind')
+                                            ->label('Rodzaj chłodziwa')
+                                            ->options([
+                                                'R290' => 'R290',
+                                                'R410a' => 'R410a',
+                                                'R32' => 'R32',
+                                            ])
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Rodzaj chłodziwa')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string => $data['name']),
 
                                         TextInput::make('refrigerant_amount')
                                             ->numeric()
-                                            ->suffix('kg')
+                                            ->suffix('g')
                                             ->label('Ilość chłodziwa'),
 
-                                        TextInput::make('needs_to_be_completed')
+                                        Toggle::make('needs_to_be_completed')
                                             ->label('Wymaga uzupełnienia'),
                                     ])->columns(2),
 
@@ -523,8 +563,8 @@ final class AirConditionerResource extends Resource
                                         Toggle::make('drain_hose')
                                             ->label('Wąż odprowadzający'),
 
-                                        TextInput::make('sealing')
-                                            ->label('Uszczelnienie'),
+                                        Toggle::make('sealing')
+                                            ->label('Uszczelka w zestawie'),
                                     ])->columns(2),
                             ]),
 
@@ -535,40 +575,6 @@ final class AirConditionerResource extends Resource
                                         TagsInput::make('colors')
                                             ->label('Dostępne kolory')
                                             ->columnSpanFull(),
-                                    ]),
-
-                                Section::make('Oceny i ranking')
-                                    ->schema([
-                                        TextInput::make('capability')
-                                            ->numeric()
-                                            ->label('Ocena możliwości'),
-
-                                        TextInput::make('profitability')
-                                            ->numeric()
-                                            ->label('Ocena opłacalności'),
-
-                                        TextInput::make('ranking')
-                                            ->numeric()
-                                            ->label('Pozycja w rankingu'),
-
-                                        Toggle::make('ranking_hidden')
-                                            ->label('Ukryj w rankingu'),
-
-                                        Toggle::make('main_ranking')
-                                            ->label('Główny ranking'),
-
-                                        TextInput::make('small')
-                                            ->label('Mały'),
-                                    ])->columns(2),
-
-                                Section::make('Dokumentacja')
-                                    ->schema([
-                                        FileUpload::make('manual')
-                                            ->directory('instructions')
-                                            ->label('Instrukcja obsługi'),
-                                        TextInput::make('manual')
-                                            ->disabled()
-                                            ->label('Instrukcja obsługi'),
                                     ]),
 
                                 Section::make('Dane systemowe')

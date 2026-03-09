@@ -48,7 +48,8 @@ final class ProductTaxonomiesSeeder extends Seeder
             'urządzenie 2w1', 'urządzenie 3w1', 'urządzenie 4w1', 'urządzenie 5w1',
             '2 kolory', 'filtr hepa', 'uszczelka na okno gratis', 'funkcja swing',
             'praca na balkonie', 'wi-fi', 'filtr węglowy', 'tryb automatyczny',
-            'funkcja grzania',
+            'funkcja grzania', 'automatycznie odszranianie', 'programator',
+            'wygaszanie podświetlania',
         ];
 
         foreach ($acFunctions as $name) {

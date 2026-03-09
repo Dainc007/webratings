@@ -19,6 +19,7 @@ final class UprightVacuum extends Model
 
     protected $casts = [
         'colors' => 'array',
+        'gallery' => 'array',
         'partner_link_rel_2' => 'array',
         'ceneo_link_rel_2' => 'array',
         'vacuum_cleaner_type' => 'array',

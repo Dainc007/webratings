@@ -20,6 +20,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -121,9 +122,6 @@ final class UprightVacuumResource extends Resource
                                             ->prefix('PLN')
                                             ->label('Cena przed'),
 
-                                        TextInput::make('image')
-                                            ->disabled(),
-
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
                                             ->columnSpanFull(),
@@ -183,6 +181,52 @@ final class UprightVacuumResource extends Resource
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),
+
+                                Section::make('Galeria')
+                                    ->schema([
+                                        FileUpload::make('gallery')
+                                            ->label('Galeria zdjęć')
+                                            ->directory('upright-vacuums')
+                                            ->image()
+                                            ->multiple()
+                                            ->preserveFilenames()
+                                            ->imagePreviewHeight('250')
+                                            ->panelLayout('grid')
+                                            ->reorderable()
+                                            ->appendFiles()
+                                            ->openable()
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->collapsible(),
+
+                                Section::make('Oceny i ranking')
+                                    ->schema([
+                                        TextInput::make('capability')
+                                            ->numeric()
+                                            ->label('Ocena możliwości'),
+
+                                        TextInput::make('profitability')
+                                            ->numeric()
+                                            ->label('Ocena opłacalności'),
+
+                                        TextInput::make('capability_points')
+                                            ->numeric()
+                                            ->label('Punkty możliwości'),
+
+                                        TextInput::make('profitability_points')
+                                            ->numeric()
+                                            ->label('Punkty opłacalności'),
+
+                                        TextInput::make('ranking')
+                                            ->numeric()
+                                            ->label('Pozycja w rankingu'),
+
+                                        Toggle::make('ranking_hidden')
+                                            ->label('Ukryj w rankingu'),
+
+                                        Toggle::make('main_ranking')
+                                            ->label('Główny ranking'),
+                                    ])->columns(2),
                             ]),
 
                         Tab::make('Moc i wydajność')
@@ -211,7 +255,7 @@ final class UprightVacuumResource extends Resource
                                             ->numeric()
                                             ->label('Liczba poziomów mocy ssania'),
 
-                                        TextInput::make('automatic_power_adjustment')
+                                        Toggle::make('automatic_power_adjustment')
                                             ->label('Automatyczna regulacja mocy'),
 
                                         TextInput::make('suction_power_highest_level_pa')
@@ -375,11 +419,11 @@ final class UprightVacuumResource extends Resource
                                         Select::make('pollution_filtration_system')
                                             ->label('System filtracji zanieczyszczeń')
                                             ->options([
-                                                'cyklonowy' => 'Cyklonowy',
-                                                'wielocyklonowy' => 'Wielocyklonowy',
-                                                'workowy' => 'Workowy',
-                                                'wodny' => 'Wodny',
-                                                'inny' => 'Inny',
+                                                '1-stopniowy' => '1-stopniowy',
+                                                '2-stopniowy' => '2-stopniowy',
+                                                '3-stopniowy' => '3-stopniowy',
+                                                '4-stopniowy' => '4-stopniowy',
+                                                '5-stopniowy' => '5-stopniowy',
                                             ]),
 
                                         Toggle::make('cyclone_technology')
@@ -450,15 +494,23 @@ final class UprightVacuumResource extends Resource
                                                 'podstawka' => 'Podstawka ładująca',
                                             ]),
 
-                                        TagsInput::make('additional_equipment')
+                                        Select::make('additional_equipment')
                                             ->label('Dodatkowe wyposażenie')
-                                            ->suggestions([
-                                                'Mini elektroszczotka',
-                                                'Miękka szczotka',
-                                                'Końcówka 2w1 do kurzu',
-                                                'Ssawka szczelinowa',
-                                                'Elastyczny adapter',
+                                            ->multiple()
+                                            ->searchable()
+                                            ->options([
+                                                'Ssawka szczelinowa' => 'Ssawka szczelinowa',
+                                                'Końcówka 2w1 do kurzu' => 'Końcówka 2w1 do kurzu',
+                                                'Mini elektroszczotka' => 'Mini elektroszczotka',
+                                                'Miękka szczotka' => 'Miękka szczotka',
+                                                'Elastyczny adapter' => 'Elastyczny adapter',
                                             ])
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nazwa wyposażenia')
+                                                    ->required(),
+                                            ])
+                                            ->createOptionUsing(fn (array $data): string => $data['name'])
                                             ->columnSpanFull(),
 
                                         Toggle::make('continuous_work')
@@ -533,26 +585,8 @@ final class UprightVacuumResource extends Resource
                                             ]),
                                     ])->columns(2),
 
-                                Section::make('Oceny i ranking')
+                                Section::make('Wideo')
                                     ->schema([
-                                        TextInput::make('capability')
-                                            ->numeric()
-                                            ->label('Ocena możliwości'),
-
-                                        TextInput::make('profitability')
-                                            ->numeric()
-                                            ->label('Ocena opłacalności'),
-
-                                        TextInput::make('ranking')
-                                            ->numeric()
-                                            ->label('Pozycja w rankingu'),
-
-                                        Toggle::make('ranking_hidden')
-                                            ->label('Ukryj w rankingu'),
-
-                                        Toggle::make('main_ranking')
-                                            ->label('Główny ranking'),
-
                                         TextInput::make('videorecenzja1')
                                             ->label('Link do wideo recenzji'),
                                     ])->columns(2),

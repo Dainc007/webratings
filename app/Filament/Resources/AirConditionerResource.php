@@ -197,6 +197,12 @@ final class AirConditionerResource extends Resource
                                             ->directory('air-conditioners')
                                             ->image()
                                             ->multiple()
+                                            ->preserveFilenames()
+                                            ->imagePreviewHeight('250')
+                                            ->panelLayout('grid')
+                                            ->reorderable()
+                                            ->appendFiles()
+                                            ->openable()
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

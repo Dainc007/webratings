@@ -152,6 +152,12 @@ final class AirHumidifierResource extends Resource
                                             ->directory('air-humidifiers')
                                             ->image()
                                             ->multiple()
+                                            ->preserveFilenames()
+                                            ->imagePreviewHeight('250')
+                                            ->panelLayout('grid')
+                                            ->reorderable()
+                                            ->appendFiles()
+                                            ->openable()
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

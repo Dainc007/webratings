@@ -183,6 +183,12 @@ final class AirPurifierResource extends Resource
                                             ->directory('air-purifiers')
                                             ->image()
                                             ->multiple()
+                                            ->preserveFilenames()
+                                            ->imagePreviewHeight('250')
+                                            ->panelLayout('grid')
+                                            ->reorderable()
+                                            ->appendFiles()
+                                            ->openable()
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

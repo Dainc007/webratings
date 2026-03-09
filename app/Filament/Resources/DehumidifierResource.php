@@ -209,6 +209,12 @@ final class DehumidifierResource extends Resource
                                             ->directory('dehumidifiers')
                                             ->image()
                                             ->multiple()
+                                            ->preserveFilenames()
+                                            ->imagePreviewHeight('250')
+                                            ->panelLayout('grid')
+                                            ->reorderable()
+                                            ->appendFiles()
+                                            ->openable()
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

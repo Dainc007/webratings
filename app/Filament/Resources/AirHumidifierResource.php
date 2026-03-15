@@ -315,27 +315,9 @@ final class AirHumidifierResource extends Resource
                                                 Toggle::make('child_lock')
                                                     ->label('Blokada rodzicielska'),
                                                 Toggle::make('display')
-                                                    ->live()
                                                     ->label('Wyświetlacz'),
-                                                TextInput::make('display_min')
-                                                    ->visible(fn (callable $get) => $get('display'))
-                                                    ->numeric()
-                                                    ->label('Wyświetlacz min'),
-                                                TextInput::make('display_max')
-                                                    ->visible(fn (callable $get) => $get('display'))
-                                                    ->numeric()
-                                                    ->label('Wyświetlacz max'),
                                                 Toggle::make('remote_control')
-                                                    ->live()
                                                     ->label('Pilot'),
-                                                TextInput::make('remote_control_min')
-                                                    ->visible(fn (callable $get) => $get('remote_control'))
-                                                    ->numeric()
-                                                    ->label('Pilot min'),
-                                                TextInput::make('remote_control_max')
-                                                    ->visible(fn (callable $get) => $get('remote_control'))
-                                                    ->numeric()
-                                                    ->label('Pilot max'),
                                             ]),
                                     ]),
                                 // Old JSON-based implementation kept for reference

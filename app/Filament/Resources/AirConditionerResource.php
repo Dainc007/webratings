@@ -127,9 +127,6 @@ final class AirConditionerResource extends Resource
                                             ->prefix('PLN')
                                             ->label('Cena przed'),
 
-                                        TextInput::make('image')
-                                            ->disabled(),
-
                                         Textarea::make('discount_info')
                                             ->label('Informacje o zniżce')
                                             ->columnSpanFull(),

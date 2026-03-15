@@ -85,7 +85,8 @@ final class AppServiceProvider extends ServiceProvider
         Field::configureUsing(function (Field $field): void {
             $field
                 ->translateLabel()
-                ->hintIcon('heroicon-o-information-circle', tooltip: "db: {$field->getName()}");
+                ->hintIcon('heroicon-o-information-circle', tooltip: $field->getName())
+                ->extraAttributes(['data-db-column' => $field->getName()]);
         });
         Entry::configureUsing(function (Entry $entry): void {
             $entry->translateLabel();

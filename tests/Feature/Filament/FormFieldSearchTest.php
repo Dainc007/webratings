@@ -157,10 +157,20 @@ class FormFieldSearchTest extends TestCase
     {
         $viewContent = file_get_contents(resource_path('views/filament/components/form-field-search.blade.php'));
 
-        // Verify all three search types are present
         $this->assertStringContainsString('.fi-tabs-item', $viewContent, 'Should search tab elements');
         $this->assertStringContainsString('.fi-section-header-heading', $viewContent, 'Should search section headings');
         $this->assertStringContainsString("form.querySelectorAll('label')", $viewContent, 'Should search field labels');
+    }
+
+    /**
+     * The search also matches against data-db-column attribute (DB column name search).
+     */
+    public function test_form_field_search_supports_db_column_name_search(): void
+    {
+        $viewContent = file_get_contents(resource_path('views/filament/components/form-field-search.blade.php'));
+
+        $this->assertStringContainsString('data-db-column', $viewContent, 'Should read data-db-column attribute for DB name search');
+        $this->assertStringContainsString('columnMatch', $viewContent, 'Should have column match logic');
     }
 
     // ==========================================

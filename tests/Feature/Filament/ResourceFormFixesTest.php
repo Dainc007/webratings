@@ -262,6 +262,43 @@ class ResourceFormFixesTest extends TestCase
         $this->assertEquals(50, $humidifier->max_rated_power_consumption);
     }
 
+    /**
+     * Poprawka: display_min/max i remote_control_min/max usunięte z nawilżaczy.
+     * Wyświetlacz i Pilot powinny być prostymi Toggle (tak/nie) bez pól min/max.
+     */
+    public function test_air_humidifier_display_and_remote_are_simple_toggles(): void
+    {
+        $resourceContent = file_get_contents(app_path('Filament/Resources/AirHumidifierResource.php'));
+
+        $this->assertStringNotContainsString("'display_min'", $resourceContent, 'display_min should be removed');
+        $this->assertStringNotContainsString("'display_max'", $resourceContent, 'display_max should be removed');
+        $this->assertStringNotContainsString("'remote_control_min'", $resourceContent, 'remote_control_min should be removed');
+        $this->assertStringNotContainsString("'remote_control_max'", $resourceContent, 'remote_control_max should be removed');
+
+        $this->assertStringContainsString("Toggle::make('display')", $resourceContent, 'display should be a Toggle');
+        $this->assertStringContainsString("Toggle::make('remote_control')", $resourceContent, 'remote_control should be a Toggle');
+    }
+
+    /**
+     * Poprawka: Nieaktywne pole image usunięte z klimatyzatorów (zastąpione galerią).
+     */
+    public function test_air_conditioner_no_disabled_image_text_input(): void
+    {
+        $resourceContent = file_get_contents(app_path('Filament/Resources/AirConditionerResource.php'));
+
+        $this->assertStringNotContainsString(
+            "TextInput::make('image')",
+            $resourceContent,
+            'Disabled image TextInput should be removed from AirConditionerResource'
+        );
+
+        $this->assertStringContainsString(
+            "FileUpload::make('gallery')",
+            $resourceContent,
+            'Gallery FileUpload should exist as replacement'
+        );
+    }
+
     // ==========================================
     // OSUSZACZE (Dehumidifier)
     // ==========================================
@@ -798,6 +835,33 @@ class ResourceFormFixesTest extends TestCase
     {
         $migrationPath = database_path('migrations/2026_02_06_000000_fix_postgresql_sequences.php');
         $this->assertFileExists($migrationPath);
+    }
+
+    /**
+     * Tooltip shows raw DB column name without "db:" prefix.
+     * Also verifies data-db-column attribute is set for field search.
+     */
+    public function test_field_hint_icon_shows_column_name_without_prefix(): void
+    {
+        $providerContent = file_get_contents(app_path('Providers/AppServiceProvider.php'));
+
+        $this->assertStringNotContainsString(
+            '"db: ',
+            $providerContent,
+            'hintIcon tooltip should NOT have "db:" prefix'
+        );
+
+        $this->assertStringContainsString(
+            "tooltip: \$field->getName()",
+            $providerContent,
+            'hintIcon should show raw column name'
+        );
+
+        $this->assertStringContainsString(
+            "data-db-column",
+            $providerContent,
+            'Field should have data-db-column attribute for search'
+        );
     }
 
     // ==========================================

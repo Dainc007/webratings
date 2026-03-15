@@ -195,25 +195,35 @@
                     });
                 }
 
-                // ── 3. Search FIELD labels ──
+                // ── 3. Search FIELD labels + DB column names ──
                 var labels = form.querySelectorAll('label');
                 for (var i = 0; i < labels.length; i++) {
                     var label = labels[i];
                     var text = label.textContent.trim();
 
                     if (!text || text.length < 2) continue;
-                    if (!text.toLowerCase().includes(q)) continue;
 
                     var wrapper = label.closest('[data-field-wrapper]') || label.closest('.fi-fo-field') || label.parentElement;
                     if (!wrapper) continue;
 
+                    var dbCol = '';
+                    var dbEl = wrapper.querySelector('[data-db-column]');
+                    if (dbEl) dbCol = dbEl.getAttribute('data-db-column') || '';
+
+                    var labelMatch = text.toLowerCase().includes(q);
+                    var columnMatch = dbCol.toLowerCase().includes(q);
+                    if (!labelMatch && !columnMatch) continue;
+
                     wrapper.setAttribute('data-ffs-id', String(id));
 
                     var tabName = this._getTabName(wrapper);
+                    var displayLabel = columnMatch && !labelMatch
+                        ? text + ' (' + dbCol + ')'
+                        : text;
 
                     results.push({
                         id: id++,
-                        label: text,
+                        label: displayLabel,
                         tab: tabName,
                         type: 'field',
                     });

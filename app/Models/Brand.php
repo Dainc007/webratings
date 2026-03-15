@@ -16,10 +16,7 @@ final class Brand extends Model
 
     protected $fillable = ['name'];
 
-    /**
-     * Get the user's first name.
-     */
-    private function name(): Attribute
+    protected function name(): Attribute
     {
         return Attribute::make(
             get: fn (string $value): string => ucfirst($value),

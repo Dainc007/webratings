@@ -157,6 +157,11 @@ final class AppServiceProvider extends ServiceProvider
             ->icon('heroicon-o-pencil-square')
             ->iconButton()
             ->tooltip('Edytuj etykietę')
+            ->modalHeading(function () use ($field, $fieldName): string {
+                $label = self::resolveFieldLabel($field, $fieldName);
+
+                return 'Edytuj: ' . ($label ?? $fieldName);
+            })
             ->size('xs')
             ->color('gray')
             ->form([
@@ -178,7 +183,7 @@ final class AppServiceProvider extends ServiceProvider
 
                 return ['_lo_display_label' => $override?->display_label];
             })
-            ->action(function (array $data) use ($field, $fieldName): void {
+            ->action(function (array $data, $livewire) use ($field, $fieldName): void {
                 $tableName = self::getResourceTableName($field);
                 if ($tableName === null) {
                     return;
@@ -209,6 +214,8 @@ final class AppServiceProvider extends ServiceProvider
                     ->title('Etykieta zaktualizowana')
                     ->success()
                     ->send();
+
+                $livewire->js('setTimeout(() => location.reload(), 500)');
             })
             ->visible(function () use ($field): bool {
                 return self::getResourceTableName($field) !== null;

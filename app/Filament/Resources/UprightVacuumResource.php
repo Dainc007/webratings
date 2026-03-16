@@ -12,6 +12,7 @@ use App\Filament\Resources\UprightVacuumResource\Pages\ListUprightVacuums;
 use App\Models\UprightVacuum;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -27,7 +28,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -60,9 +60,9 @@ final class UprightVacuumResource extends Resource
                 Tabs::make('Formularz Odkurzacza Pionowego')
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('Podstawowe informacje')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Podstawowe informacje'))
                             ->schema([
-                                Section::make('Podstawowe informacje')
+                                LabelService::sectionMake('upright_vacuums', 'Podstawowe informacje')
                                     ->schema([
                                         Select::make('status')
                                             ->selectablePlaceholder(false)
@@ -127,7 +127,7 @@ final class UprightVacuumResource extends Resource
                                             ->columnSpanFull(),
                                     ])->columns(2),
 
-                                Section::make('Linki partnerskie')
+                                LabelService::sectionMake('upright_vacuums', 'Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_name')
                                             ->label('Nazwa partnera'),
@@ -152,7 +152,7 @@ final class UprightVacuumResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Linki Ceneo')
+                                LabelService::sectionMake('upright_vacuums', 'Linki Ceneo')
                                     ->schema([
                                         Textarea::make('ceneo_url')
                                             ->label('Link Ceneo')
@@ -174,7 +174,7 @@ final class UprightVacuumResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Link do recenzji')
+                                LabelService::sectionMake('upright_vacuums', 'Link do recenzji')
                                     ->schema([
                                         Textarea::make('review_link')
                                             ->label('Link do recenzji')
@@ -182,7 +182,7 @@ final class UprightVacuumResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Galeria')
+                                LabelService::sectionMake('upright_vacuums', 'Galeria')
                                     ->schema([
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
@@ -199,7 +199,7 @@ final class UprightVacuumResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Oceny i ranking')
+                                LabelService::sectionMake('upright_vacuums', 'Oceny i ranking')
                                     ->schema([
                                         TextInput::make('capability')
                                             ->numeric()
@@ -229,9 +229,9 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Moc i wydajność')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Moc i wydajność'))
                             ->schema([
-                                Section::make('Parametry ssania')
+                                LabelService::sectionMake('upright_vacuums', 'Parametry ssania')
                                     ->schema([
                                         Select::make('vacuum_cleaner_type')
                                             ->multiple()
@@ -274,7 +274,7 @@ final class UprightVacuumResource extends Resource
                                             ->label('Moc ssania - niski poziom'),
                                     ])->columns(2),
 
-                                Section::make('Silnik')
+                                LabelService::sectionMake('upright_vacuums', 'Silnik')
                                     ->schema([
                                         TextInput::make('maximum_engine_power')
                                             ->numeric()
@@ -293,9 +293,9 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Zasilanie i bateria')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Zasilanie i bateria'))
                             ->schema([
-                                Section::make('Zasilanie')
+                                LabelService::sectionMake('upright_vacuums', 'Zasilanie')
                                     ->schema([
                                         CheckboxList::make('power_supply')
                                             ->options([
@@ -314,7 +314,7 @@ final class UprightVacuumResource extends Resource
                                             ->dehydrated(),
                                     ])->columns(2),
 
-                                Section::make('Bateria')
+                                LabelService::sectionMake('upright_vacuums', 'Bateria')
                                     ->schema([
                                         Select::make('battery_change')
                                             ->label('Wymiana baterii')
@@ -358,9 +358,9 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Funkcje czyszczenia')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Funkcje czyszczenia'))
                             ->schema([
-                                Section::make('Funkcje mopowania')
+                                LabelService::sectionMake('upright_vacuums', 'Funkcje mopowania')
                                     ->schema([
                                         Toggle::make('mopping_function')
                                             ->label('Funkcja mopowania'),
@@ -390,7 +390,7 @@ final class UprightVacuumResource extends Resource
                                             ]),
                                     ])->columns(2),
 
-                                Section::make('Zbiorniki')
+                                LabelService::sectionMake('upright_vacuums', 'Zbiorniki')
                                     ->schema([
                                         TextInput::make('clean_water_tank_capacity')
                                             ->numeric()
@@ -412,9 +412,9 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Filtry i technologie')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Filtry i technologie'))
                             ->schema([
-                                Section::make('System filtracji')
+                                LabelService::sectionMake('upright_vacuums', 'System filtracji')
                                     ->schema([
                                         Select::make('pollution_filtration_system')
                                             ->label('System filtracji zanieczyszczeń')
@@ -439,7 +439,7 @@ final class UprightVacuumResource extends Resource
                                             ->label('Filtr EPA'),
                                     ])->columns(2),
 
-                                Section::make('Dodatkowe technologie')
+                                LabelService::sectionMake('upright_vacuums', 'Dodatkowe technologie')
                                     ->schema([
                                         Toggle::make('uv_technology')
                                             ->label('Technologia UV'),
@@ -455,9 +455,9 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Szczotki i akcesoria')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Szczotki i akcesoria'))
                             ->schema([
-                                Section::make('Szczotki')
+                                LabelService::sectionMake('upright_vacuums', 'Szczotki')
                                     ->schema([
                                         Toggle::make('electric_brush')
                                             ->label('Elektroszczotka'),
@@ -478,7 +478,7 @@ final class UprightVacuumResource extends Resource
                                             ->label('Rura teleskopowa'),
                                     ])->columns(2),
 
-                                Section::make('Wyposażenie dodatkowe')
+                                LabelService::sectionMake('upright_vacuums', 'Wyposażenie dodatkowe')
                                     ->schema([
                                         Toggle::make('hand_vacuum_cleaner')
                                             ->label('Odkurzacz ręczny'),
@@ -518,9 +518,9 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Wyświetlacz i sterowanie')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Wyświetlacz i sterowanie'))
                             ->schema([
-                                Section::make('Wyświetlacz')
+                                LabelService::sectionMake('upright_vacuums', 'Wyświetlacz')
                                     ->schema([
                                         Toggle::make('display')
                                             ->label('Wyświetlacz'),
@@ -537,7 +537,7 @@ final class UprightVacuumResource extends Resource
                                             ->label('Typ wyświetlacza'),
                                     ])->columns(2),
 
-                                Section::make('Czas pracy')
+                                LabelService::sectionMake('upright_vacuums', 'Czas pracy')
                                     ->schema([
                                         TextInput::make('vacuuming_time_max')
                                             ->label('Maksymalny czas odkurzania'),
@@ -549,9 +549,9 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Dodatkowe informacje')
+                        Tab::make(LabelService::tab('upright_vacuums', 'Dodatkowe informacje'))
                             ->schema([
-                                Section::make('Wygląd i wymiary')
+                                LabelService::sectionMake('upright_vacuums', 'Wygląd i wymiary')
                                     ->schema([
                                         TagsInput::make('colors')
                                             ->label('Dostępne kolory')
@@ -568,7 +568,7 @@ final class UprightVacuumResource extends Resource
                                             ->label('Waga w ręce'),
                                     ])->columns(2),
 
-                                Section::make('Przeznaczenie')
+                                LabelService::sectionMake('upright_vacuums', 'Przeznaczenie')
                                     ->schema([
                                         Select::make('for_pet_owners')
                                             ->label('Dla właścicieli zwierząt')
@@ -585,7 +585,7 @@ final class UprightVacuumResource extends Resource
                                             ]),
                                     ])->columns(2),
 
-                                Section::make('Wideo')
+                                LabelService::sectionMake('upright_vacuums', 'Wideo')
                                     ->schema([
                                         TextInput::make('videorecenzja1')
                                             ->label('Link do wideo recenzji'),

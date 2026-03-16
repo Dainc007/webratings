@@ -13,6 +13,7 @@ use App\Filament\Resources\AirHumidifierResource\Pages\ListAirHumidifiers;
 use App\Models\AirHumidifier;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -29,7 +30,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -63,9 +63,9 @@ final class AirHumidifierResource extends Resource
                 FormFieldSearch::make(),
                 Tabs::make('Formularz Nawilżacza Powietrza')
                     ->tabs([
-                        Tab::make('Podstawowe informacje')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Podstawowe informacje'))
                             ->schema([
-                                Section::make('Podstawowe informacje')
+                                LabelService::sectionMake('air_humidifiers', 'Podstawowe informacje')
                                     ->schema([
                                         TextInput::make('remote_id')
                                             ->label('ID zdalne'),
@@ -107,7 +107,7 @@ final class AirHumidifierResource extends Resource
                                             ->columnSpanFull(),
                                     ])->columns(2),
 
-                                Section::make('Linki partnerskie')
+                                LabelService::sectionMake('air_humidifiers', 'Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_link_url')
                                             ->url()
@@ -126,7 +126,7 @@ final class AirHumidifierResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Linki Ceneo')
+                                LabelService::sectionMake('air_humidifiers', 'Linki Ceneo')
                                     ->schema([
                                         TextInput::make('ceneo_url')
                                             ->url()
@@ -134,7 +134,7 @@ final class AirHumidifierResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Link do recenzji')
+                                LabelService::sectionMake('air_humidifiers', 'Link do recenzji')
                                     ->schema([
                                         TextInput::make('review_link')
                                             ->url()
@@ -142,7 +142,7 @@ final class AirHumidifierResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Ranking')
+                                LabelService::sectionMake('air_humidifiers', 'Ranking')
                                     ->schema([
                                         TextInput::make('capability')
                                             ->label('Możliwości'),
@@ -160,7 +160,7 @@ final class AirHumidifierResource extends Resource
                                     ])->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Galeria')
+                                LabelService::sectionMake('air_humidifiers', 'Galeria')
                                     ->schema([
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
@@ -177,7 +177,7 @@ final class AirHumidifierResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Typy i kategorie')
+                                LabelService::sectionMake('air_humidifiers', 'Typy i kategorie')
                                     ->schema([
                                         Select::make('types')
                                             ->label('Typy produktu')
@@ -204,9 +204,9 @@ final class AirHumidifierResource extends Resource
                                     ])
                                     ->collapsible(),
                             ]),
-                        Tab::make('Wydajność')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Wydajność'))
                             ->schema([
-                                Section::make('Wydajność')
+                                LabelService::sectionMake('air_humidifiers', 'Wydajność')
                                     ->schema([
                                         TextInput::make('max_performance')
                                             ->numeric()
@@ -222,7 +222,7 @@ final class AirHumidifierResource extends Resource
                                             ->label('Wydajność testowana'),
                                     ])->columns(2),
 
-                                Section::make('Głośność wentylatora')
+                                LabelService::sectionMake('air_humidifiers', 'Głośność wentylatora')
                                     ->schema([
                                         Toggle::make('fan_volume')
                                             ->label('Głośność Wentylatora')
@@ -239,7 +239,7 @@ final class AirHumidifierResource extends Resource
                                             ->label('Max głośność'),
                                     ])->columns(2),
 
-                                Section::make('Pobór mocy')
+                                LabelService::sectionMake('air_humidifiers', 'Pobór mocy')
                                     ->schema([
                                         TextInput::make('min_rated_power_consumption')
                                             ->numeric()
@@ -249,9 +249,9 @@ final class AirHumidifierResource extends Resource
                                             ->label('Maksymalny pobór mocy'),
                                     ])->columns(2),
                             ]),
-                        Tab::make('Zbiornik na wodę')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Zbiornik na wodę'))
                             ->schema([
-                                Section::make('Zbiornik na wodę')
+                                LabelService::sectionMake('air_humidifiers', 'Zbiornik na wodę')
                                     ->schema([
                                         TextInput::make('water_tank_capacity')
                                             ->numeric()
@@ -268,7 +268,7 @@ final class AirHumidifierResource extends Resource
                                             ]),
                                     ])->columns(2),
                             ]),
-                        Tab::make('Sterowanie')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Sterowanie'))
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
@@ -338,7 +338,7 @@ final class AirHumidifierResource extends Resource
                                             ->required(),
                                     ])
                                     ->columnSpanFull(),
-                                Section::make('Funkcje smart')
+                                LabelService::sectionMake('air_humidifiers', 'Funkcje smart')
                                     ->schema([
                                         Toggle::make('mobile_app')
                                             ->label('Aplikacja mobilna'),
@@ -351,11 +351,11 @@ final class AirHumidifierResource extends Resource
                                             ->columns(2),
                                     ])->columns(2),
                             ]),
-                        Tab::make('Filtry')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Filtry'))
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
-                                        Section::make('Filtr ewaporacyjny')
+                                        LabelService::sectionMake('air_humidifiers', 'Filtr ewaporacyjny')
                                             ->schema([
                                                 Toggle::make('evaporative_filter')
                                                     ->live()
@@ -369,7 +369,7 @@ final class AirHumidifierResource extends Resource
                                                     ->numeric()
                                                     ->label('Cena filtra ewaporacyjnego'),
                                             ]),
-                                        Section::make('Srebrna jonizacja')
+                                        LabelService::sectionMake('air_humidifiers', 'Srebrna jonizacja')
                                             ->schema([
                                                 Toggle::make('silver_ion')
                                                     ->live()
@@ -383,7 +383,7 @@ final class AirHumidifierResource extends Resource
                                                     ->numeric()
                                                     ->label('Cena srebrnej jonizacji'),
                                             ]),
-                                        Section::make('Filtr ceramiczny')
+                                        LabelService::sectionMake('air_humidifiers', 'Filtr ceramiczny')
                                             ->schema([
                                                 Toggle::make('ceramic_filter')
                                                     ->live()
@@ -397,7 +397,7 @@ final class AirHumidifierResource extends Resource
                                                     ->numeric()
                                                     ->label('Cena filtra ceramicznego'),
                                             ]),
-                                        Section::make('Filtr węglowy')
+                                        LabelService::sectionMake('air_humidifiers', 'Filtr węglowy')
                                             ->schema([
                                                 Toggle::make('carbon_filter')
                                                     ->live()
@@ -413,7 +413,7 @@ final class AirHumidifierResource extends Resource
                                                     ->suffix('miesięcy')
                                                     ->label('Żywotność filtra węglowego'),
                                             ]),
-                                        Section::make('Inne filtry')
+                                        LabelService::sectionMake('air_humidifiers', 'Inne filtry')
                                             ->schema([
                                                 Toggle::make('uv_lamp')
                                                     ->live()
@@ -429,9 +429,9 @@ final class AirHumidifierResource extends Resource
                                             ]),
                                     ]),
                             ]),
-                        Tab::make('Wymiary')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Wymiary'))
                             ->schema([
-                                Section::make('Wymiary')
+                                LabelService::sectionMake('air_humidifiers', 'Wymiary')
                                     ->schema([
                                         TextInput::make('rated_voltage')
                                             ->numeric()
@@ -450,9 +450,9 @@ final class AirHumidifierResource extends Resource
                                             ->label('Głębokość'),
                                     ])->columns(2),
                             ]),
-                        Tab::make('Kategorie')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Kategorie'))
                             ->schema([
-                                Section::make('Kategorie')
+                                LabelService::sectionMake('air_humidifiers', 'Kategorie')
                                     ->schema([
                                         Toggle::make('for_plant')
                                             ->label('Do roślin'),
@@ -470,9 +470,9 @@ final class AirHumidifierResource extends Resource
                                             ->label('Duża powierzchnia'),
                                     ])->columns(2),
                             ]),
-                        Tab::make('Dodatkowe')
+                        Tab::make(LabelService::tab('air_humidifiers', 'Dodatkowe'))
                             ->schema([
-                                Section::make('Dodatkowe')
+                                LabelService::sectionMake('air_humidifiers', 'Dodatkowe')
                                     ->schema([
                                         TagsInput::make('colors')
                                             ->placeholder('Dodaj kolor')

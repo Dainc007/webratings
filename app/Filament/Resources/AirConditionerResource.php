@@ -12,6 +12,7 @@ use App\Filament\Resources\AirConditionerResource\Pages\ListAirConditioners;
 use App\Models\AirConditioner;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -27,7 +28,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -62,9 +62,9 @@ final class AirConditionerResource extends Resource
                 Tabs::make('Formularz Klimatyzatora')
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('Podstawowe informacje')
+                        Tab::make(LabelService::tab('air_conditioners', 'Podstawowe informacje'))
                             ->schema([
-                                Section::make('Podstawowe informacje')
+                                LabelService::sectionMake('air_conditioners', 'Podstawowe informacje')
                                     ->schema([
                                         Select::make('status')
                                             ->selectablePlaceholder(false)
@@ -132,7 +132,7 @@ final class AirConditionerResource extends Resource
                                             ->columnSpanFull(),
                                     ])->columns(2),
 
-                                Section::make('Linki partnerskie')
+                                LabelService::sectionMake('air_conditioners', 'Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_name')
                                             ->label('Nazwa partnera'),
@@ -157,7 +157,7 @@ final class AirConditionerResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Linki Ceneo')
+                                LabelService::sectionMake('air_conditioners', 'Linki Ceneo')
                                     ->schema([
                                         Textarea::make('ceneo_url')
                                             ->label('Link Ceneo')
@@ -179,7 +179,7 @@ final class AirConditionerResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Link do recenzji')
+                                LabelService::sectionMake('air_conditioners', 'Link do recenzji')
                                     ->schema([
                                         Textarea::make('review_link')
                                             ->label('Link do recenzji')
@@ -187,7 +187,7 @@ final class AirConditionerResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Galeria')
+                                LabelService::sectionMake('air_conditioners', 'Galeria')
                                     ->schema([
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
@@ -204,7 +204,7 @@ final class AirConditionerResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Oceny i ranking')
+                                LabelService::sectionMake('air_conditioners', 'Oceny i ranking')
                                     ->schema([
                                         TextInput::make('capability')
                                             ->numeric()
@@ -228,7 +228,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Mały'),
                                     ])->columns(2),
 
-                                Section::make('Dokumentacja')
+                                LabelService::sectionMake('air_conditioners', 'Dokumentacja')
                                     ->schema([
                                         FileUpload::make('manual')
                                             ->directory('instructions')
@@ -237,9 +237,9 @@ final class AirConditionerResource extends Resource
                                     ->collapsible(),
                             ]),
 
-                        Tab::make('Wydajność chłodzenia')
+                        Tab::make(LabelService::tab('air_conditioners', 'Wydajność chłodzenia'))
                             ->schema([
-                                Section::make('Parametry chłodzenia')
+                                LabelService::sectionMake('air_conditioners', 'Parametry chłodzenia')
                                     ->schema([
                                         TextInput::make('maximum_cooling_power')
                                             ->numeric()
@@ -280,9 +280,9 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Wydajność grzania')
+                        Tab::make(LabelService::tab('air_conditioners', 'Wydajność grzania'))
                             ->schema([
-                                Section::make('Parametry grzania')
+                                LabelService::sectionMake('air_conditioners', 'Parametry grzania')
                                     ->schema([
                                         TextInput::make('maximum_heating_power')
                                             ->numeric()
@@ -326,9 +326,9 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Tryby pracy i funkcje')
+                        Tab::make(LabelService::tab('air_conditioners', 'Tryby pracy i funkcje'))
                             ->schema([
-                                Section::make('Tryby pracy')
+                                LabelService::sectionMake('air_conditioners', 'Tryby pracy')
                                     ->schema([
                                         Toggle::make('mode_dry')
                                             ->label('Tryb osuszania'),
@@ -350,7 +350,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Tryb oczyszczania'),
                                     ])->columns(2),
 
-                                Section::make('Parametry powietrza')
+                                LabelService::sectionMake('air_conditioners', 'Parametry powietrza')
                                     ->schema([
                                         TextInput::make('max_air_flow')
                                             ->numeric()
@@ -368,7 +368,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Zakres temperatur'),
                                     ])->columns(2),
 
-                                Section::make('Hałas')
+                                LabelService::sectionMake('air_conditioners', 'Hałas')
                                     ->schema([
                                         TextInput::make('max_loudness')
                                             ->numeric()
@@ -382,15 +382,15 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Filtry i oczyszczanie')
+                        Tab::make(LabelService::tab('air_conditioners', 'Filtry i oczyszczanie'))
                             ->schema([
-                                Section::make('Filtry podstawowe')
+                                LabelService::sectionMake('air_conditioners', 'Filtry podstawowe')
                                     ->schema([
                                         Toggle::make('mesh_filter')
                                             ->label('Filtr wstępny'),
                                     ])->columns(1),
 
-                                Section::make('Filtr HEPA')
+                                LabelService::sectionMake('air_conditioners', 'Filtr HEPA')
                                     ->schema([
                                         Toggle::make('hepa_filter')
                                             ->live()
@@ -409,7 +409,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Żywotność filtra HEPA'),
                                     ])->columns(2)->collapsible(),
 
-                                Section::make('Filtr węglowy')
+                                LabelService::sectionMake('air_conditioners', 'Filtr węglowy')
                                     ->schema([
                                         Toggle::make('carbon_filter')
                                             ->live()
@@ -428,7 +428,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Żywotność filtra węglowego'),
                                     ])->columns(2)->collapsible(),
 
-                                Section::make('Dodatkowe technologie')
+                                LabelService::sectionMake('air_conditioners', 'Dodatkowe technologie')
                                     ->schema([
                                         Toggle::make('ionization')
                                             ->label('Jonizacja'),
@@ -444,9 +444,9 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Sterowanie i łączność')
+                        Tab::make(LabelService::tab('air_conditioners', 'Sterowanie i łączność'))
                             ->schema([
-                                Section::make('Sterowanie')
+                                LabelService::sectionMake('air_conditioners', 'Sterowanie')
                                     ->schema([
                                         Toggle::make('remote_control')
                                             ->label('Pilot zdalnego sterowania'),
@@ -455,7 +455,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Aplikacja mobilna'),
                                     ])->columns(2),
 
-                                Section::make('Funkcje i wyposażenie')
+                                LabelService::sectionMake('air_conditioners', 'Funkcje i wyposażenie')
                                     ->schema([
                                         // Old JSON-based implementation kept for reference
                                         // TagsInput::make('productFunctions')
@@ -481,9 +481,9 @@ final class AirConditionerResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Specyfikacja techniczna')
+                        Tab::make(LabelService::tab('air_conditioners', 'Specyfikacja techniczna'))
                             ->schema([
-                                Section::make('Chłodziwo')
+                                LabelService::sectionMake('air_conditioners', 'Chłodziwo')
                                     ->schema([
                                         Select::make('refrigerant_kind')
                                             ->label('Rodzaj chłodziwa')
@@ -508,7 +508,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Wymaga uzupełnienia'),
                                     ])->columns(2),
 
-                                Section::make('Parametry elektryczne')
+                                LabelService::sectionMake('air_conditioners', 'Parametry elektryczne')
                                     ->schema([
                                         TextInput::make('rated_voltage')
                                             ->numeric()
@@ -516,7 +516,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Napięcie znamionowe'),
                                     ])->columns(2),
 
-                                Section::make('Wymiary i waga')
+                                LabelService::sectionMake('air_conditioners', 'Wymiary i waga')
                                     ->schema([
                                         TextInput::make('width')
                                             ->numeric()
@@ -539,7 +539,7 @@ final class AirConditionerResource extends Resource
                                             ->label('Waga'),
                                     ])->columns(2),
 
-                                Section::make('Instalacja')
+                                LabelService::sectionMake('air_conditioners', 'Instalacja')
                                     ->schema([
                                         Toggle::make('discharge_pipe')
                                             ->live()
@@ -565,16 +565,16 @@ final class AirConditionerResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Dodatkowe informacje')
+                        Tab::make(LabelService::tab('air_conditioners', 'Dodatkowe informacje'))
                             ->schema([
-                                Section::make('Wygląd')
+                                LabelService::sectionMake('air_conditioners', 'Wygląd')
                                     ->schema([
                                         TagsInput::make('colors')
                                             ->label('Dostępne kolory')
                                             ->columnSpanFull(),
                                     ]),
 
-                                Section::make('Dane systemowe')
+                                LabelService::sectionMake('air_conditioners', 'Dane systemowe')
                                     ->schema([
                                         TextInput::make('remote_id')
                                             ->numeric()

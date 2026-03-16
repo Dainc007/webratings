@@ -12,6 +12,7 @@ use App\Filament\Resources\SensorResource\Pages\ListSensors;
 use App\Models\Sensor;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -27,7 +28,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -62,9 +62,9 @@ final class SensorResource extends Resource
                 FormFieldSearch::make(),
                 Tabs::make('Sensor form')
                     ->tabs([
-                        Tab::make('Podstawowe informacje')
+                        Tab::make(LabelService::tab('sensors', 'Podstawowe informacje'))
                             ->schema([
-                                Section::make('Podstawowe informacje')
+                                LabelService::sectionMake('sensors', 'Podstawowe informacje')
                                     ->schema([
                                         Select::make('status')
                                             ->selectablePlaceholder(false)
@@ -114,7 +114,7 @@ final class SensorResource extends Resource
                                             ->columnSpanFull(),
                                     ])->columns(2),
 
-                                Section::make('Linki partnerskie')
+                                LabelService::sectionMake('sensors', 'Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_name')
                                             ->label('Partner Name'),
@@ -139,7 +139,7 @@ final class SensorResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Ceneo')
+                                LabelService::sectionMake('sensors', 'Ceneo')
                                     ->schema([
                                         Textarea::make('ceneo_url')
                                             ->label('Ceneo URL')
@@ -161,7 +161,7 @@ final class SensorResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Link do recenzji')
+                                LabelService::sectionMake('sensors', 'Link do recenzji')
                                     ->schema([
                                         Textarea::make('review_link')
                                             ->label('Review Link URL')
@@ -170,9 +170,9 @@ final class SensorResource extends Resource
                                     ->collapsible(),
                             ]),
 
-                        Tab::make('Czujniki PM')
+                        Tab::make(LabelService::tab('sensors', 'Czujniki PM'))
                             ->schema([
-                                Section::make(__('sensors.sections.pm1_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik PM1')
                                     ->schema([
                                         Toggle::make('is_pm1')
                                             ->live(),
@@ -187,7 +187,7 @@ final class SensorResource extends Resource
                                             ->visible(fn (Get $get): mixed => $get('is_pm1')),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.pm2_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik PM2.5')
                                     ->schema([
                                         Toggle::make('is_pm2')
                                             ->live(),
@@ -202,7 +202,7 @@ final class SensorResource extends Resource
                                             ->visible(fn (Get $get): mixed => $get('is_pm2')),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.pm10_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik PM10')
                                     ->schema([
                                         Toggle::make('is_pm10')
                                             ->live(),
@@ -218,9 +218,9 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Czujniki chemiczne')
+                        Tab::make(LabelService::tab('sensors', 'Czujniki chemiczne'))
                             ->schema([
-                                Section::make(__('sensors.sections.lzo_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik LZO')
                                     ->schema([
                                         Toggle::make('is_lzo')
                                             ->live(),
@@ -235,7 +235,7 @@ final class SensorResource extends Resource
                                             ->visible(fn (Get $get): mixed => $get('is_lzo')),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.hcho_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik HCHO')
                                     ->schema([
                                         Toggle::make('is_hcho')
                                             ->live(),
@@ -250,7 +250,7 @@ final class SensorResource extends Resource
                                             ->visible(fn (Get $get): mixed => $get('is_hcho')),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.co2_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik CO2')
                                     ->schema([
                                         Toggle::make('is_co2')
                                             ->live(),
@@ -265,7 +265,7 @@ final class SensorResource extends Resource
                                             ->visible(fn (Get $get): mixed => $get('is_co2')),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.co_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik CO')
                                     ->schema([
                                         Toggle::make('is_co')
                                             ->live(),
@@ -281,9 +281,9 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Czujniki środowiskowe')
+                        Tab::make(LabelService::tab('sensors', 'Czujniki środowiskowe'))
                             ->schema([
-                                Section::make(__('sensors.sections.temperature_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik temperatury')
                                     ->schema([
                                         Toggle::make('is_temperature')
                                             ->live(),
@@ -297,7 +297,7 @@ final class SensorResource extends Resource
                                         TextInput::make('temperature'),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.humidity_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik wilgotności')
                                     ->schema([
                                         Toggle::make('is_humidity')
                                             ->live(),
@@ -311,7 +311,7 @@ final class SensorResource extends Resource
                                         TextInput::make('humidity'),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.pressure_sensor'))
+                                LabelService::sectionMake('sensors', 'Czujnik ciśnienia')
                                     ->schema([
                                         Toggle::make('is_pressure')
                                             ->live(),
@@ -324,9 +324,9 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Zasilanie i łączność')
+                        Tab::make(LabelService::tab('sensors', 'Zasilanie i łączność'))
                             ->schema([
-                                Section::make(__('sensors.sections.power'))
+                                LabelService::sectionMake('sensors', 'Zasilanie')
                                     ->schema([
                                         TextInput::make('battery'),
 
@@ -339,7 +339,7 @@ final class SensorResource extends Resource
                                         Toggle::make('has_power_cord'),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.connectivity'))
+                                LabelService::sectionMake('sensors', 'Łączność')
                                     ->schema([
                                         Toggle::make('wifi'),
 
@@ -351,9 +351,9 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Funkcje urządzenia')
+                        Tab::make(LabelService::tab('sensors', 'Funkcje urządzenia'))
                             ->schema([
-                                Section::make(__('sensors.sections.features'))
+                                LabelService::sectionMake('sensors', 'Funkcje')
                                     ->schema([
                                         Grid::make(3)
                                             ->schema([
@@ -374,9 +374,9 @@ final class SensorResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Wymiary i wydajność')
+                        Tab::make(LabelService::tab('sensors', 'Wymiary i wydajność'))
                             ->schema([
-                                Section::make(__('sensors.sections.physical_dimensions'))
+                                LabelService::sectionMake('sensors', 'Wymiary fizyczne')
                                     ->schema([
                                         TextInput::make('width')
                                             ->numeric()
@@ -399,7 +399,7 @@ final class SensorResource extends Resource
                                             ->suffix('kg'),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.performance_rating'))
+                                LabelService::sectionMake('sensors', 'Ocena wydajności')
                                     ->schema([
                                         TextInput::make('capability_points')
                                             ->numeric(),
@@ -416,9 +416,9 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Ranking')
+                        Tab::make(LabelService::tab('sensors', 'Ranking'))
                             ->schema([
-                                Section::make(__('sensors.sections.ranking_settings'))
+                                LabelService::sectionMake('sensors', 'Ustawienia rankingu')
                                     ->schema([
                                         TextInput::make('ranking')
                                             ->numeric(),
@@ -429,9 +429,9 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Metadane')
+                        Tab::make(LabelService::tab('sensors', 'Metadane'))
                             ->schema([
-                                Section::make(__('sensors.sections.system_identifiers'))
+                                LabelService::sectionMake('sensors', 'Identyfikatory systemowe')
                                     ->schema([
                                         TextInput::make('remote_id')
                                             ->numeric(),
@@ -446,7 +446,7 @@ final class SensorResource extends Resource
                                             ->disabled(),
                                     ])->columns(2),
 
-                                Section::make(__('sensors.sections.timestamps'))
+                                LabelService::sectionMake('sensors', 'Znaczniki czasu')
                                     ->schema([
                                         DateTimePicker::make('date_created')
                                             ->disabled(),

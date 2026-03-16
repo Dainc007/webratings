@@ -14,6 +14,7 @@ use App\Filament\Resources\AirPurifierResource\Pages\ListAirPurifiers;
 use App\Models\AirPurifier;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -30,7 +31,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -65,9 +65,9 @@ final class AirPurifierResource extends Resource
                 FormFieldSearch::make(),
                 Tabs::make('Air Purifier Form')
                     ->tabs([
-                        Tab::make('Podstawowe informacje')
+                        Tab::make(LabelService::tab('air_purifiers', 'Podstawowe informacje'))
                             ->schema([
-                                Section::make('Podstawowe informacje')
+                                LabelService::sectionMake('air_purifiers', 'Podstawowe informacje')
                                     ->schema([
                                         Select::make('status')
                                             ->default('draft')
@@ -115,7 +115,7 @@ final class AirPurifierResource extends Resource
                                     ])
                                     ->columns(2),
 
-                                Section::make('Oceny i ranking')
+                                LabelService::sectionMake('air_purifiers', 'Oceny i ranking')
                                     ->schema([
                                         TextInput::make('capability_points')
                                             ->numeric()
@@ -134,7 +134,7 @@ final class AirPurifierResource extends Resource
                                     ])
                                     ->columns(2),
 
-                                Section::make('Linki partnerskie')
+                                LabelService::sectionMake('air_purifiers', 'Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_link_url')
                                             ->maxLength(255)
@@ -153,7 +153,7 @@ final class AirPurifierResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Ceneo')
+                                LabelService::sectionMake('air_purifiers', 'Ceneo')
                                     ->schema([
                                         TextInput::make('ceneo_url')
                                             ->maxLength(255)
@@ -176,7 +176,7 @@ final class AirPurifierResource extends Resource
                                     ->maxLength(255)
                                     ->label('Link do recenzji'),
 
-                                Section::make('Galeria')
+                                LabelService::sectionMake('air_purifiers', 'Galeria')
                                     ->schema([
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
@@ -194,7 +194,7 @@ final class AirPurifierResource extends Resource
                                     ->collapsible(),
                             ]),
 
-                        Tab::make('Wydajność')
+                        Tab::make(LabelService::tab('air_purifiers', 'Wydajność'))
                             ->columns(4)
                             ->schema([
                                 TextInput::make('max_performance')
@@ -233,9 +233,9 @@ final class AirPurifierResource extends Resource
                                     ->label('Max. pobór prądu'),
                             ]),
 
-                        Tab::make('Nawilżanie')
+                        Tab::make(LabelService::tab('air_purifiers', 'Nawilżanie'))
                             ->schema([
-                                Section::make('Nawilżanie')
+                                LabelService::sectionMake('air_purifiers', 'Nawilżanie')
                                     ->schema([
                                         Toggle::make('has_humidification')
                                             ->label('Posiada nawilżanie')
@@ -278,7 +278,7 @@ final class AirPurifierResource extends Resource
                                     ])
                                     ->columns(2),
 
-                                Section::make('Higrostat')
+                                LabelService::sectionMake('air_purifiers', 'Higrostat')
                                     ->schema([
                                         Toggle::make('hygrometer')
                                             ->label('Higrometr'),
@@ -304,10 +304,10 @@ final class AirPurifierResource extends Resource
                                     ->columns(2),
                             ]),
 
-                        Tab::make('Filtry')
+                        Tab::make(LabelService::tab('air_purifiers', 'Filtry'))
                             ->schema([
                                 Toggle::make('evaporative_filter')->live(),
-                                Section::make('Filtr ewaporacyjny')
+                                LabelService::sectionMake('air_purifiers', 'Filtr ewaporacyjny')
                                     ->schema([
                                         TextInput::make('evaporative_filter_life')
                                             ->numeric(),
@@ -318,7 +318,7 @@ final class AirPurifierResource extends Resource
                                     ->visible(fn (callable $get) => $get('evaporative_filter')),
 
                                 Toggle::make('hepa_filter')->live(),
-                                Section::make('Filtr HEPA')
+                                LabelService::sectionMake('air_purifiers', 'Filtr HEPA')
                                     ->schema([
                                         TextInput::make('hepa_filter_class'),
                                         TextInput::make('effectiveness_hepa_filter')
@@ -334,7 +334,7 @@ final class AirPurifierResource extends Resource
                                     ->visible(fn (callable $get) => $get('hepa_filter')),
 
                                 Toggle::make('carbon_filter')->live(),
-                                Section::make('Filtr węglowy')
+                                LabelService::sectionMake('air_purifiers', 'Filtr węglowy')
                                     ->schema([
                                         TextInput::make('carbon_filter_service_life')
                                             ->numeric(),
@@ -350,10 +350,10 @@ final class AirPurifierResource extends Resource
                                 Textarea::make('filter_costs'),
                             ]),
 
-                        Tab::make('Funkcje')
+                        Tab::make(LabelService::tab('air_purifiers', 'Funkcje'))
                             ->schema([
                                 Toggle::make('ionization')->live(),
-                                Section::make('Jonizator')
+                                LabelService::sectionMake('air_purifiers', 'Jonizator')
                                     ->schema([
                                         Select::make('ionizer_type')
                                             ->label('Typ Jonizatora')
@@ -362,7 +362,7 @@ final class AirPurifierResource extends Resource
                                     ])
                                     ->visible(fn (callable $get) => $get('ionization')),
 
-                                Section::make('Inne funkcje')
+                                LabelService::sectionMake('air_purifiers', 'Inne funkcje')
                                     ->schema([
                                         Toggle::make('uvc'),
 
@@ -388,7 +388,7 @@ final class AirPurifierResource extends Resource
                                         Toggle::make('cooling_function'),
                                     ])->collapsible(),
 
-                                Section::make('Czujniki')
+                                LabelService::sectionMake('air_purifiers', 'Czujniki')
                                     ->schema([
                                         Toggle::make('pm2_sensor'),
 
@@ -420,7 +420,7 @@ final class AirPurifierResource extends Resource
                                     ->createOptionUsing(fn (array $data): string => $data['name']),
                             ]),
 
-                        Tab::make('Wymiary')
+                        Tab::make(LabelService::tab('air_purifiers', 'Wymiary'))
                             ->columns(4)
                             ->schema([
                                 TextInput::make('width')
@@ -445,7 +445,7 @@ final class AirPurifierResource extends Resource
                                     ->separator(','),
                             ]),
 
-                        Tab::make('Klasyfikacja')
+                        Tab::make(LabelService::tab('air_purifiers', 'Klasyfikacja'))
                             ->schema([
                                 TagsInput::make('type_of_device')
                                     ->placeholder('Dodaj typ urządzenia')
@@ -473,7 +473,7 @@ final class AirPurifierResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Daty')
+                        Tab::make(LabelService::tab('air_purifiers', 'Daty'))
                             ->schema([
                                 DateTimePicker::make('date_created')
                                     ->disabled(),

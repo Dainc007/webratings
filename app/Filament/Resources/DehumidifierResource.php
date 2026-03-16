@@ -13,6 +13,7 @@ use App\Filament\Resources\DehumidifierResource\Pages\ListDehumidifiers;
 use App\Models\Dehumidifier;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -28,7 +29,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -63,9 +63,9 @@ final class DehumidifierResource extends Resource
                 Tabs::make('Formularz Osuszacza')
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('Podstawowe informacje')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Podstawowe informacje'))
                             ->schema([
-                                Section::make('Podstawowe informacje')
+                                LabelService::sectionMake('dehumidifiers', 'Podstawowe informacje')
                                     ->schema([
                                         Select::make('status')
                                             ->selectablePlaceholder(false)
@@ -121,7 +121,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Informacje o zniżce')
                                             ->columnSpanFull(),
                                     ])->columns(2),
-                                    Section::make('Oceny i ranking')
+                                    LabelService::sectionMake('dehumidifiers', 'Oceny i ranking')
                                     ->schema([
                                         TextInput::make('capability')
                                             ->numeric()
@@ -147,7 +147,7 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Linki partnerskie')
+                                LabelService::sectionMake('dehumidifiers', 'Linki partnerskie')
                                     ->schema([
                                         TextInput::make('partner_name')
                                             ->label('Nazwa partnera'),
@@ -172,7 +172,7 @@ final class DehumidifierResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Linki Ceneo')
+                                LabelService::sectionMake('dehumidifiers', 'Linki Ceneo')
                                     ->schema([
                                         Textarea::make('ceneo_url')
                                             ->label('Link Ceneo')
@@ -194,7 +194,7 @@ final class DehumidifierResource extends Resource
                                     ->columns(2)
                                     ->collapsible(),
 
-                                Section::make('Link do recenzji')
+                                LabelService::sectionMake('dehumidifiers', 'Link do recenzji')
                                     ->schema([
                                         Textarea::make('review_link')
                                             ->label('Link do recenzji')
@@ -202,7 +202,7 @@ final class DehumidifierResource extends Resource
                                     ])
                                     ->collapsible(),
 
-                                Section::make('Galeria')
+                                LabelService::sectionMake('dehumidifiers', 'Galeria')
                                     ->schema([
                                         FileUpload::make('gallery')
                                             ->label('Galeria zdjęć')
@@ -220,9 +220,9 @@ final class DehumidifierResource extends Resource
                                     ->collapsible(),
                             ]),
 
-                        Tab::make('Wydajność osuszania')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Wydajność osuszania'))
                             ->schema([
-                                Section::make('Parametry osuszania')
+                                LabelService::sectionMake('dehumidifiers', 'Parametry osuszania')
                                     ->schema([
                                         TextInput::make('max_performance_dry')
                                             ->numeric()
@@ -252,9 +252,9 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Warunki pracy')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Warunki pracy'))
                             ->schema([
-                                Section::make('Zakres temperatur')
+                                LabelService::sectionMake('dehumidifiers', 'Zakres temperatur')
                                     ->schema([
                                         TextInput::make('minimum_temperature')
                                             ->numeric()
@@ -267,7 +267,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Maksymalna temperatura'),
                                     ])->columns(2),
 
-                                Section::make('Zakres wilgotności')
+                                LabelService::sectionMake('dehumidifiers', 'Zakres wilgotności')
                                     ->schema([
                                         TextInput::make('minimum_humidity')
                                             ->numeric()
@@ -281,9 +281,9 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Zbiornik na wodę')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Zbiornik na wodę'))
                             ->schema([
-                                Section::make('Parametry zbiornika')
+                                LabelService::sectionMake('dehumidifiers', 'Parametry zbiornika')
                                     ->schema([
                                         TextInput::make('water_tank_capacity')
                                             ->numeric()
@@ -302,9 +302,9 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Higrostat i sterowanie')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Higrostat i sterowanie'))
                             ->schema([
-                                Section::make('Higrostat')
+                                LabelService::sectionMake('dehumidifiers', 'Higrostat')
                                     ->schema([
                                         Toggle::make('higrostat')
                                             ->label('Higrostat')
@@ -328,7 +328,7 @@ final class DehumidifierResource extends Resource
                                             ->visible(fn (callable $get) => $get('higrostat')),
                                     ])->columns(2),
 
-                                Section::make('Wentylator')
+                                LabelService::sectionMake('dehumidifiers', 'Wentylator')
                                     ->schema([
                                         TextInput::make('number_of_fan_speeds')
                                             ->numeric()
@@ -340,7 +340,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Maksymalny przepływ powietrza'),
                                     ])->columns(2),
 
-                                Section::make('Hałas')
+                                LabelService::sectionMake('dehumidifiers', 'Hałas')
                                     ->schema([
                                         TextInput::make('max_loudness')
                                             ->numeric()
@@ -353,7 +353,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Minimalny poziom hałasu'),
                                     ])->columns(2),
 
-                                Section::make('Tryby pracy')
+                                LabelService::sectionMake('dehumidifiers', 'Tryby pracy')
                                     ->schema([
                                         Select::make('modes_of_operation')
                                             ->label('Tryby pracy')
@@ -377,15 +377,15 @@ final class DehumidifierResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Filtry i oczyszczanie')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Filtry i oczyszczanie'))
                             ->schema([
-                                Section::make('Filtry podstawowe')
+                                LabelService::sectionMake('dehumidifiers', 'Filtry podstawowe')
                                     ->schema([
                                         Toggle::make('mesh_filter')
                                             ->label('Filtr wstępny'),
                                     ])->columns(1),
 
-                                Section::make('Filtr HEPA')
+                                LabelService::sectionMake('dehumidifiers', 'Filtr HEPA')
                                     ->schema([
                                         Toggle::make('hepa_filter')
                                             ->live()
@@ -404,7 +404,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Żywotność filtra HEPA'),
                                     ])->columns(2)->collapsible(),
 
-                                Section::make('Filtr węglowy')
+                                LabelService::sectionMake('dehumidifiers', 'Filtr węglowy')
                                     ->schema([
                                         Toggle::make('carbon_filter')
                                             ->live()
@@ -423,7 +423,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Żywotność filtra węglowego'),
                                     ])->columns(2)->collapsible(),
 
-                                Section::make('Dodatkowe technologie')
+                                LabelService::sectionMake('dehumidifiers', 'Dodatkowe technologie')
                                     ->schema([
                                         Toggle::make('ionization')
                                             ->label('Jonizacja'),
@@ -438,9 +438,9 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Sterowanie i łączność')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Sterowanie i łączność'))
                             ->schema([
-                                Section::make('Sterowanie')
+                                LabelService::sectionMake('dehumidifiers', 'Sterowanie')
                                     ->schema([
                                         Toggle::make('mobile_app')
                                             ->live()
@@ -452,7 +452,7 @@ final class DehumidifierResource extends Resource
                                             ->columnSpanFull(),
                                     ])->columns(2),
 
-                                Section::make('Funkcje i wyposażenie')
+                                LabelService::sectionMake('dehumidifiers', 'Funkcje i wyposażenie')
                                     ->schema([
                                         Select::make('productFunctions')
                                             ->relationship('productFunctions', 'name')
@@ -473,9 +473,9 @@ final class DehumidifierResource extends Resource
                                     ]),
                             ]),
 
-                        Tab::make('Specyfikacja techniczna')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Specyfikacja techniczna'))
                             ->schema([
-                                Section::make('Chłodziwo')
+                                LabelService::sectionMake('dehumidifiers', 'Chłodziwo')
                                     ->schema([
                                         Select::make('refrigerant_kind')
                                             ->label('Rodzaj chłodziwa')
@@ -494,7 +494,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Wymaga uzupełnienia'),
                                     ])->columns(2),
 
-                                Section::make('Parametry elektryczne')
+                                LabelService::sectionMake('dehumidifiers', 'Parametry elektryczne')
                                     ->schema([
                                         TextInput::make('rated_power_consumption')
                                             ->numeric()
@@ -507,7 +507,7 @@ final class DehumidifierResource extends Resource
                                             ->label('Napięcie znamionowe'),
                                     ])->columns(2),
 
-                                Section::make('Wymiary i waga')
+                                LabelService::sectionMake('dehumidifiers', 'Wymiary i waga')
                                     ->schema([
                                         TextInput::make('width')
                                             ->numeric()
@@ -531,16 +531,16 @@ final class DehumidifierResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('Dodatkowe informacje')
+                        Tab::make(LabelService::tab('dehumidifiers', 'Dodatkowe informacje'))
                             ->schema([
-                                Section::make('Dokumentacja')
+                                LabelService::sectionMake('dehumidifiers', 'Dokumentacja')
                                     ->schema([
                                         FileUpload::make('manual_file')
                                             ->directory('instructions')
                                             ->label('Plik instrukcji'),
                                     ]),
 
-                                Section::make('Dane systemowe')
+                                LabelService::sectionMake('dehumidifiers', 'Dane systemowe')
                                     ->schema([
                                         TextInput::make('remote_id')
                                             ->numeric()

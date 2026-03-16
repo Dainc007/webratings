@@ -13,6 +13,7 @@ use App\Models\Sensor;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\LabelService;
+use App\Services\FormLayoutService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -57,12 +58,8 @@ final class SensorResource extends Resource
     {
         $customFieldSchema = CustomFieldService::getFormFields('sensors');
 
-        return $schema
-            ->components([
-                FormFieldSearch::make(),
-                Tabs::make('Sensor form')
-                    ->tabs([
-                        Tab::make(LabelService::tab('sensors', 'Podstawowe informacje'))
+        $defaultTabs = [
+            Tab::make(LabelService::tab('sensors', 'Podstawowe informacje'))
                             ->schema([
                                 LabelService::sectionMake('sensors', 'Podstawowe informacje')
                                     ->schema([
@@ -456,12 +453,18 @@ final class SensorResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('custom_fields')
-                            ->schema(
-                                $customFieldSchema
-                            )
-                            ->visible(fn () => count($customFieldSchema) > 0),
-                    ])
+            Tab::make('custom_fields')
+                ->schema(
+                    $customFieldSchema
+                )
+                ->visible(fn () => count($customFieldSchema) > 0),
+        ];
+
+        return $schema
+            ->components([
+                FormFieldSearch::make(),
+                Tabs::make('Sensor form')
+                    ->tabs(FormLayoutService::applyLayout('sensors', $defaultTabs))
                     ->persistTabInQueryString()
                     ->columnSpanFull(),
             ]);

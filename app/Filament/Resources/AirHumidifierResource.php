@@ -14,6 +14,7 @@ use App\Models\AirHumidifier;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\LabelService;
+use App\Services\FormLayoutService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -58,12 +59,8 @@ final class AirHumidifierResource extends Resource
     {
         $customFieldSchema = CustomFieldService::getFormFields('air_humidifiers');
 
-        return $schema
-            ->components([
-                FormFieldSearch::make(),
-                Tabs::make('Formularz Nawilżacza Powietrza')
-                    ->tabs([
-                        Tab::make(LabelService::tab('air_humidifiers', 'Podstawowe informacje'))
+        $defaultTabs = [
+            Tab::make(LabelService::tab('air_humidifiers', 'Podstawowe informacje'))
                             ->schema([
                                 LabelService::sectionMake('air_humidifiers', 'Podstawowe informacje')
                                     ->schema([
@@ -488,7 +485,13 @@ final class AirHumidifierResource extends Resource
                                 $customFieldSchema
                             )
                             ->visible(fn () => count($customFieldSchema) > 0),
-                    ])
+        ];
+
+        return $schema
+            ->components([
+                FormFieldSearch::make(),
+                Tabs::make('Formularz Nawilżacza Powietrza')
+                    ->tabs(FormLayoutService::applyLayout('air_humidifiers', $defaultTabs))
                     ->persistTabInQueryString()
                     ->columnSpanFull(),
             ]);

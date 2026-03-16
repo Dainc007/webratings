@@ -12,6 +12,7 @@ use App\Filament\Resources\UprightVacuumResource\Pages\ListUprightVacuums;
 use App\Models\UprightVacuum;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\FormLayoutService;
 use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
@@ -54,13 +55,8 @@ final class UprightVacuumResource extends Resource
     {
         $customFieldSchema = CustomFieldService::getFormFields('upright_vacuums');
 
-        return $schema
-            ->components([
-                FormFieldSearch::make(),
-                Tabs::make('Formularz Odkurzacza Pionowego')
-                    ->columnSpanFull()
-                    ->tabs([
-                        Tab::make(LabelService::tab('upright_vacuums', 'Podstawowe informacje'))
+        $defaultTabs = [
+            Tab::make(LabelService::tab('upright_vacuums', 'Podstawowe informacje'))
                             ->schema([
                                 LabelService::sectionMake('upright_vacuums', 'Podstawowe informacje')
                                     ->schema([
@@ -592,12 +588,19 @@ final class UprightVacuumResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Tab::make('custom_fields')
-                            ->schema(
-                                $customFieldSchema
-                            )
-                            ->visible(fn () => count($customFieldSchema) > 0),
-                    ]),
+            Tab::make('custom_fields')
+                ->schema(
+                    $customFieldSchema
+                )
+                ->visible(fn () => count($customFieldSchema) > 0),
+        ];
+
+        return $schema
+            ->components([
+                FormFieldSearch::make(),
+                Tabs::make('Formularz Odkurzacza Pionowego')
+                    ->columnSpanFull()
+                    ->tabs(FormLayoutService::applyLayout('upright_vacuums', $defaultTabs)),
             ]);
     }
 

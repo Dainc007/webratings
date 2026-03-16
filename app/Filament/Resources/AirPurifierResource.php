@@ -14,6 +14,7 @@ use App\Filament\Resources\AirPurifierResource\Pages\ListAirPurifiers;
 use App\Models\AirPurifier;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
+use App\Services\FormLayoutService;
 use App\Services\LabelService;
 use App\Services\ExportActionService;
 use BackedEnum;
@@ -60,11 +61,7 @@ final class AirPurifierResource extends Resource
     {
         $customFieldSchema = CustomFieldService::getFormFields('air_purifiers');
 
-        return $schema
-            ->components([
-                FormFieldSearch::make(),
-                Tabs::make('Air Purifier Form')
-                    ->tabs([
+        $defaultTabs = [
                         Tab::make(LabelService::tab('air_purifiers', 'Podstawowe informacje'))
                             ->schema([
                                 LabelService::sectionMake('air_purifiers', 'Podstawowe informacje')
@@ -493,7 +490,13 @@ final class AirPurifierResource extends Resource
                                 $customFieldSchema
                             )
                             ->visible(fn () => count($customFieldSchema) > 0),
-                    ])
+        ];
+
+        return $schema
+            ->components([
+                FormFieldSearch::make(),
+                Tabs::make('Air Purifier Form')
+                    ->tabs(FormLayoutService::applyLayout('air_purifiers', $defaultTabs))
                     ->persistTabInQueryString()
                     ->columnSpanFull(),
             ]);

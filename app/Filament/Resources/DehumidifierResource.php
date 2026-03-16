@@ -14,6 +14,7 @@ use App\Models\Dehumidifier;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\LabelService;
+use App\Services\FormLayoutService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -57,12 +58,7 @@ final class DehumidifierResource extends Resource
     {
         $customFieldSchema = CustomFieldService::getFormFields('dehumidifiers');
 
-        return $schema
-            ->components([
-                FormFieldSearch::make(),
-                Tabs::make('Formularz Osuszacza')
-                    ->columnSpanFull()
-                    ->tabs([
+        $defaultTabs = [
                         Tab::make(LabelService::tab('dehumidifiers', 'Podstawowe informacje'))
                             ->schema([
                                 LabelService::sectionMake('dehumidifiers', 'Podstawowe informacje')
@@ -569,7 +565,14 @@ final class DehumidifierResource extends Resource
                                 $customFieldSchema
                             )
                             ->visible(fn () => count($customFieldSchema) > 0),
-                    ]),
+        ];
+
+        return $schema
+            ->components([
+                FormFieldSearch::make(),
+                Tabs::make('Formularz Osuszacza')
+                    ->columnSpanFull()
+                    ->tabs(FormLayoutService::applyLayout('dehumidifiers', $defaultTabs))
             ]);
     }
 

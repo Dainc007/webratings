@@ -13,6 +13,7 @@ use App\Models\AirConditioner;
 use App\Models\Brand;
 use App\Services\CustomFieldService;
 use App\Services\LabelService;
+use App\Services\FormLayoutService;
 use App\Services\ExportActionService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -56,13 +57,8 @@ final class AirConditionerResource extends Resource
     {
         $customFieldSchema = CustomFieldService::getFormFields('air_conditioners');
 
-        return $schema
-            ->components([
-                FormFieldSearch::make(),
-                Tabs::make('Formularz Klimatyzatora')
-                    ->columnSpanFull()
-                    ->tabs([
-                        Tab::make(LabelService::tab('air_conditioners', 'Podstawowe informacje'))
+        $defaultTabs = [
+            Tab::make(LabelService::tab('air_conditioners', 'Podstawowe informacje'))
                             ->schema([
                                 LabelService::sectionMake('air_conditioners', 'Podstawowe informacje')
                                     ->schema([
@@ -603,7 +599,14 @@ final class AirConditionerResource extends Resource
                                 $customFieldSchema
                             )
                             ->visible(fn () => count($customFieldSchema) > 0),
-                    ]),
+        ];
+
+        return $schema
+            ->components([
+                FormFieldSearch::make(),
+                Tabs::make('Formularz Klimatyzatora')
+                    ->columnSpanFull()
+                    ->tabs(FormLayoutService::applyLayout('air_conditioners', $defaultTabs))
             ]);
     }
 

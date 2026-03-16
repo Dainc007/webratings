@@ -162,7 +162,7 @@ final class LabelServiceTest extends TestCase
     {
         $override = new LabelOverride();
         $this->assertEquals(
-            ['table_name', 'element_type', 'element_key', 'display_label'],
+            ['table_name', 'element_type', 'element_key', 'display_label', 'sort_order'],
             $override->getFillable()
         );
     }

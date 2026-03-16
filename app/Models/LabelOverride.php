@@ -13,5 +13,10 @@ final class LabelOverride extends Model
         'element_type',
         'element_key',
         'display_label',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'sort_order' => 'integer',
     ];
 }

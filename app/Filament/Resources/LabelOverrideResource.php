@@ -74,6 +74,11 @@ final class LabelOverrideResource extends Resource
             TextInput::make('display_label')
                 ->label('Nowa nazwa')
                 ->required(),
+            TextInput::make('sort_order')
+                ->label('Kolejność')
+                ->numeric()
+                ->nullable()
+                ->helperText('Niższa wartość = wyżej w sekcji (CSS order)'),
         ]);
     }
 
@@ -136,6 +141,10 @@ final class LabelOverrideResource extends Resource
                     ->searchable(),
                 TextInputColumn::make('display_label')
                     ->label('Wyświetlana nazwa'),
+                TextInputColumn::make('sort_order')
+                    ->label('Kolejność')
+                    ->type('number')
+                    ->rules(['nullable', 'integer']),
             ])
             ->defaultSort(function (Builder $query): Builder {
                 return $query

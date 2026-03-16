@@ -12,7 +12,7 @@ use Filament\Schemas\Components\Section;
 
 final class LabelService
 {
-    /** @var array<string, array<string, array<string, ?string>>> */
+    /** @var array<string, array{labels: array<string, array<string, ?string>>, sort_orders: array<string, array<string, ?int>>}> */
     private static array $cache = [];
 
     /**
@@ -22,7 +22,7 @@ final class LabelService
     {
         $overrides = self::loadOverrides($tableName);
 
-        $dbLabel = $overrides[$elementType][$key] ?? null;
+        $dbLabel = $overrides['labels'][$elementType][$key] ?? null;
         if ($dbLabel !== null && $dbLabel !== '') {
             return $dbLabel;
         }
@@ -52,8 +52,15 @@ final class LabelService
         return self::resolve($tableName, 'section', $key) ?? $key;
     }
 
+    public static function sortOrder(string $tableName, string $elementType, string $key): ?int
+    {
+        $overrides = self::loadOverrides($tableName);
+
+        return $overrides['sort_orders'][$elementType][$key] ?? null;
+    }
+
     /**
-     * @return array<string, array<string, ?string>>
+     * @return array{labels: array<string, array<string, ?string>>, sort_orders: array<string, array<string, ?int>>}
      */
     private static function loadOverrides(string $tableName): array
     {
@@ -62,19 +69,25 @@ final class LabelService
         }
 
         try {
-            $overrides = LabelOverride::where('table_name', $tableName)
-                ->whereNotNull('display_label')
-                ->where('display_label', '!=', '')
-                ->get();
+            $overrides = LabelOverride::where('table_name', $tableName)->get();
 
-            $grouped = [];
+            $labels = [];
+            $sortOrders = [];
             foreach ($overrides as $override) {
-                $grouped[$override->element_type][$override->element_key] = $override->display_label;
+                if ($override->display_label !== null && $override->display_label !== '') {
+                    $labels[$override->element_type][$override->element_key] = $override->display_label;
+                }
+                if ($override->sort_order !== null) {
+                    $sortOrders[$override->element_type][$override->element_key] = $override->sort_order;
+                }
             }
 
-            self::$cache[$tableName] = $grouped;
+            self::$cache[$tableName] = [
+                'labels' => $labels,
+                'sort_orders' => $sortOrders,
+            ];
         } catch (\Throwable) {
-            self::$cache[$tableName] = [];
+            self::$cache[$tableName] = ['labels' => [], 'sort_orders' => []];
         }
 
         return self::$cache[$tableName];

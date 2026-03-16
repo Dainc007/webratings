@@ -852,7 +852,7 @@ class ResourceFormFixesTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            "tooltip: \$field->getName()",
+            "tooltip: \$fieldName",
             $providerContent,
             'hintIcon should show raw column name'
         );

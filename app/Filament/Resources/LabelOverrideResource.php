@@ -12,7 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
-use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -71,7 +70,10 @@ final class LabelOverrideResource extends Resource
                         'tab' => 'Zakładka',
                         'section' => 'Sekcja',
                     ]),
-            ], layout: FiltersLayout::AboveContent)
+            ])
+            ->filtersTriggerAction(
+                fn (\Filament\Actions\Action $action) => $action->slideOver(),
+            )
             ->recordActions([])
             ->toolbarActions([]);
     }

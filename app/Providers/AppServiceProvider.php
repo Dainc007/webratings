@@ -55,7 +55,9 @@ final class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict($isProduction);
         Model::automaticallyEagerLoadRelationships();
         //        DB::prohibitDestructiveCommands($isProduction);
-        URL::forceScheme('https');
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
 
         date_default_timezone_set(config('app.timezone'));
 

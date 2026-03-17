@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_visible')->default(true);
             $table->timestamps();
 
-            $table->unique(['table_name', 'column_name', 'sort_order']);
+            $table->unique(['table_name', 'column_name', 'sort_order'], 'tcp_table_column_sort_unique');
         });
     }
 

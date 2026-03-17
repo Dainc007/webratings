@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Login;
-use App\Http\Middleware\UpgradeToHttpsUnderNgrok;
 use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -42,6 +41,7 @@ final class AdminPanelProvider extends PanelProvider
             ])
             ->assets([
                 Css::make('form-field-search', resource_path('css/filament/form-field-search.css')),
+                Css::make('form-layout-editor', resource_path('css/filament/form-layout-editor.css')),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -61,7 +61,6 @@ final class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                UpgradeToHttpsUnderNgrok::class,
             ])
             ->plugins([
                 GlobalSearchModalPlugin::make(),

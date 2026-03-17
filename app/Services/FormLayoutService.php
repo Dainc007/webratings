@@ -142,7 +142,7 @@ final class FormLayoutService
         $fields = [];
         foreach ($tabs as $tab) {
             if ($tab instanceof Tab) {
-                self::extractFieldsFromComponents($tab->getChildComponents(), $fields);
+                self::extractFieldsFromComponents($tab->getDefaultChildComponents(), $fields);
             }
         }
 
@@ -154,8 +154,8 @@ final class FormLayoutService
         foreach ($components as $component) {
             if ($component instanceof Field) {
                 $fields[$component->getName()] = $component;
-            } elseif (method_exists($component, 'getChildComponents')) {
-                self::extractFieldsFromComponents($component->getChildComponents(), $fields);
+            } elseif (method_exists($component, 'getDefaultChildComponents')) {
+                self::extractFieldsFromComponents($component->getDefaultChildComponents(), $fields);
             }
         }
     }
@@ -170,7 +170,7 @@ final class FormLayoutService
         $sections = [];
         foreach ($tabs as $tab) {
             if ($tab instanceof Tab) {
-                foreach ($tab->getChildComponents() as $component) {
+                foreach ($tab->getDefaultChildComponents() as $component) {
                     if ($component instanceof Section) {
                         $heading = $component->getHeading();
                         if ($heading !== null) {

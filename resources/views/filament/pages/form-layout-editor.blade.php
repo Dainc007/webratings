@@ -49,37 +49,26 @@
         </x-filament::section>
 
     @else
-    {{-- ── Tab list ────────────────────────────────────────────────────── --}}
-    <div class="fle-tabs">
+    {{-- ── Tab list — wire:sort for tab reordering ─────────────────────── --}}
+    <div class="fle-tabs" wire:sort="sortTabs">
 
         @foreach($layoutTree as $tabIndex => $tab)
-        <section class="fi-section fle-tab-card" wire:key="tab-{{ $tabIndex }}">
+        <section class="fi-section fle-tab-card"
+                 wire:key="tab-{{ $tab['key'] }}"
+                 wire:sort:item="{{ $tab['key'] }}"
+                 x-data="{ open: true }"
+        >
+            {{-- Tab header — entire row is the drag handle --}}
+            <div class="fle-row fle-tab-header" wire:sort:handle>
 
-            {{-- Tab header --}}
-            <div class="fle-row fle-tab-header">
+                <x-filament::icon icon="heroicon-m-bars-3" class="fle-drag-handle" />
 
-                <div class="fle-btn-group">
-                    <x-filament::icon-button
-                        icon="heroicon-m-chevron-up"
-                        color="gray" size="xs"
-                        tooltip="Przesuń zakładkę wyżej"
-                        wire:click="moveTab({{ $tabIndex }}, -1)"
-                        :disabled="$tabIndex === 0"
-                    />
-                    <x-filament::icon-button
-                        icon="heroicon-m-chevron-down"
-                        color="gray" size="xs"
-                        tooltip="Przesuń zakładkę niżej"
-                        wire:click="moveTab({{ $tabIndex }}, 1)"
-                        :disabled="$tabIndex === count($layoutTree) - 1"
-                    />
-                </div>
-
-                <x-filament::badge color="info" size="xs">Zakładka</x-filament::badge>
+                <x-filament::badge color="info" size="xs" wire:sort:ignore>Zakładka</x-filament::badge>
 
                 <div class="fle-name-wrap"
                      x-data="{ editing: false, val: @js($tab['display']) }"
                      x-init="$watch('val', v => v)"
+                     wire:sort:ignore
                 >
                     <span
                         x-show="!editing"
@@ -100,38 +89,34 @@
                     />
                 </div>
 
-                <span class="fle-index">#{{ $tabIndex }}</span>
+                <span class="fle-index" wire:sort:ignore>#{{ $tabIndex }}</span>
+
+                {{-- Collapse toggle --}}
+                <button class="fle-collapse-btn" @click.stop="open = !open" wire:sort:ignore :title="open ? 'Zwiń' : 'Rozwiń'">
+                    <x-filament::icon icon="heroicon-m-chevron-up" class="fle-collapse-icon" x-show="open" />
+                    <x-filament::icon icon="heroicon-m-chevron-down" class="fle-collapse-icon" x-show="!open" />
+                </button>
             </div>
 
-            {{-- Sections grid --}}
-            <div class="fle-sections-grid">
+            {{-- Sections grid — collapsible --}}
+            <div class="fle-sections-grid" wire:sort="sortSections" x-show="open" x-collapse>
 
                 @foreach($tab['sections'] as $sectionIndex => $section)
-                <div class="fle-section-card" wire:key="section-{{ $tabIndex }}-{{ $sectionIndex }}">
+                <div class="fle-section-card"
+                     wire:key="section-{{ $tab['key'] }}-{{ $section['key'] }}"
+                     wire:sort:item="{{ $tabIndex }}:{{ $section['key'] }}"
+                     x-data="{ open: true }"
+                >
+                    {{-- Section header — drag handle for this section --}}
+                    <div class="fle-row fle-section-header" wire:sort:handle>
 
-                    {{-- Section header --}}
-                    <div class="fle-row fle-section-header">
-                        <div class="fle-btn-group">
-                            <x-filament::icon-button
-                                icon="heroicon-m-chevron-up"
-                                color="gray" size="xs"
-                                tooltip="Przesuń sekcję wyżej"
-                                wire:click="moveSection({{ $tabIndex }}, {{ $sectionIndex }}, -1)"
-                                :disabled="$sectionIndex === 0"
-                            />
-                            <x-filament::icon-button
-                                icon="heroicon-m-chevron-down"
-                                color="gray" size="xs"
-                                tooltip="Przesuń sekcję niżej"
-                                wire:click="moveSection({{ $tabIndex }}, {{ $sectionIndex }}, 1)"
-                                :disabled="$sectionIndex === count($tab['sections']) - 1"
-                            />
-                        </div>
+                        <x-filament::icon icon="heroicon-m-bars-3" class="fle-drag-handle" />
 
-                        <x-filament::badge color="warning" size="xs">Sekcja</x-filament::badge>
+                        <x-filament::badge color="warning" size="xs" wire:sort:ignore>Sekcja</x-filament::badge>
 
                         <div class="fle-name-wrap"
                              x-data="{ editing: false, val: @js($section['display']) }"
+                             wire:sort:ignore
                         >
                             <span
                                 x-show="!editing"
@@ -152,64 +137,35 @@
                             />
                         </div>
 
-                        <span class="fle-index">#{{ $sectionIndex }}</span>
+                        <span class="fle-index" wire:sort:ignore>#{{ $sectionIndex }}</span>
+
+                        {{-- Collapse toggle --}}
+                        <button class="fle-collapse-btn" @click.stop="open = !open" wire:sort:ignore :title="open ? 'Zwiń' : 'Rozwiń'">
+                            <x-filament::icon icon="heroicon-m-chevron-up" class="fle-collapse-icon" x-show="open" />
+                            <x-filament::icon icon="heroicon-m-chevron-down" class="fle-collapse-icon" x-show="!open" />
+                        </button>
                     </div>
 
-                    {{-- Fields drop zone: uses mouse Y to determine insert position ── --}}
+                    {{-- Fields list — collapsible, wire:sort:group for cross-section dragging --}}
                     <div class="fle-fields-list"
-                         x-data="{ over: false, indicatorY: null }"
-                         @dragover.prevent="
-                             over = true;
-                             const items = Array.from($el.querySelectorAll('.fle-field-item'));
-                             let y = null;
-                             for (let i = 0; i < items.length; i++) {
-                                 const r = items[i].getBoundingClientRect();
-                                 if ($event.clientY < r.top + r.height / 2) { y = r.top - $el.getBoundingClientRect().top; break; }
-                             }
-                             indicatorY = y;
-                         "
-                         @dragleave.self="over = false; indicatorY = null"
-                         @drop.prevent="
-                             over = false;
-                             indicatorY = null;
-                             const d = JSON.parse($event.dataTransfer.getData('application/fle-field'));
-                             const items = Array.from($el.querySelectorAll('.fle-field-item'));
-                             let insertIndex = items.length;
-                             for (let i = 0; i < items.length; i++) {
-                                 const r = items[i].getBoundingClientRect();
-                                 if ($event.clientY < r.top + r.height / 2) { insertIndex = i; break; }
-                             }
-                             $wire.moveField(d.key, d.fromTab, d.fromSection, {{ $tabIndex }}, {{ $sectionIndex }}, insertIndex);
-                         "
-                         :class="{ 'fle-drop-target': over }"
+                         wire:sort="sortFields"
+                         wire:sort:group="fle-fields"
+                         wire:sort:group-id="{{ $tabIndex }}:{{ $sectionIndex }}"
+                         x-show="open"
+                         x-collapse
                     >
-                        {{-- Drop position indicator line --}}
-                        <div class="fle-drop-indicator"
-                             x-show="over && indicatorY !== null"
-                             :style="'top:' + indicatorY + 'px'"
-                             x-cloak
-                        ></div>
-
                         @foreach($section['fields'] as $fieldIndex => $field)
                         <div class="fle-field-item"
-                             wire:key="field-{{ $tabIndex }}-{{ $sectionIndex }}-{{ $fieldIndex }}"
-                             draggable="true"
-                             x-data="{ dragging: false }"
-                             @dragstart="
-                                 dragging = true;
-                                 $event.dataTransfer.effectAllowed = 'move';
-                                 $event.dataTransfer.setData('application/fle-field', JSON.stringify({
-                                     key: '{{ $field['key'] }}',
-                                     fromTab: {{ $tabIndex }},
-                                     fromSection: {{ $sectionIndex }}
-                                 }));
-                             "
-                             @dragend="dragging = false"
-                             :class="{ 'fle-dragging': dragging }"
+                             wire:key="field-{{ $field['key'] }}"
+                             wire:sort:item="{{ $field['key'] }}"
                         >
-                            <x-filament::icon icon="heroicon-m-bars-2" class="fle-drag-handle" />
-                            <code class="fle-field-code">{{ $field['key'] }}</code>
-                            <span class="fle-index">{{ $fieldIndex }}</span>
+                            <x-filament::icon
+                                icon="heroicon-m-bars-2"
+                                class="fle-drag-handle"
+                                wire:sort:handle
+                            />
+                            <code class="fle-field-code" wire:sort:ignore>{{ $field['key'] }}</code>
+                            <span class="fle-index" wire:sort:ignore>{{ $fieldIndex }}</span>
                         </div>
                         @endforeach
 

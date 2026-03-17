@@ -114,14 +114,6 @@
     border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ── Move-button groups ── */
-.fle-tab-controls,
-.fle-section-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    flex-shrink: 0;
-}
 
 /* ── Tab name ── */
 .fle-tab-name {
@@ -212,6 +204,41 @@
     position: relative;
 }
 
+/* ── Collapse toggle button ── */
+.fle-collapse-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding: 0.125rem;
+    border-radius: 0.25rem;
+    color: #6b7280;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.fle-collapse-btn:hover {
+    color: #374151;
+    background-color: #f3f4f6;
+}
+
+.dark .fle-collapse-btn {
+    color: #9ca3af;
+}
+
+.dark .fle-collapse-btn:hover {
+    color: #d1d5db;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.fle-collapse-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
 /* ── Drag handle ── */
 .fle-drag-handle {
     width: 1rem;
@@ -262,31 +289,6 @@
     color: #d1d5db;
 }
 
-/* ── Dragging state ── */
-.fle-dragging {
-    opacity: 0.4;
-}
-
-/* ── Drop target highlight (section-level) ── */
-.fle-drop-target {
-    outline: 2px dashed #f59e0b;
-    outline-offset: -2px;
-    background-color: rgba(245, 158, 11, 0.05);
-    border-radius: 0.25rem;
-}
-
-/* ── Drop position indicator line ── */
-.fle-drop-indicator {
-    position: absolute;
-    left: 0.5rem;
-    right: 0.5rem;
-    height: 2px;
-    background-color: #f59e0b;
-    border-radius: 1px;
-    pointer-events: none;
-    z-index: 10;
-}
-
 /* ── Empty fields placeholder ── */
 .fle-fields-empty {
     font-size: 0.75rem;
@@ -302,7 +304,6 @@
     font-family: ui-monospace, SFMono-Regular, monospace;
     color: #9ca3af;
     flex-shrink: 0;
-    margin-left: auto;
 }
 
 .dark .fle-index {

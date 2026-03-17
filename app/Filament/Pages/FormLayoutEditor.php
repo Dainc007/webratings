@@ -94,71 +94,94 @@ final class FormLayoutEditor extends Page
         $this->layoutTree = $tree;
     }
 
-    // ── Move operations (update in-memory; user clicks Save to persist) ──────
+    // ── Sort operations via wire:sort (update in-memory; user clicks Save to persist) ──
 
-    public function moveTab(int $index, int $direction): void
+    /** Called by wire:sort on the tabs list. */
+    public function sortTabs(string $tabKey, int $position): void
     {
-        $newIndex = $index + $direction;
-        if ($newIndex < 0 || $newIndex >= count($this->layoutTree)) {
-            return;
-        }
-        $tree = $this->layoutTree;
-        [$tree[$index], $tree[$newIndex]] = [$tree[$newIndex], $tree[$index]];
-        $this->layoutTree = array_values($tree);
-    }
-
-    public function moveSection(int $tabIndex, int $sectionIndex, int $direction): void
-    {
-        $sections = $this->layoutTree[$tabIndex]['sections'] ?? [];
-        $newIndex  = $sectionIndex + $direction;
-        if ($newIndex < 0 || $newIndex >= count($sections)) {
-            return;
-        }
-        $tree = $this->layoutTree;
-        [$tree[$tabIndex]['sections'][$sectionIndex], $tree[$tabIndex]['sections'][$newIndex]] =
-            [$tree[$tabIndex]['sections'][$newIndex], $tree[$tabIndex]['sections'][$sectionIndex]];
-        $this->layoutTree = $tree;
-    }
-
-    /** Called by drag-and-drop: move a field, optionally inserting before a specific index. */
-    public function moveField(
-        string $fieldKey,
-        int $fromTabIndex,
-        int $fromSectionIndex,
-        int $toTabIndex,
-        int $toSectionIndex,
-        ?int $toFieldIndex = null,
-    ): void {
         $tree      = $this->layoutTree;
-        $fieldData = null;
-        $removedAt = null;
+        $fromIndex = null;
 
-        foreach ($tree[$fromTabIndex]['sections'][$fromSectionIndex]['fields'] ?? [] as $i => $field) {
-            if ($field['key'] === $fieldKey) {
-                $fieldData = $field;
-                $removedAt = $i;
-                array_splice($tree[$fromTabIndex]['sections'][$fromSectionIndex]['fields'], $i, 1);
+        foreach ($tree as $i => $tab) {
+            if ($tab['key'] === $tabKey) {
+                $fromIndex = $i;
                 break;
             }
         }
 
-        if ($fieldData === null) {
+        if ($fromIndex === null) {
             return;
         }
 
-        if ($toFieldIndex === null) {
-            // Append at end
-            $tree[$toTabIndex]['sections'][$toSectionIndex]['fields'][] = $fieldData;
-        } else {
-            $insertAt = $toFieldIndex;
-            // Same section: removing the item before target shifts the target index down by 1
-            if ($fromTabIndex === $toTabIndex && $fromSectionIndex === $toSectionIndex
-                && $removedAt !== null && $removedAt < $toFieldIndex) {
-                $insertAt = max(0, $toFieldIndex - 1);
+        $item = array_splice($tree, $fromIndex, 1)[0];
+        array_splice($tree, $position, 0, [$item]);
+        $this->layoutTree = array_values($tree);
+    }
+
+    /** Called by wire:sort on each tab's sections grid. Item id is "{tabIndex}:{sectionKey}". */
+    public function sortSections(string $itemId, int $position): void
+    {
+        [$tabIndexStr, $sectionKey] = explode(':', $itemId, 2);
+        $tabIndex  = (int) $tabIndexStr;
+        $fromIndex = null;
+
+        foreach ($this->layoutTree[$tabIndex]['sections'] ?? [] as $i => $section) {
+            if ($section['key'] === $sectionKey) {
+                $fromIndex = $i;
+                break;
             }
-            array_splice($tree[$toTabIndex]['sections'][$toSectionIndex]['fields'], $insertAt, 0, [$fieldData]);
         }
 
+        if ($fromIndex === null) {
+            return;
+        }
+
+        $tree = $this->layoutTree;
+        $item = array_splice($tree[$tabIndex]['sections'], $fromIndex, 1)[0];
+        array_splice($tree[$tabIndex]['sections'], $position, 0, [$item]);
+        $this->layoutTree = $tree;
+    }
+
+    /**
+     * Called by wire:sort:group on field lists.
+     * $destinationId is "{tabIndex}:{sectionIndex}" from wire:sort:group-id.
+     * When sorting within the same section $destinationId may be empty.
+     */
+    public function sortFields(string $fieldKey, int $position, string $destinationId = ''): void
+    {
+        $fromTabIndex     = null;
+        $fromSectionIndex = null;
+        $fromFieldIndex   = null;
+
+        foreach ($this->layoutTree as $ti => $tab) {
+            foreach ($tab['sections'] as $si => $section) {
+                foreach ($section['fields'] as $fi => $field) {
+                    if ($field['key'] === $fieldKey) {
+                        $fromTabIndex     = $ti;
+                        $fromSectionIndex = $si;
+                        $fromFieldIndex   = $fi;
+                        break 3;
+                    }
+                }
+            }
+        }
+
+        if ($fromTabIndex === null) {
+            return;
+        }
+
+        if ($destinationId === '') {
+            $toTabIndex     = $fromTabIndex;
+            $toSectionIndex = $fromSectionIndex;
+        } else {
+            [$toTabStr, $toSectionStr] = explode(':', $destinationId, 2);
+            $toTabIndex     = (int) $toTabStr;
+            $toSectionIndex = (int) $toSectionStr;
+        }
+
+        $tree      = $this->layoutTree;
+        $fieldData = array_splice($tree[$fromTabIndex]['sections'][$fromSectionIndex]['fields'], $fromFieldIndex, 1)[0];
+        array_splice($tree[$toTabIndex]['sections'][$toSectionIndex]['fields'], $position, 0, [$fieldData]);
         $this->layoutTree = $tree;
     }
 

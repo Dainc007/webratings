@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\CustomFieldStatus;
 use App\Enums\Status;
+use App\Jobs\ProcessCustomFieldMigration;
 use App\Models\CustomField;
 use App\Models\TableColumnPreference;
 use Filament\Forms\Components\TextInput;
@@ -13,30 +15,38 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 
 final class CustomFieldService
 {
     public static function getFormFields(string $tableName): array
     {
-        $customFields = CustomField::where('table_name', $tableName)->get();
+        $customFields = CustomField::where('table_name', $tableName)->active()->get();
         $customFieldSchema = [];
         foreach ($customFields as $customField) {
-            if ($customField->column_type === 'boolean') {
-                $field = Toggle::make($customField->column_name);
-            } else {
-                $field = TextInput::make($customField->column_name);
-            }
-
-            if ($customField->column_type === 'integer') {
-                $field->numeric();
-            }
-            $customFieldSchema[] = $field;
+            $customFieldSchema[] = self::makeFormComponent($customField);
         }
 
         return $customFieldSchema;
+    }
+
+    public static function makeFormComponent(CustomField $customField): TextInput|Toggle
+    {
+        if ($customField->column_type === 'boolean') {
+            $field = Toggle::make($customField->column_name);
+        } else {
+            $field = TextInput::make($customField->column_name);
+        }
+
+        if ($customField->column_type === 'integer') {
+            $field->numeric();
+        }
+
+        if ($customField->display_name) {
+            $field->label($customField->display_name);
+        }
+
+        return $field;
     }
 
     public static function getTableColumns(string $tableName): array
@@ -111,7 +121,7 @@ final class CustomFieldService
             $availableColumns[] = $field;
         }
 
-        $customFields = CustomField::where('table_name', $tableName)->get();
+        $customFields = CustomField::where('table_name', $tableName)->active()->get();
         foreach ($customFields as $customField) {
             if ($customField->column_type === 'boolean') {
                 $field = ToggleColumn::make($customField->column_name);
@@ -139,70 +149,25 @@ final class CustomFieldService
         return $availableColumns;
     }
 
-    public function createField(string $tableName, string $columnName, string $columnType): true
+    public static function createField(CustomField $customField): void
     {
-        // Generate timestamp for migration filename
-        $timestamp = date('Y_m_d_His');
-        $migrationName = "add_{$columnName}_to_{$tableName}_table";
-        $migrationFileName = $timestamp.'_'.$migrationName.'.php';
-        $migrationPath = database_path('migrations/'.$migrationFileName);
-
-        // Read stub file
-        $stubPath = resource_path('stubs/add-column.stub');
-        $stub = file_get_contents($stubPath);
-
-        // Replace placeholders
-        $nullableStr = '->nullable()';
-        $stub = str_replace('{{ table }}', $tableName, $stub);
-        $stub = str_replace('{{ column_name }}', $columnName, $stub);
-        $stub = str_replace('{{ column_type }}', $columnType, $stub);
-        $stub = str_replace('{{ nullable }}', $nullableStr, $stub);
-
-        // Create migration file
-        File::put($migrationPath, $stub);
-
-        // Run migration
-        Artisan::call('migrate', [
-            '--force' => true,
-        ]);
-
-        TableColumnPreference::firstOrCreate([
-            'table_name' => $tableName,
-            'column_name' => $columnName,
-        ], [
-            'sort_order' => 0,
-            'is_visible' => true,
-        ]);
-
-        return true;
+        ProcessCustomFieldMigration::dispatch($customField, 'create');
     }
 
-    public function deleteField(string $tableName, string $columnName): true
+    public static function deleteField(CustomField $customField): void
     {
-        // Generate timestamp for migration filename
-        $timestamp = date('Y_m_d_His');
-        $migrationName = "remove_{$columnName}_from_{$tableName}_table";
-        $migrationFileName = $timestamp.'_'.$migrationName.'.php';
-        $migrationPath = database_path('migrations/'.$migrationFileName);
+        $customField->update(['status' => CustomFieldStatus::DELETING]);
 
-        // Read stub file
-        $stubPath = resource_path('stubs/remove-column.stub');
-        $stub = file_get_contents($stubPath);
+        ProcessCustomFieldMigration::dispatch($customField, 'delete');
+    }
 
-        // Replace placeholders
-        $stub = str_replace('{{ table }}', $tableName, $stub);
-        $stub = str_replace('{{ column_name }}', $columnName, $stub);
-
-        // Create migration file
-        File::put($migrationPath, $stub);
-
-        // Run migration
-        Artisan::call('migrate', [
-            '--force' => true,
+    public static function retryField(CustomField $customField): void
+    {
+        $customField->update([
+            'status' => CustomFieldStatus::PENDING,
+            'error_message' => null,
         ]);
 
-        TableColumnPreference::where(['table_name' => $tableName, 'column_name' => $columnName])->delete();
-
-        return true;
+        ProcessCustomFieldMigration::dispatch($customField, 'create');
     }
 }

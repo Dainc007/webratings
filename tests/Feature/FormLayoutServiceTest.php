@@ -250,4 +250,109 @@ final class FormLayoutServiceTest extends TestCase
             'FormLayoutEditor view should exist'
         );
     }
+
+    public function test_apply_layout_reorders_tabs_based_on_db(): void
+    {
+        // Seed layout with Tab B first, then Tab A
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'tab', 'element_key' => 'Tab B', 'parent_key' => null, 'sort_order' => 0]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'tab', 'element_key' => 'Tab A', 'parent_key' => null, 'sort_order' => 1]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'section', 'element_key' => 'Sec B', 'parent_key' => 'Tab B', 'sort_order' => 0]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'section', 'element_key' => 'Sec A', 'parent_key' => 'Tab A', 'sort_order' => 0]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'field', 'element_key' => 'field_b', 'parent_key' => 'Sec B', 'sort_order' => 0]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'field', 'element_key' => 'field_a', 'parent_key' => 'Sec A', 'sort_order' => 0]);
+
+        $defaultTabs = [
+            Tab::make('Tab A')->schema([
+                \Filament\Schemas\Components\Section::make('Sec A')->schema([TextInput::make('field_a')]),
+            ]),
+            Tab::make('Tab B')->schema([
+                \Filament\Schemas\Components\Section::make('Sec B')->schema([TextInput::make('field_b')]),
+            ]),
+        ];
+
+        $result = FormLayoutService::applyLayout('test', $defaultTabs);
+
+        $this->assertCount(2, $result);
+        $this->assertEquals('Tab B', $result[0]->getLabel());
+        $this->assertEquals('Tab A', $result[1]->getLabel());
+    }
+
+    public function test_apply_layout_creates_unassigned_tab_for_orphan_fields(): void
+    {
+        // Only assign field_a to the layout, field_b will be orphaned
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'tab', 'element_key' => 'Tab A', 'parent_key' => null, 'sort_order' => 0]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'section', 'element_key' => 'Sec A', 'parent_key' => 'Tab A', 'sort_order' => 0]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'field', 'element_key' => 'field_a', 'parent_key' => 'Sec A', 'sort_order' => 0]);
+
+        $defaultTabs = [
+            Tab::make('Tab A')->schema([
+                \Filament\Schemas\Components\Section::make('Sec A')->schema([
+                    TextInput::make('field_a'),
+                    TextInput::make('field_b'),
+                ]),
+            ]),
+        ];
+
+        $result = FormLayoutService::applyLayout('test', $defaultTabs);
+
+        // Should have Tab A + "Nieprzypisane" tab
+        $this->assertCount(2, $result);
+        $this->assertEquals('Nieprzypisane', $result[1]->getLabel());
+    }
+
+    public function test_build_tabs_falls_back_to_defaults_when_no_layout(): void
+    {
+        $defaultTabs = [
+            Tab::make('Tab A')->schema([TextInput::make('field_a')]),
+        ];
+
+        $result = FormLayoutService::buildTabs('nonexistent', [], $defaultTabs);
+
+        $this->assertSame($defaultTabs, $result);
+    }
+
+    public function test_get_structure_respects_sort_order(): void
+    {
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'tab', 'element_key' => 'Tab B', 'parent_key' => null, 'sort_order' => 0]);
+        FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'tab', 'element_key' => 'Tab A', 'parent_key' => null, 'sort_order' => 1]);
+
+        $structure = FormLayoutService::getStructure('test');
+
+        $keys = array_keys($structure);
+        $this->assertEquals('Tab B', $keys[0]);
+        $this->assertEquals('Tab A', $keys[1]);
+    }
+
+    public function test_seed_preserves_tab_section_parent_relationship(): void
+    {
+        FormLayoutService::seedDefaultLayout('test', [
+            'Tab X' => [
+                'sections' => [
+                    'Sec Y' => ['f1'],
+                ],
+            ],
+        ]);
+
+        $section = FormLayoutItem::where('element_key', 'Sec Y')->first();
+        $this->assertEquals('Tab X', $section->parent_key);
+
+        $field = FormLayoutItem::where('element_key', 'f1')->first();
+        $this->assertEquals('Sec Y', $field->parent_key);
+    }
+
+    public function test_clear_cache_allows_fresh_data(): void
+    {
+        // Prime cache with empty
+        FormLayoutService::getStructure('cache_test');
+
+        // Add data
+        FormLayoutItem::create(['table_name' => 'cache_test', 'element_type' => 'tab', 'element_key' => 'Tab', 'parent_key' => null, 'sort_order' => 0]);
+
+        // Still cached as empty
+        $this->assertEmpty(FormLayoutService::getStructure('cache_test'));
+
+        // After clear, should see new data
+        FormLayoutService::clearCache();
+        $this->assertNotEmpty(FormLayoutService::getStructure('cache_test'));
+    }
 }

@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Enums\CustomFieldStatus;
 use App\Enums\Product;
+use App\Models\CustomField;
 use App\Models\FormLayoutItem;
 use App\Models\LabelOverride;
+use App\Services\CustomFieldService;
 use App\Services\FormLayoutService;
 use App\Services\LabelService;
 use BackedEnum;
@@ -29,8 +32,22 @@ final class FormLayoutEditor extends Page
 
     public string $selectedTable = '';
 
-    /** @var array<int, array{key: string, display: string, sort_order: int, sections: array<int, array{key: string, display: string, sort_order: int, fields: array<int, array{key: string, sort_order: int}>}>}> */
     public array $layoutTree = [];
+
+    // ── Add Custom Field modal state ─────────────────────────────────────
+    public bool $showAddFieldModal = false;
+
+    public string $newFieldColumnName = '';
+
+    public string $newFieldDisplayName = '';
+
+    public string $newFieldType = 'string';
+
+    public int $targetTabIndex = 0;
+
+    public int $targetSectionIndex = 0;
+
+    public bool $hasPendingFields = false;
 
     public function mount(): void
     {
@@ -60,15 +77,23 @@ final class FormLayoutEditor extends Page
             return;
         }
 
+        $customFieldKeys = CustomField::where('table_name', $this->selectedTable)
+            ->active()
+            ->pluck('display_name', 'column_name')
+            ->toArray();
+
         $tree = [];
         foreach ($structure as $tabKey => $tabData) {
             $tabSections = [];
             foreach ($tabData['sections'] ?? [] as $sectionKey => $sectionData) {
                 $sectionFields = [];
                 foreach ($sectionData['fields'] ?? [] as $fieldKey => $sortOrder) {
+                    $isCustom = isset($customFieldKeys[$fieldKey]);
                     $sectionFields[] = [
                         'key'        => $fieldKey,
                         'sort_order' => $sortOrder,
+                        'is_custom'  => $isCustom,
+                        'display'    => $isCustom ? ($customFieldKeys[$fieldKey] ?? $fieldKey) : (LabelService::field($this->selectedTable, $fieldKey) ?? $fieldKey),
                     ];
                 }
                 usort($sectionFields, fn ($a, $b) => $a['sort_order'] <=> $b['sort_order']);
@@ -241,6 +266,195 @@ final class FormLayoutEditor extends Page
         $this->loadTree();
 
         Notification::make()->title('Nazwa sekcji zmieniona')->success()->send();
+    }
+
+    // ── Add tab / section ───────────────────────────────────────────────────
+
+    public function addTab(): void
+    {
+        if ($this->selectedTable === '' || empty($this->layoutTree)) {
+            return;
+        }
+
+        $maxSort = FormLayoutItem::where('table_name', $this->selectedTable)
+            ->where('element_type', 'tab')
+            ->max('sort_order') ?? -1;
+
+        $index = $maxSort + 1;
+        $key = 'tab_' . $index;
+
+        // Ensure unique key
+        while (FormLayoutItem::where('table_name', $this->selectedTable)->where('element_type', 'tab')->where('element_key', $key)->exists()) {
+            $index++;
+            $key = 'tab_' . $index;
+        }
+
+        FormLayoutItem::create([
+            'table_name' => $this->selectedTable,
+            'element_type' => 'tab',
+            'element_key' => $key,
+            'parent_key' => null,
+            'sort_order' => $maxSort + 1,
+        ]);
+
+        // Create a default section inside the new tab
+        $sectionKey = 'section_' . $index;
+        FormLayoutItem::create([
+            'table_name' => $this->selectedTable,
+            'element_type' => 'section',
+            'element_key' => $sectionKey,
+            'parent_key' => $key,
+            'sort_order' => 0,
+        ]);
+
+        FormLayoutService::clearCache();
+        $this->loadTree();
+
+        Notification::make()->title('Dodano nową zakładkę')->success()->send();
+    }
+
+    public function addSection(int $tabIndex): void
+    {
+        $tab = $this->layoutTree[$tabIndex] ?? null;
+
+        if ($tab === null || $this->selectedTable === '') {
+            return;
+        }
+
+        $maxSort = FormLayoutItem::where('table_name', $this->selectedTable)
+            ->where('element_type', 'section')
+            ->where('parent_key', $tab['key'])
+            ->max('sort_order') ?? -1;
+
+        $index = FormLayoutItem::where('table_name', $this->selectedTable)
+            ->where('element_type', 'section')
+            ->count();
+
+        $key = 'section_' . $index;
+
+        while (FormLayoutItem::where('table_name', $this->selectedTable)->where('element_type', 'section')->where('element_key', $key)->exists()) {
+            $index++;
+            $key = 'section_' . $index;
+        }
+
+        FormLayoutItem::create([
+            'table_name' => $this->selectedTable,
+            'element_type' => 'section',
+            'element_key' => $key,
+            'parent_key' => $tab['key'],
+            'sort_order' => $maxSort + 1,
+        ]);
+
+        FormLayoutService::clearCache();
+        $this->loadTree();
+
+        Notification::make()->title('Dodano nową sekcję')->success()->send();
+    }
+
+    // ── Custom field management ─────────────────────────────────────────────
+
+    public function openAddFieldModal(int $tabIndex, int $sectionIndex): void
+    {
+        $this->targetTabIndex = $tabIndex;
+        $this->targetSectionIndex = $sectionIndex;
+        $this->newFieldColumnName = '';
+        $this->newFieldDisplayName = '';
+        $this->newFieldType = 'string';
+        $this->showAddFieldModal = true;
+    }
+
+    public function addCustomField(): void
+    {
+        $columnName = trim($this->newFieldColumnName);
+        $displayName = trim($this->newFieldDisplayName);
+
+        if ($columnName === '' || $displayName === '') {
+            Notification::make()->title('Nazwa kolumny i wyświetlana nazwa są wymagane')->danger()->send();
+
+            return;
+        }
+
+        if (! preg_match('/^[a-z][a-z0-9_]*$/', $columnName)) {
+            Notification::make()->title('Nazwa kolumny może zawierać tylko małe litery, cyfry i podkreślniki')->danger()->send();
+
+            return;
+        }
+
+        if (DBSchema::hasColumn($this->selectedTable, $columnName)) {
+            Notification::make()->title('Kolumna o tej nazwie już istnieje')->danger()->send();
+
+            return;
+        }
+
+        // Determine target section key
+        $sectionKey = $this->layoutTree[$this->targetTabIndex]['sections'][$this->targetSectionIndex]['key'] ?? null;
+
+        // Create CustomField record
+        $customField = CustomField::create([
+            'table_name' => $this->selectedTable,
+            'column_name' => $columnName,
+            'column_type' => $this->newFieldType,
+            'display_name' => $displayName,
+            'status' => CustomFieldStatus::PENDING,
+        ]);
+
+        // Create FormLayoutItem with parent_key pointing to the target section
+        $maxSort = FormLayoutItem::where('table_name', $this->selectedTable)
+            ->where('element_type', 'field')
+            ->where('parent_key', $sectionKey)
+            ->max('sort_order') ?? -1;
+
+        FormLayoutItem::updateOrCreate(
+            ['table_name' => $this->selectedTable, 'element_type' => 'field', 'element_key' => $columnName],
+            ['parent_key' => $sectionKey, 'sort_order' => $maxSort + 1],
+        );
+
+        // Dispatch the migration job
+        CustomFieldService::createField($customField);
+
+        FormLayoutService::clearCache();
+
+        $this->showAddFieldModal = false;
+        $this->hasPendingFields = true;
+        $this->loadTree();
+
+        Notification::make()
+            ->title("Pole \"{$displayName}\" dodane - migracja w toku")
+            ->success()
+            ->send();
+    }
+
+    public function deleteCustomField(string $fieldKey): void
+    {
+        $customField = CustomField::where('table_name', $this->selectedTable)
+            ->where('column_name', $fieldKey)
+            ->active()
+            ->first();
+
+        if ($customField === null) {
+            Notification::make()->title('To pole nie jest polem niestandardowym lub jest w trakcie przetwarzania')->danger()->send();
+
+            return;
+        }
+
+        CustomFieldService::deleteField($customField);
+
+        $this->hasPendingFields = true;
+        $this->loadTree();
+
+        Notification::make()->title("Usuwanie pola \"{$fieldKey}\" - migracja w toku")->warning()->send();
+    }
+
+    public function checkPendingFields(): void
+    {
+        $this->hasPendingFields = CustomField::where('table_name', $this->selectedTable)
+            ->pending()
+            ->exists();
+
+        if (! $this->hasPendingFields) {
+            FormLayoutService::clearCache();
+            $this->loadTree();
+        }
     }
 
     // ── Seed / Save ───────────────────────────────────────────────────────────

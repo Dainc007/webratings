@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Enums\Product;
 use App\Models\Shortcode;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Schema;
 
 final class ShortcodeService
 {
@@ -50,6 +51,11 @@ final class ShortcodeService
     {
         foreach ($conditions as $condition) {
             $field = $condition->field;
+
+            if (! Schema::hasColumn($query->getModel()->getTable(), $field)) {
+                continue;
+            }
+
             $operator = $condition->operator;
             $value = $this->castValue($condition->value, $condition->type);
 

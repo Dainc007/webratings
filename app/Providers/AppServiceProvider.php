@@ -96,16 +96,22 @@ final class AppServiceProvider extends ServiceProvider
             }
 
             $field
-                ->hintIcon('heroicon-o-information-circle', tooltip: $fieldName)
+                ->hintIcon(function () use ($field): ?string {
+                    return self::getResourceTableName($field) !== null
+                        ? 'heroicon-o-information-circle'
+                        : null;
+                }, tooltip: $fieldName)
                 ->extraAttributes(function () use ($field, $fieldName): array {
+                    $tableName = self::getResourceTableName($field);
+                    if ($tableName === null) {
+                        return [];
+                    }
+
                     $attrs = ['data-db-column' => $fieldName];
 
-                    $tableName = self::getResourceTableName($field);
-                    if ($tableName !== null) {
-                        $sortOrder = LabelService::sortOrder($tableName, 'field', $fieldName);
-                        if ($sortOrder !== null) {
-                            $attrs['style'] = "order: {$sortOrder}";
-                        }
+                    $sortOrder = LabelService::sortOrder($tableName, 'field', $fieldName);
+                    if ($sortOrder !== null) {
+                        $attrs['style'] = "order: {$sortOrder}";
                     }
 
                     return $attrs;

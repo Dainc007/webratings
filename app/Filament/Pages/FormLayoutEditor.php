@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Config\ProductFormStructure;
 use App\Enums\CustomFieldStatus;
 use App\Enums\Product;
 use App\Models\CustomField;
@@ -15,6 +16,7 @@ use App\Services\LabelService;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema as DBSchema;
 use UnitEnum;
 
@@ -221,6 +223,12 @@ final class FormLayoutEditor extends Page
             return;
         }
 
+        if (mb_strlen($newName) > ProductFormStructure::MAX_LABEL_LENGTH) {
+            Notification::make()->title('Nazwa jest zbyt dluga (max ' . ProductFormStructure::MAX_LABEL_LENGTH . ' znakow)')->danger()->send();
+
+            return;
+        }
+
         if ($newName === $tab['key']) {
             LabelOverride::where([
                 'table_name'   => $this->selectedTable,
@@ -246,6 +254,12 @@ final class FormLayoutEditor extends Page
         $newName = trim($newName);
 
         if ($section === null || $newName === '' || $newName === $section['display']) {
+            return;
+        }
+
+        if (mb_strlen($newName) > ProductFormStructure::MAX_LABEL_LENGTH) {
+            Notification::make()->title('Nazwa jest zbyt dluga (max ' . ProductFormStructure::MAX_LABEL_LENGTH . ' znakow)')->danger()->send();
+
             return;
         }
 
@@ -276,36 +290,37 @@ final class FormLayoutEditor extends Page
             return;
         }
 
-        $maxSort = FormLayoutItem::where('table_name', $this->selectedTable)
-            ->where('element_type', 'tab')
-            ->max('sort_order') ?? -1;
+        DB::transaction(function (): void {
+            $maxSort = FormLayoutItem::where('table_name', $this->selectedTable)
+                ->where('element_type', 'tab')
+                ->lockForUpdate()
+                ->max('sort_order') ?? -1;
 
-        $index = $maxSort + 1;
-        $key = 'tab_' . $index;
-
-        // Ensure unique key
-        while (FormLayoutItem::where('table_name', $this->selectedTable)->where('element_type', 'tab')->where('element_key', $key)->exists()) {
-            $index++;
+            $index = $maxSort + 1;
             $key = 'tab_' . $index;
-        }
 
-        FormLayoutItem::create([
-            'table_name' => $this->selectedTable,
-            'element_type' => 'tab',
-            'element_key' => $key,
-            'parent_key' => null,
-            'sort_order' => $maxSort + 1,
-        ]);
+            while (FormLayoutItem::where('table_name', $this->selectedTable)->where('element_type', 'tab')->where('element_key', $key)->exists()) {
+                $index++;
+                $key = 'tab_' . $index;
+            }
 
-        // Create a default section inside the new tab
-        $sectionKey = 'section_' . $index;
-        FormLayoutItem::create([
-            'table_name' => $this->selectedTable,
-            'element_type' => 'section',
-            'element_key' => $sectionKey,
-            'parent_key' => $key,
-            'sort_order' => 0,
-        ]);
+            FormLayoutItem::create([
+                'table_name' => $this->selectedTable,
+                'element_type' => 'tab',
+                'element_key' => $key,
+                'parent_key' => null,
+                'sort_order' => $maxSort + 1,
+            ]);
+
+            $sectionKey = 'section_' . $index;
+            FormLayoutItem::create([
+                'table_name' => $this->selectedTable,
+                'element_type' => 'section',
+                'element_key' => $sectionKey,
+                'parent_key' => $key,
+                'sort_order' => 0,
+            ]);
+        });
 
         FormLayoutService::clearCache();
         $this->loadTree();
@@ -321,29 +336,32 @@ final class FormLayoutEditor extends Page
             return;
         }
 
-        $maxSort = FormLayoutItem::where('table_name', $this->selectedTable)
-            ->where('element_type', 'section')
-            ->where('parent_key', $tab['key'])
-            ->max('sort_order') ?? -1;
+        DB::transaction(function () use ($tab): void {
+            $maxSort = FormLayoutItem::where('table_name', $this->selectedTable)
+                ->where('element_type', 'section')
+                ->where('parent_key', $tab['key'])
+                ->lockForUpdate()
+                ->max('sort_order') ?? -1;
 
-        $index = FormLayoutItem::where('table_name', $this->selectedTable)
-            ->where('element_type', 'section')
-            ->count();
+            $index = FormLayoutItem::where('table_name', $this->selectedTable)
+                ->where('element_type', 'section')
+                ->count();
 
-        $key = 'section_' . $index;
-
-        while (FormLayoutItem::where('table_name', $this->selectedTable)->where('element_type', 'section')->where('element_key', $key)->exists()) {
-            $index++;
             $key = 'section_' . $index;
-        }
 
-        FormLayoutItem::create([
-            'table_name' => $this->selectedTable,
-            'element_type' => 'section',
-            'element_key' => $key,
-            'parent_key' => $tab['key'],
-            'sort_order' => $maxSort + 1,
-        ]);
+            while (FormLayoutItem::where('table_name', $this->selectedTable)->where('element_type', 'section')->where('element_key', $key)->exists()) {
+                $index++;
+                $key = 'section_' . $index;
+            }
+
+            FormLayoutItem::create([
+                'table_name' => $this->selectedTable,
+                'element_type' => 'section',
+                'element_key' => $key,
+                'parent_key' => $tab['key'],
+                'sort_order' => $maxSort + 1,
+            ]);
+        });
 
         FormLayoutService::clearCache();
         $this->loadTree();
@@ -375,7 +393,19 @@ final class FormLayoutEditor extends Page
         }
 
         if (! preg_match('/^[a-z][a-z0-9_]*$/', $columnName)) {
-            Notification::make()->title('Nazwa kolumny może zawierać tylko małe litery, cyfry i podkreślniki')->danger()->send();
+            Notification::make()->title('Nazwa kolumny moze zawierac tylko male litery, cyfry i podkreslniki')->danger()->send();
+
+            return;
+        }
+
+        if (mb_strlen($columnName) > 64) {
+            Notification::make()->title('Nazwa kolumny jest zbyt dluga (max 64 znaki)')->danger()->send();
+
+            return;
+        }
+
+        if (ProductFormStructure::isReservedColumnName($columnName)) {
+            Notification::make()->title("Nazwa \"{$columnName}\" jest zarezerwowanym slowem SQL")->danger()->send();
 
             return;
         }
@@ -493,26 +523,28 @@ final class FormLayoutEditor extends Page
             return;
         }
 
-        foreach ($this->layoutTree as $tabIndex => $tab) {
-            FormLayoutItem::updateOrCreate(
-                ['table_name' => $tableName, 'element_type' => 'tab', 'element_key' => $tab['key']],
-                ['parent_key' => null, 'sort_order' => $tabIndex],
-            );
-
-            foreach ($tab['sections'] ?? [] as $sectionIndex => $section) {
+        DB::transaction(function () use ($tableName): void {
+            foreach ($this->layoutTree as $tabIndex => $tab) {
                 FormLayoutItem::updateOrCreate(
-                    ['table_name' => $tableName, 'element_type' => 'section', 'element_key' => $section['key']],
-                    ['parent_key' => $tab['key'], 'sort_order' => $sectionIndex],
+                    ['table_name' => $tableName, 'element_type' => 'tab', 'element_key' => $tab['key']],
+                    ['parent_key' => null, 'sort_order' => $tabIndex],
                 );
 
-                foreach ($section['fields'] ?? [] as $fieldIndex => $field) {
+                foreach ($tab['sections'] ?? [] as $sectionIndex => $section) {
                     FormLayoutItem::updateOrCreate(
-                        ['table_name' => $tableName, 'element_type' => 'field', 'element_key' => $field['key']],
-                        ['parent_key' => $section['key'], 'sort_order' => $fieldIndex],
+                        ['table_name' => $tableName, 'element_type' => 'section', 'element_key' => $section['key']],
+                        ['parent_key' => $tab['key'], 'sort_order' => $sectionIndex],
                     );
+
+                    foreach ($section['fields'] ?? [] as $fieldIndex => $field) {
+                        FormLayoutItem::updateOrCreate(
+                            ['table_name' => $tableName, 'element_type' => 'field', 'element_key' => $field['key']],
+                            ['parent_key' => $section['key'], 'sort_order' => $fieldIndex],
+                        );
+                    }
                 }
             }
-        }
+        });
 
         FormLayoutService::clearCache();
 
@@ -533,16 +565,9 @@ final class FormLayoutEditor extends Page
      */
     private function extractDefaultStructure(string $tableName): array
     {
-        $resourceMap = [
-            'air_purifiers'  => \App\Filament\Resources\AirPurifierResource::class,
-            'air_humidifiers' => \App\Filament\Resources\AirHumidifierResource::class,
-            'air_conditioners' => \App\Filament\Resources\AirConditionerResource::class,
-            'dehumidifiers'  => \App\Filament\Resources\DehumidifierResource::class,
-            'upright_vacuums' => \App\Filament\Resources\UprightVacuumResource::class,
-            'sensors'        => \App\Filament\Resources\SensorResource::class,
-        ];
+        $tabSectionMap = ProductFormStructure::getMap($tableName);
 
-        if (! isset($resourceMap[$tableName])) {
+        if (empty($tabSectionMap)) {
             return [];
         }
 
@@ -552,8 +577,7 @@ final class FormLayoutEditor extends Page
         } catch (\Throwable) {
         }
 
-        $tabSectionMap = $this->getTabSectionMap($tableName);
-        $structure     = [];
+        $structure = [];
         $assignedFields = [];
 
         foreach ($tabSectionMap as $tabKey => $sections) {
@@ -566,7 +590,7 @@ final class FormLayoutEditor extends Page
 
         $unassigned = array_diff($columns, $assignedFields, ['id', 'created_at', 'updated_at']);
         if (count($unassigned) > 0 && ! empty($structure)) {
-            $firstTab     = array_key_first($structure);
+            $firstTab = array_key_first($structure);
             $firstSection = array_key_first($structure[$firstTab]['sections'] ?? []);
             if ($firstSection !== null) {
                 $structure[$firstTab]['sections'][$firstSection] = array_merge(
@@ -577,141 +601,5 @@ final class FormLayoutEditor extends Page
         }
 
         return $structure;
-    }
-
-    /**
-     * @return array<string, array<string, list<string>>>
-     */
-    private function getTabSectionMap(string $tableName): array
-    {
-        $maps = [
-            'air_purifiers' => [
-                'Podstawowe informacje' => [
-                    'Podstawowe informacje' => ['status', 'model', 'brand_name', 'price', 'price_before', 'price_date', 'discount_info'],
-                    'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
-                    'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
-                    'Ceneo'                 => ['ceneo_url', 'ceneo_link_rel_2'],
-                    'Galeria'               => ['gallery'],
-                ],
-                'Wydajność' => [
-                    'Wydajność' => ['max_performance', 'max_area', 'max_area_ro', 'number_of_fan_speeds', 'min_loudness', 'max_loudness', 'min_rated_power_consumption', 'max_rated_power_consumption'],
-                ],
-                'Nawilżanie' => [
-                    'Nawilżanie' => ['has_humidification', 'humidification_type', 'humidification_switch', 'humidification_area', 'water_tank_capacity', 'humidification_efficiency'],
-                    'Higrostat'  => ['hygrometer', 'hygrostat', 'hygrostat_min', 'hygrostat_max'],
-                ],
-                'Filtry' => [
-                    'Filtr ewaporacyjny' => ['evaporative_filter', 'evaporative_filter_life', 'evaporative_filter_price'],
-                    'Filtr HEPA'         => ['hepa_filter', 'hepa_filter_class', 'effectiveness_hepa_filter', 'hepa_filter_service_life', 'hepa_filter_price'],
-                    'Filtr węglowy'      => ['carbon_filter', 'carbon_filter_service_life', 'carbon_filter_price'],
-                ],
-                'Funkcje' => [
-                    'Jonizator'    => ['ionization', 'ionizer_type', 'ionizer_switch'],
-                    'Inne funkcje' => ['uvc', 'mobile_app', 'remote_control', 'heating_and_cooling_function', 'cooling_function'],
-                    'Czujniki'     => ['pm2_sensor', 'lzo_tvcop_sensor', 'temperature_sensor', 'humidity_sensor', 'light_sensor'],
-                ],
-                'Wymiary' => [
-                    'Wymiary' => ['width', 'height', 'depth', 'weight', 'colors'],
-                ],
-                'Klasyfikacja' => [
-                    'Klasyfikacja' => ['type_of_device', 'main_ranking', 'ranking_hidden', 'for_kids', 'bedroom', 'smokers', 'office', 'kindergarten', 'astmatic', 'alergic'],
-                ],
-            ],
-            'air_humidifiers' => [
-                'Podstawowe informacje' => [
-                    'Podstawowe informacje' => ['status', 'model', 'brand_name', 'price', 'price_before', 'price_date', 'discount_info'],
-                    'Ranking'               => ['capability_points', 'profitability_points', 'popularity'],
-                    'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
-                    'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                    'Galeria'               => ['gallery'],
-                ],
-                'Wydajność' => [
-                    'Wydajność'         => ['max_humidification_efficiency', 'max_area', 'humidification_type'],
-                    'Głośność wentylatora' => ['min_fan_volume', 'max_fan_volume'],
-                    'Pobór mocy'        => ['min_rated_power_consumption', 'max_rated_power_consumption'],
-                ],
-                'Zbiornik na wodę' => [
-                    'Zbiornik na wodę' => ['water_tank_capacity', 'tank_fill_type'],
-                ],
-                'Sterowanie' => [
-                    'Funkcje smart' => ['mobile_app', 'wifi_24ghz', 'wifi_5ghz', 'display', 'remote_control'],
-                ],
-                'Filtry' => [
-                    'Filtr ewaporacyjny' => ['evaporative_filter', 'evaporative_filter_life', 'evaporative_filter_cost'],
-                    'Filtr węglowy'      => ['carbon_filter', 'carbon_filter_cost', 'carbon_filter_life'],
-                ],
-                'Wymiary' => [
-                    'Wymiary' => ['width', 'height', 'depth', 'weight', 'colors'],
-                ],
-            ],
-            'air_conditioners' => [
-                'Podstawowe informacje' => [
-                    'Podstawowe informacje' => ['status', 'model', 'brand_name', 'price', 'price_before', 'price_date', 'discount_info'],
-                    'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
-                    'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
-                    'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                    'Galeria'               => ['gallery'],
-                ],
-                'Wydajność chłodzenia' => [
-                    'Parametry chłodzenia' => ['max_cooling_power', 'min_cooling_power', 'max_area_cooling'],
-                ],
-                'Wydajność grzania' => [
-                    'Parametry grzania' => ['max_heating_power', 'min_heating_power'],
-                ],
-                'Tryby pracy i funkcje' => [
-                    'Tryby pracy' => ['swing_function'],
-                ],
-                'Specyfikacja techniczna' => [
-                    'Chłodziwo'     => ['refrigerant_type', 'refrigerant_amount', 'needs_refill'],
-                    'Wymiary i waga' => ['width', 'height', 'depth', 'weight'],
-                ],
-            ],
-            'dehumidifiers' => [
-                'Podstawowe informacje' => [
-                    'Podstawowe informacje' => ['status', 'model', 'brand_name', 'price', 'price_before', 'price_date', 'discount_info'],
-                    'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
-                    'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
-                    'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                    'Galeria'               => ['gallery'],
-                ],
-                'Wydajność osuszania' => [
-                    'Parametry osuszania' => ['max_dehumidification_efficiency', 'max_area'],
-                ],
-                'Specyfikacja techniczna' => [
-                    'Chłodziwo'     => ['refrigerant_type', 'refrigerant_amount', 'needs_refill'],
-                    'Wymiary i waga' => ['width', 'height', 'depth', 'weight'],
-                ],
-            ],
-            'upright_vacuums' => [
-                'Podstawowe informacje' => [
-                    'Podstawowe informacje' => ['status', 'model', 'brand_name', 'price', 'price_before', 'price_date', 'discount_info'],
-                    'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
-                    'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
-                    'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                    'Galeria'               => ['gallery'],
-                ],
-                'Moc i wydajność' => [
-                    'Parametry ssania' => ['suction_power', 'motor_type'],
-                ],
-                'Zasilanie i bateria' => [
-                    'Zasilanie' => ['power_supply', 'cable_length'],
-                    'Bateria'   => ['battery_capacity', 'charging_time'],
-                ],
-            ],
-            'sensors' => [
-                'Podstawowe informacje' => [
-                    'Podstawowe informacje' => ['status', 'model', 'brand_name', 'price', 'price_before', 'price_date', 'discount_info'],
-                    'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
-                    'Ceneo'                 => ['ceneo_url', 'ceneo_link_rel_2'],
-                ],
-                'Czujniki PM' => [
-                    'Czujnik PM1'   => ['pm1', 'pm1_accuracy'],
-                    'Czujnik PM2.5' => ['pm25', 'pm25_accuracy'],
-                    'Czujnik PM10'  => ['pm10', 'pm10_accuracy'],
-                ],
-            ],
-        ];
-
-        return $maps[$tableName] ?? [];
     }
 }

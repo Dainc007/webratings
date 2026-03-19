@@ -300,17 +300,6 @@ final class FormLayoutServiceTest extends TestCase
         $this->assertEquals('Nieprzypisane', $result[1]->getLabel());
     }
 
-    public function test_build_tabs_falls_back_to_defaults_when_no_layout(): void
-    {
-        $defaultTabs = [
-            Tab::make('Tab A')->schema([TextInput::make('field_a')]),
-        ];
-
-        $result = FormLayoutService::buildTabs('nonexistent', [], $defaultTabs);
-
-        $this->assertSame($defaultTabs, $result);
-    }
-
     public function test_get_structure_respects_sort_order(): void
     {
         FormLayoutItem::create(['table_name' => 'test', 'element_type' => 'tab', 'element_key' => 'Tab B', 'parent_key' => null, 'sort_order' => 0]);

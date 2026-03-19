@@ -14,6 +14,7 @@ use App\Services\LabelService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 
@@ -61,20 +62,22 @@ final class ProcessCustomFieldMigration implements ShouldQueue
             throw new \RuntimeException("Column '{$cf->column_name}' was not created on '{$cf->table_name}' after migration.");
         }
 
-        TableColumnPreference::firstOrCreate(
-            ['table_name' => $cf->table_name, 'column_name' => $cf->column_name],
-            ['sort_order' => 0, 'is_visible' => true],
-        );
+        DB::transaction(function () use ($cf): void {
+            TableColumnPreference::firstOrCreate(
+                ['table_name' => $cf->table_name, 'column_name' => $cf->column_name],
+                ['sort_order' => 0, 'is_visible' => true],
+            );
 
-        FormLayoutItem::firstOrCreate(
-            ['table_name' => $cf->table_name, 'element_type' => 'field', 'element_key' => $cf->column_name],
-            ['parent_key' => null, 'sort_order' => 999],
-        );
+            FormLayoutItem::firstOrCreate(
+                ['table_name' => $cf->table_name, 'element_type' => 'field', 'element_key' => $cf->column_name],
+                ['parent_key' => null, 'sort_order' => 999],
+            );
+
+            $cf->update(['status' => CustomFieldStatus::ACTIVE, 'error_message' => null]);
+        });
 
         FormLayoutService::clearCache();
         LabelService::clearCache();
-
-        $cf->update(['status' => CustomFieldStatus::ACTIVE, 'error_message' => null]);
     }
 
     private function handleDelete(): void
@@ -92,24 +95,26 @@ final class ProcessCustomFieldMigration implements ShouldQueue
 
         Artisan::call('migrate', ['--force' => true]);
 
-        TableColumnPreference::where(['table_name' => $cf->table_name, 'column_name' => $cf->column_name])->delete();
+        DB::transaction(function () use ($cf): void {
+            TableColumnPreference::where(['table_name' => $cf->table_name, 'column_name' => $cf->column_name])->delete();
 
-        FormLayoutItem::where([
-            'table_name' => $cf->table_name,
-            'element_type' => 'field',
-            'element_key' => $cf->column_name,
-        ])->delete();
+            FormLayoutItem::where([
+                'table_name' => $cf->table_name,
+                'element_type' => 'field',
+                'element_key' => $cf->column_name,
+            ])->delete();
 
-        LabelOverride::where([
-            'table_name' => $cf->table_name,
-            'element_type' => 'field',
-            'element_key' => $cf->column_name,
-        ])->delete();
+            LabelOverride::where([
+                'table_name' => $cf->table_name,
+                'element_type' => 'field',
+                'element_key' => $cf->column_name,
+            ])->delete();
+
+            $cf->delete();
+        });
 
         FormLayoutService::clearCache();
         LabelService::clearCache();
-
-        $cf->delete();
     }
 
     public function failed(\Throwable $e): void

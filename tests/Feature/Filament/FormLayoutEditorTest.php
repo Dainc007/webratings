@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Filament;
 
+use App\Config\ProductFormStructure;
+use App\Enums\CustomFieldStatus;
 use App\Filament\Pages\FormLayoutEditor;
+use App\Models\CustomField;
 use App\Models\FormLayoutItem;
 use App\Models\LabelOverride;
 use App\Models\User;
 use App\Services\FormLayoutService;
 use App\Services\LabelService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -523,5 +528,405 @@ final class FormLayoutEditorTest extends TestCase
 
         // Just verify the method is callable and the page has options
         $component->assertOk();
+    }
+
+    // ── Add Tab ──────────────────────────────────────────────────────────────
+
+    public function test_add_tab_creates_tab_and_default_section(): void
+    {
+        $this->seedTestLayout();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('addTab');
+
+        $tree = $component->get('layoutTree');
+
+        $this->assertCount(4, $tree);
+
+        $newTab = $tree[3];
+        $this->assertStringStartsWith('tab_', $newTab['key']);
+        $this->assertCount(1, $newTab['sections']);
+        $this->assertStringStartsWith('section_', $newTab['sections'][0]['key']);
+
+        $this->assertDatabaseHas('form_layout_items', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'tab',
+            'element_key' => $newTab['key'],
+        ]);
+    }
+
+    public function test_add_tab_with_empty_layout_does_nothing(): void
+    {
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('addTab');
+
+        $this->assertEmpty($component->get('layoutTree'));
+    }
+
+    public function test_add_tab_with_empty_table_does_nothing(): void
+    {
+        $countBefore = FormLayoutItem::count();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', '')
+            ->call('addTab');
+
+        $this->assertEquals($countBefore, FormLayoutItem::count());
+    }
+
+    public function test_add_tab_generates_unique_keys(): void
+    {
+        $this->seedTestLayout();
+
+        // Add two tabs in sequence
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('addTab')
+            ->call('addTab');
+
+        $tree = $component->get('layoutTree');
+
+        $this->assertCount(5, $tree);
+
+        $newKeys = [$tree[3]['key'], $tree[4]['key']];
+        $this->assertCount(2, array_unique($newKeys));
+    }
+
+    // ── Add Section ──────────────────────────────────────────────────────────
+
+    public function test_add_section_creates_section_in_tab(): void
+    {
+        $this->seedTestLayout();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('addSection', 0);
+
+        $tree = $component->get('layoutTree');
+
+        // Tab A originally had 2 sections, now 3
+        $this->assertCount(3, $tree[0]['sections']);
+
+        $newSection = $tree[0]['sections'][2];
+        $this->assertStringStartsWith('section_', $newSection['key']);
+
+        $this->assertDatabaseHas('form_layout_items', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'section',
+            'element_key' => $newSection['key'],
+            'parent_key' => 'Tab A',
+        ]);
+    }
+
+    public function test_add_section_with_invalid_tab_index_does_nothing(): void
+    {
+        $this->seedTestLayout();
+
+        $countBefore = FormLayoutItem::count();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('addSection', 99);
+
+        $this->assertEquals($countBefore, FormLayoutItem::count());
+    }
+
+    public function test_add_section_generates_unique_keys(): void
+    {
+        $this->seedTestLayout();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('addSection', 0)
+            ->call('addSection', 0);
+
+        $tree = $component->get('layoutTree');
+
+        $sectionKeys = array_column($tree[0]['sections'], 'key');
+        $this->assertCount(count($sectionKeys), array_unique($sectionKeys));
+    }
+
+    // ── Rename Max Length ────────────────────────────────────────────────────
+
+    public function test_rename_tab_rejects_name_exceeding_max_length(): void
+    {
+        $this->seedTestLayout();
+
+        $longName = str_repeat('a', ProductFormStructure::MAX_LABEL_LENGTH + 1);
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameTab', 0, $longName);
+
+        $this->assertDatabaseMissing('label_overrides', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'tab',
+            'element_key' => 'Tab A',
+        ]);
+    }
+
+    public function test_rename_section_rejects_name_exceeding_max_length(): void
+    {
+        $this->seedTestLayout();
+
+        $longName = str_repeat('a', ProductFormStructure::MAX_LABEL_LENGTH + 1);
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameSection', 0, 0, $longName);
+
+        $this->assertDatabaseMissing('label_overrides', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'section',
+            'element_key' => 'Section 1',
+        ]);
+    }
+
+    // ── Add Custom Field Validation ──────────────────────────────────────────
+
+    public function test_add_custom_field_rejects_reserved_sql_word(): void
+    {
+        $this->seedTestLayout();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('newFieldColumnName', 'select')
+            ->set('newFieldDisplayName', 'Test')
+            ->set('newFieldType', 'string')
+            ->set('targetTabIndex', 0)
+            ->set('targetSectionIndex', 0)
+            ->call('addCustomField');
+
+        $this->assertDatabaseMissing('custom_fields', [
+            'column_name' => 'select',
+        ]);
+    }
+
+    public function test_add_custom_field_rejects_column_name_too_long(): void
+    {
+        $this->seedTestLayout();
+
+        $longName = str_repeat('a', 65);
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('newFieldColumnName', $longName)
+            ->set('newFieldDisplayName', 'Test')
+            ->set('newFieldType', 'string')
+            ->set('targetTabIndex', 0)
+            ->set('targetSectionIndex', 0)
+            ->call('addCustomField');
+
+        $this->assertDatabaseMissing('custom_fields', [
+            'display_name' => 'Test',
+        ]);
+    }
+
+    public function test_add_custom_field_rejects_empty_names(): void
+    {
+        $this->seedTestLayout();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('newFieldColumnName', '')
+            ->set('newFieldDisplayName', '')
+            ->call('addCustomField');
+
+        $this->assertEquals(0, CustomField::count());
+    }
+
+    public function test_add_custom_field_rejects_invalid_column_name_format(): void
+    {
+        $this->seedTestLayout();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('newFieldColumnName', 'InvalidName')
+            ->set('newFieldDisplayName', 'Test')
+            ->call('addCustomField');
+
+        $this->assertEquals(0, CustomField::count());
+    }
+
+    public function test_add_custom_field_creates_record_and_layout_item(): void
+    {
+        $this->seedTestLayout();
+        Queue::fake();
+
+        Schema::shouldReceive('hasColumn')
+            ->with('air_purifiers', 'test_field')
+            ->andReturn(false);
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('newFieldColumnName', 'test_field')
+            ->set('newFieldDisplayName', 'Pole testowe')
+            ->set('newFieldType', 'string')
+            ->set('targetTabIndex', 0)
+            ->set('targetSectionIndex', 0)
+            ->call('addCustomField');
+
+        $this->assertDatabaseHas('custom_fields', [
+            'table_name' => 'air_purifiers',
+            'column_name' => 'test_field',
+            'display_name' => 'Pole testowe',
+            'column_type' => 'string',
+            'status' => CustomFieldStatus::PENDING->value,
+        ]);
+
+        $this->assertDatabaseHas('form_layout_items', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'field',
+            'element_key' => 'test_field',
+            'parent_key' => 'Section 1',
+        ]);
+    }
+
+    public function test_add_custom_field_closes_modal_and_sets_pending(): void
+    {
+        $this->seedTestLayout();
+        Queue::fake();
+
+        Schema::shouldReceive('hasColumn')
+            ->with('air_purifiers', 'test_field')
+            ->andReturn(false);
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('newFieldColumnName', 'test_field')
+            ->set('newFieldDisplayName', 'Pole testowe')
+            ->set('newFieldType', 'string')
+            ->set('targetTabIndex', 0)
+            ->set('targetSectionIndex', 0)
+            ->call('addCustomField');
+
+        $this->assertFalse($component->get('showAddFieldModal'));
+        $this->assertTrue($component->get('hasPendingFields'));
+    }
+
+    // ── Delete Custom Field ──────────────────────────────────────────────────
+
+    public function test_delete_custom_field_sets_deleting_status(): void
+    {
+        $this->seedTestLayout();
+        Queue::fake();
+
+        $customField = CustomField::create([
+            'table_name' => 'air_purifiers',
+            'column_name' => 'test_col',
+            'column_type' => 'string',
+            'display_name' => 'Test',
+            'status' => CustomFieldStatus::ACTIVE,
+        ]);
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('deleteCustomField', 'test_col');
+
+        $customField->refresh();
+        $this->assertEquals(CustomFieldStatus::DELETING, $customField->status);
+    }
+
+    public function test_delete_custom_field_nonexistent_shows_error(): void
+    {
+        $this->seedTestLayout();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('deleteCustomField', 'nonexistent');
+
+        $component->assertNotified();
+    }
+
+    // ── Check Pending Fields ─────────────────────────────────────────────────
+
+    public function test_check_pending_fields_clears_flag_when_done(): void
+    {
+        $this->seedTestLayout();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('hasPendingFields', true)
+            ->call('checkPendingFields');
+
+        $this->assertFalse($component->get('hasPendingFields'));
+    }
+
+    public function test_check_pending_fields_keeps_flag_when_pending(): void
+    {
+        $this->seedTestLayout();
+
+        CustomField::create([
+            'table_name' => 'air_purifiers',
+            'column_name' => 'pending_col',
+            'column_type' => 'string',
+            'display_name' => 'Pending',
+            'status' => CustomFieldStatus::PENDING,
+        ]);
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->set('hasPendingFields', true)
+            ->call('checkPendingFields');
+
+        $this->assertTrue($component->get('hasPendingFields'));
+    }
+
+    // ── Open Add Field Modal ─────────────────────────────────────────────────
+
+    public function test_open_add_field_modal_sets_state(): void
+    {
+        $this->seedTestLayout();
+
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('openAddFieldModal', 1, 0);
+
+        $this->assertTrue($component->get('showAddFieldModal'));
+        $this->assertEquals(1, $component->get('targetTabIndex'));
+        $this->assertEquals(0, $component->get('targetSectionIndex'));
+        $this->assertEquals('', $component->get('newFieldColumnName'));
+        $this->assertEquals('string', $component->get('newFieldType'));
+    }
+
+    // ── Save Tree Transaction ────────────────────────────────────────────────
+
+    public function test_save_tree_persists_new_tab_and_section(): void
+    {
+        $this->seedTestLayout();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('addTab')
+            ->call('saveTree');
+
+        FormLayoutService::clearCache();
+        $structure = FormLayoutService::getStructure('air_purifiers');
+
+        // Original 3 tabs + 1 new tab
+        $this->assertCount(4, $structure);
     }
 }

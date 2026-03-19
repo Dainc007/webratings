@@ -114,25 +114,6 @@ final class FormLayoutService
     }
 
     /**
-     * Build a complete tabbed form from flat field definitions and DB layout.
-     *
-     * @param  string  $tableName
-     * @param  array<string, Field>  $fieldDefinitions  Flat map of field_name => Filament Field component
-     * @param  array<int, Tab>  $defaultTabs  Fallback tabs when no DB layout exists
-     * @return array<int, Tab>
-     */
-    public static function buildTabs(string $tableName, array $fieldDefinitions, array $defaultTabs): array
-    {
-        $layoutItems = self::loadLayout($tableName);
-
-        if ($layoutItems->isEmpty()) {
-            return $defaultTabs;
-        }
-
-        return self::applyLayout($tableName, $defaultTabs);
-    }
-
-    /**
      * Recursively extract all Field components from tabs into a flat map.
      *
      * @return array<string, Field>

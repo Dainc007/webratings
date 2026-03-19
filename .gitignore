@@ -23,3 +23,10 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+.DS_Store
+.claude/
+.env.docker
+.env.valet
+.env.dusk.backup
+tests/Browser/click_result.txt
+tests/Browser/modal_inspection*.json

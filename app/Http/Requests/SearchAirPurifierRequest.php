@@ -17,10 +17,11 @@ final class SearchAirPurifierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'max' => ['nullable'],
-            'all' => ['nullable'],
-            'display' => ['nullable'],
-            'paginate' => ['nullable'],
+            'id' => ['nullable', 'string', 'regex:/^\d+(,\d+)*$/'],
+            'max' => ['nullable', 'integer', 'min:1', 'max:1000'],
+            'all' => ['nullable', 'boolean'],
+            'display' => ['nullable', 'string', 'max:500'],
+            'paginate' => ['nullable', 'boolean'],
         ];
     }
 }

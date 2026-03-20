@@ -9,6 +9,7 @@ use App\Http\Requests\SearchAirPurifierRequest;
 use App\Http\Resources\AirPurifierResource;
 use App\Models\AirPurifier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 final class AirPurifierController extends Controller
 {
@@ -20,8 +21,11 @@ final class AirPurifierController extends Controller
         $query = AirPurifier::query();
 
         if ($request->filled('display')) {
-            $columns = explode(',', $request->get('display'));
-            $query->select($columns);
+            $allowed = Schema::getColumnListing((new AirPurifier)->getTable());
+            $columns = array_intersect(explode(',', $request->get('display')), $allowed);
+            if (! empty($columns)) {
+                $query->select(array_values($columns));
+            }
         }
         if ($request->filled('id')) {
             $ids = explode(',', $request->get('id'));

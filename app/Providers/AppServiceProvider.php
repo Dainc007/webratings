@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Models\LabelOverride;
 use App\Models\User;
 use App\Services\LabelService;
 use Filament\Actions\Action;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Entry;
-use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Component;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
@@ -21,7 +17,6 @@ use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
@@ -54,7 +49,7 @@ final class AppServiceProvider extends ServiceProvider
         Model::unguard();
         Model::shouldBeStrict($isProduction);
         Model::automaticallyEagerLoadRelationships();
-        //        DB::prohibitDestructiveCommands($isProduction);
+
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
@@ -80,7 +75,6 @@ final class AppServiceProvider extends ServiceProvider
     {
         Column::configureUsing(function (Column $column): void {
             $column
-                ->wrapHeader()
                 ->alignCenter()
                 ->sortable()
                 ->translateLabel();
@@ -91,37 +85,15 @@ final class AppServiceProvider extends ServiceProvider
         Field::configureUsing(function (Field $field): void {
             $fieldName = $field->getName();
 
-            if (str_starts_with($fieldName, '_lo_')) {
-                return;
-            }
-
             $field
                 ->hintIcon(function () use ($field): ?string {
                     return self::getResourceTableName($field) !== null
                         ? 'heroicon-o-information-circle'
                         : null;
                 }, tooltip: $fieldName)
-                ->extraAttributes(function () use ($field, $fieldName): array {
-                    $tableName = self::getResourceTableName($field);
-                    if ($tableName === null) {
-                        return [];
-                    }
-
-                    $attrs = ['data-db-column' => $fieldName];
-
-                    $sortOrder = LabelService::sortOrder($tableName, 'field', $fieldName);
-                    if ($sortOrder !== null) {
-                        $attrs['style'] = "order: {$sortOrder}";
-                    }
-
-                    return $attrs;
-                })
                 ->label(function () use ($field, $fieldName): ?string {
                     return self::resolveFieldLabel($field, $fieldName);
-                })
-                ->hintAction(
-                    self::makeEditLabelAction($field, $fieldName)
-                );
+                });
         });
         Entry::configureUsing(function (Entry $entry): void {
             $entry->translateLabel();
@@ -130,11 +102,6 @@ final class AppServiceProvider extends ServiceProvider
         Action::configureUsing(function (Action $action): void {
             $action->translateLabel();
         });
-
-        // not working in filament v4
-        //        Component::configureUsing(function (Component $component): void {
-        //            $component->translateLabel();
-        //        });
 
         ImportColumn::configureUsing(function (ImportColumn $importColumn): void {
             $importColumn->requiredMapping();
@@ -169,76 +136,5 @@ final class AppServiceProvider extends ServiceProvider
         }
 
         return LabelService::field($tableName, $fieldName);
-    }
-
-    private static function makeEditLabelAction(Field $field, string $fieldName): Action
-    {
-        return Action::make('editLabel')
-            ->icon('heroicon-o-pencil-square')
-            ->iconButton()
-            ->tooltip('Edytuj etykietę')
-            ->modalHeading(function () use ($field, $fieldName): string {
-                $label = self::resolveFieldLabel($field, $fieldName);
-
-                return 'Edytuj: ' . ($label ?? $fieldName);
-            })
-            ->size('xs')
-            ->color('gray')
-            ->form([
-                TextInput::make('_lo_display_label')
-                    ->label('Nowa nazwa')
-                    ->placeholder('Pozostaw puste aby użyć domyślnej'),
-            ])
-            ->fillForm(function () use ($field, $fieldName): array {
-                $tableName = self::getResourceTableName($field);
-                if ($tableName === null) {
-                    return [];
-                }
-
-                $override = LabelOverride::where([
-                    'table_name' => $tableName,
-                    'element_type' => 'field',
-                    'element_key' => $fieldName,
-                ])->first();
-
-                return ['_lo_display_label' => $override?->display_label];
-            })
-            ->action(function (array $data, $livewire) use ($field, $fieldName): void {
-                $tableName = self::getResourceTableName($field);
-                if ($tableName === null) {
-                    return;
-                }
-
-                $label = $data['_lo_display_label'] ?? null;
-
-                if (empty($label)) {
-                    LabelOverride::where([
-                        'table_name' => $tableName,
-                        'element_type' => 'field',
-                        'element_key' => $fieldName,
-                    ])->delete();
-                } else {
-                    LabelOverride::updateOrCreate(
-                        [
-                            'table_name' => $tableName,
-                            'element_type' => 'field',
-                            'element_key' => $fieldName,
-                        ],
-                        ['display_label' => $label]
-                    );
-                }
-
-                LabelService::clearCache();
-
-                Notification::make()
-                    ->title('Etykieta zaktualizowana')
-                    ->success()
-                    ->send();
-
-                $livewire->js('setTimeout(() => location.reload(), 500)');
-            })
-            ->visible(function () use ($field): bool {
-                return self::getResourceTableName($field) !== null;
-            });
     }
 }

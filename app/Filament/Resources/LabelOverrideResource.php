@@ -25,6 +25,8 @@ use UnitEnum;
 
 final class LabelOverrideResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = LabelOverride::class;
 
     protected static ?string $navigationLabel = 'Etykiety';

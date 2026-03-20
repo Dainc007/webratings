@@ -184,9 +184,36 @@
                             />
                             <code class="fle-field-code" wire:sort:ignore>{{ $field['key'] }}</code>
 
-                            @if(($field['display'] ?? null) && $field['display'] !== $field['key'])
-                                <span class="fle-field-label" wire:sort:ignore>{{ $field['display'] }}</span>
-                            @endif
+                            <div class="fle-name-wrap"
+                                 x-data="{ editing: false, val: @js($field['display'] ?? $field['key']) }"
+                                 wire:sort:ignore
+                            >
+                                <span
+                                    x-show="!editing && val !== @js($field['key'])"
+                                    x-text="val"
+                                    @dblclick="editing = true; $nextTick(() => $refs.finp.select())"
+                                    class="fle-field-label"
+                                    title="Kliknij dwukrotnie aby zmienić nazwę"
+                                    style="cursor: pointer;"
+                                ></span>
+                                <span
+                                    x-show="!editing && val === @js($field['key'])"
+                                    @dblclick="editing = true; $nextTick(() => $refs.finp.select())"
+                                    class="fle-field-label fle-field-label--placeholder"
+                                    title="Kliknij dwukrotnie aby nadać nazwę wyświetlaną"
+                                    style="cursor: pointer; opacity: 0.5; font-style: italic;"
+                                >zmień nazwę</span>
+                                <input
+                                    x-ref="finp"
+                                    x-show="editing"
+                                    x-cloak
+                                    x-model="val"
+                                    @keydown.enter.prevent="editing = false; $wire.renameField({{ $tabIndex }}, {{ $sectionIndex }}, {{ $fieldIndex }}, val)"
+                                    @keydown.escape.prevent="editing = false; val = @js($field['display'] ?? $field['key'])"
+                                    @blur="editing = false; $wire.renameField({{ $tabIndex }}, {{ $sectionIndex }}, {{ $fieldIndex }}, val)"
+                                    class="fle-rename-input fle-rename-input-sm"
+                                />
+                            </div>
 
                             @if($field['is_custom'] ?? false)
                                 <x-filament::badge color="success" size="xs" wire:sort:ignore>Własne</x-filament::badge>

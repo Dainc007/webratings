@@ -282,6 +282,44 @@ final class FormLayoutEditor extends Page
         Notification::make()->title('Nazwa sekcji zmieniona')->success()->send();
     }
 
+    public function renameField(int $tabIndex, int $sectionIndex, int $fieldIndex, string $newName): void
+    {
+        $field   = $this->layoutTree[$tabIndex]['sections'][$sectionIndex]['fields'][$fieldIndex] ?? null;
+        $newName = trim($newName);
+
+        if ($field === null || $newName === '' || $newName === $field['display']) {
+            return;
+        }
+
+        if (mb_strlen($newName) > ProductFormStructure::MAX_LABEL_LENGTH) {
+            Notification::make()->title('Nazwa jest zbyt dluga (max ' . ProductFormStructure::MAX_LABEL_LENGTH . ' znakow)')->danger()->send();
+
+            return;
+        }
+
+        if ($field['is_custom'] ?? false) {
+            CustomField::where('table_name', $this->selectedTable)
+                ->where('column_name', $field['key'])
+                ->update(['display_name' => $newName]);
+        } elseif ($newName === $field['key']) {
+            LabelOverride::where([
+                'table_name'   => $this->selectedTable,
+                'element_type' => 'field',
+                'element_key'  => $field['key'],
+            ])->delete();
+        } else {
+            LabelOverride::updateOrCreate(
+                ['table_name' => $this->selectedTable, 'element_type' => 'field', 'element_key' => $field['key']],
+                ['display_label' => $newName],
+            );
+        }
+
+        LabelService::clearCache();
+        $this->loadTree();
+
+        Notification::make()->title('Nazwa pola zmieniona')->success()->send();
+    }
+
     // ── Add tab / section ───────────────────────────────────────────────────
 
     public function addTab(): void

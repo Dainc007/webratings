@@ -23,6 +23,8 @@ use UnitEnum;
 
 final class FormLayoutItemResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = FormLayoutItem::class;
 
     protected static ?string $navigationLabel = 'Układ formularza';

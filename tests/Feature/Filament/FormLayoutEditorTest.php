@@ -427,6 +427,124 @@ final class FormLayoutEditorTest extends TestCase
         $this->assertEquals(0, LabelOverride::count());
     }
 
+    // ── Rename Field ────────────────────────────────────────────────────────
+
+    public function test_rename_field_creates_label_override(): void
+    {
+        $this->seedTestLayout();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameField', 0, 0, 0, 'New Field Name');
+
+        $this->assertDatabaseHas('label_overrides', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'field',
+            'element_key' => 'field_a',
+            'display_label' => 'New Field Name',
+        ]);
+    }
+
+    public function test_rename_field_to_original_key_deletes_override(): void
+    {
+        $this->seedTestLayout();
+
+        LabelOverride::create([
+            'table_name' => 'air_purifiers',
+            'element_type' => 'field',
+            'element_key' => 'field_a',
+            'display_label' => 'Custom Field Name',
+        ]);
+        LabelService::clearCache();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameField', 0, 0, 0, 'field_a');
+
+        $this->assertDatabaseMissing('label_overrides', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'field',
+            'element_key' => 'field_a',
+        ]);
+    }
+
+    public function test_rename_field_with_empty_name_does_nothing(): void
+    {
+        $this->seedTestLayout();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameField', 0, 0, 0, '   ');
+
+        $this->assertDatabaseMissing('label_overrides', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'field',
+            'element_key' => 'field_a',
+        ]);
+    }
+
+    public function test_rename_field_with_invalid_index_does_nothing(): void
+    {
+        $this->seedTestLayout();
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameField', 99, 0, 0, 'New Name');
+
+        $this->assertEquals(0, LabelOverride::count());
+    }
+
+    public function test_rename_field_rejects_name_exceeding_max_length(): void
+    {
+        $this->seedTestLayout();
+
+        $longName = str_repeat('a', ProductFormStructure::MAX_LABEL_LENGTH + 1);
+
+        Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameField', 0, 0, 0, $longName);
+
+        $this->assertDatabaseMissing('label_overrides', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'field',
+            'element_key' => 'field_a',
+        ]);
+    }
+
+    public function test_rename_custom_field_updates_display_name(): void
+    {
+        $this->seedTestLayout();
+
+        $customField = CustomField::create([
+            'table_name' => 'air_purifiers',
+            'column_name' => 'field_a',
+            'column_type' => 'string',
+            'display_name' => 'Original',
+            'status' => CustomFieldStatus::ACTIVE,
+        ]);
+
+        // Reload tree so the field is marked as custom
+        $component = Livewire::actingAs($this->user)
+            ->test(FormLayoutEditor::class)
+            ->set('selectedTable', 'air_purifiers')
+            ->call('renameField', 0, 0, 0, 'Updated Display Name');
+
+        $customField->refresh();
+        $this->assertEquals('Updated Display Name', $customField->display_name);
+
+        // Should NOT create a label_override for custom fields
+        $this->assertDatabaseMissing('label_overrides', [
+            'table_name' => 'air_purifiers',
+            'element_type' => 'field',
+            'element_key' => 'field_a',
+        ]);
+    }
+
     // ── Save Tree ────────────────────────────────────────────────────────────
 
     public function test_save_tree_persists_reordered_tabs(): void

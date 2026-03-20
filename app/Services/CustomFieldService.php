@@ -61,7 +61,8 @@ final class CustomFieldService
             ->get();
 
         foreach ($columns as $column) {
-            $field = TextColumn::make($column['column_name']);
+            $field = TextColumn::make($column['column_name'])
+                ->wrap(false);
 
             if ($column['column_name'] === 'price') {
                 $field = TextInputColumn::make($column['column_name'])
@@ -126,7 +127,8 @@ final class CustomFieldService
             if ($customField->column_type === 'boolean') {
                 $field = ToggleColumn::make($customField->column_name);
             } else {
-                $field = TextColumn::make($customField->column_name);
+                $field = TextColumn::make($customField->column_name)
+                    ->wrap(false);
             }
 
             if ($customField->column_type === 'integer') {

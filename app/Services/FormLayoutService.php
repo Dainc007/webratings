@@ -70,7 +70,12 @@ final class FormLayoutService
                 }
 
                 if (count($sectionComponents) > 0) {
-                    $section = $sectionMap[$sectionKey] ?? LabelService::sectionMake($tableName, $sectionKey);
+                    if (isset($sectionMap[$sectionKey])) {
+                        $section = $sectionMap[$sectionKey];
+                        $section->clearCachedDefaultChildSchemas();
+                    } else {
+                        $section = LabelService::sectionMake($tableName, $sectionKey);
+                    }
                     $section->schema($sectionComponents);
                     $tabSchema[] = $section;
                 }
@@ -87,7 +92,12 @@ final class FormLayoutService
             }
 
             if (count($tabSchema) > 0) {
-                $tab = $tabMap[$tabKey] ?? Tab::make($tabLabel);
+                if (isset($tabMap[$tabKey])) {
+                    $tab = $tabMap[$tabKey];
+                    $tab->clearCachedDefaultChildSchemas();
+                } else {
+                    $tab = Tab::make($tabLabel);
+                }
                 $tab->schema($tabSchema);
                 $builtTabs[] = $tab;
             }

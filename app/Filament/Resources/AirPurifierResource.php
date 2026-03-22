@@ -186,6 +186,7 @@ final class AirPurifierResource extends Resource
                                             ->reorderable()
                                             ->appendFiles()
                                             ->openable()
+                                            ->visibility('public')
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

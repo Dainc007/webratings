@@ -196,6 +196,7 @@ final class AirConditionerResource extends Resource
                                             ->reorderable()
                                             ->appendFiles()
                                             ->openable()
+                                            ->visibility('public')
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

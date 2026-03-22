@@ -211,6 +211,7 @@ final class DehumidifierResource extends Resource
                                             ->reorderable()
                                             ->appendFiles()
                                             ->openable()
+                                            ->visibility('public')
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

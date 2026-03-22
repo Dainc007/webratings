@@ -191,6 +191,7 @@ final class UprightVacuumResource extends Resource
                                             ->reorderable()
                                             ->appendFiles()
                                             ->openable()
+                                            ->visibility('public')
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),

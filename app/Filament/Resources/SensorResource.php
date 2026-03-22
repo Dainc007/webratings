@@ -116,6 +116,7 @@ final class SensorResource extends Resource
                                             ->reorderable()
                                             ->appendFiles()
                                             ->openable()
+                                            ->visibility('public')
                                             ->columnSpanFull(),
 
                                         Textarea::make('discount_info')

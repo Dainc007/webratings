@@ -185,7 +185,7 @@ final class AirConditionerResource extends Resource
 
                                 LabelService::sectionMake('air_conditioners', 'Galeria')
                                     ->schema([
-                                        FileUpload::make('gallery')
+                                        FileUpload::make('local_gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('air-conditioners')
                                             ->image()

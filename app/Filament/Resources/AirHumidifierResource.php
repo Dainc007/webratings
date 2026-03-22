@@ -159,7 +159,7 @@ final class AirHumidifierResource extends Resource
 
                                 LabelService::sectionMake('air_humidifiers', 'Galeria')
                                     ->schema([
-                                        FileUpload::make('gallery')
+                                        FileUpload::make('local_gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('air-humidifiers')
                                             ->image()

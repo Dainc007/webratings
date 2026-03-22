@@ -175,7 +175,7 @@ final class AirPurifierResource extends Resource
 
                                 LabelService::sectionMake('air_purifiers', 'Galeria')
                                     ->schema([
-                                        FileUpload::make('gallery')
+                                        FileUpload::make('local_gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('air-purifiers')
                                             ->image()

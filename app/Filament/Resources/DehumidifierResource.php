@@ -200,7 +200,7 @@ final class DehumidifierResource extends Resource
 
                                 LabelService::sectionMake('dehumidifiers', 'Galeria')
                                     ->schema([
-                                        FileUpload::make('gallery')
+                                        FileUpload::make('local_gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('dehumidifiers')
                                             ->image()

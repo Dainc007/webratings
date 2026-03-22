@@ -23,6 +23,7 @@ final class AirHumidifier extends Model
         'colors' => 'array',
         'mobile_features' => 'array',
         'gallery' => 'array',
+        'local_gallery' => 'array',
         'control_other' => 'array',
         'partner_link_rel_2' => 'array',
     ];

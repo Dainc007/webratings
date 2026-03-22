@@ -21,6 +21,7 @@ final class Sensor extends Model
         'partner_link_rel_2' => 'array',
         'ceneo_link_rel_2' => 'array',
         'mobile_features' => 'array',
+        'local_gallery' => 'array',
     ];
 
     public function types(): MorphToMany

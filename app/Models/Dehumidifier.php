@@ -24,6 +24,7 @@ final class Dehumidifier extends Model
         'modes_of_operation' => 'array',
         'functions_and_equipment_dehumi' => 'array',
         'gallery' => 'array',
+        'local_gallery' => 'array',
         'colors' => 'array',
         'date_created' => 'datetime',
         'date_updated' => 'datetime',

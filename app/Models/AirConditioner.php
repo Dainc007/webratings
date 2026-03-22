@@ -24,6 +24,7 @@ final class AirConditioner extends Model
         'mobile_features' => 'array',
         'functions_and_equipment_condi' => 'array',
         'gallery' => 'array',
+        'local_gallery' => 'array',
     ];
 
     public function types(): MorphToMany

@@ -30,6 +30,7 @@ final class AirPurifier extends Model
         'partner_link_rel_2' => 'array',
         'ceneo_link_rel_2' => 'array',
         'gallery' => 'array',
+        'local_gallery' => 'array',
         'ionizer_type' => IonizerType::class,
     ];
 

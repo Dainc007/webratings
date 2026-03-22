@@ -180,7 +180,7 @@ final class UprightVacuumResource extends Resource
 
                                 LabelService::sectionMake('upright_vacuums', 'Galeria')
                                     ->schema([
-                                        FileUpload::make('gallery')
+                                        FileUpload::make('local_gallery')
                                             ->label('Galeria zdjęć')
                                             ->directory('upright-vacuums')
                                             ->image()

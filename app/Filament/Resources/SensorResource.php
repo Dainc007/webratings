@@ -26,6 +26,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
@@ -104,8 +105,18 @@ final class SensorResource extends Resource
                                             ->numeric()
                                             ->prefix('PLN'),
 
-                                        TextInput::make('image')
-                                            ->disabled(),
+                                        FileUpload::make('local_gallery')
+                                            ->label('Galeria zdjęć')
+                                            ->directory('sensors')
+                                            ->image()
+                                            ->multiple()
+                                            ->preserveFilenames()
+                                            ->imagePreviewHeight('250')
+                                            ->panelLayout('grid')
+                                            ->reorderable()
+                                            ->appendFiles()
+                                            ->openable()
+                                            ->columnSpanFull(),
 
                                         Textarea::make('discount_info')
                                             ->columnSpanFull(),

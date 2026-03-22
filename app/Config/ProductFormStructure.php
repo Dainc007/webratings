@@ -57,7 +57,7 @@ final class ProductFormStructure
                 'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
                 'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
                 'Ceneo'                 => ['ceneo_url', 'ceneo_link_rel_2'],
-                'Galeria'               => ['gallery'],
+                'Galeria'               => ['local_gallery'],
             ],
             'Wydajność' => [
                 'Wydajność' => ['max_performance', 'max_area', 'max_area_ro', 'number_of_fan_speeds', 'min_loudness', 'max_loudness', 'min_rated_power_consumption', 'max_rated_power_consumption'],
@@ -89,7 +89,7 @@ final class ProductFormStructure
                 'Ranking'               => ['capability_points', 'profitability_points', 'popularity'],
                 'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
                 'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                'Galeria'               => ['gallery'],
+                'Galeria'               => ['local_gallery'],
             ],
             'Wydajność' => [
                 'Wydajność'         => ['max_humidification_efficiency', 'max_area', 'humidification_type'],
@@ -116,7 +116,7 @@ final class ProductFormStructure
                 'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
                 'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
                 'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                'Galeria'               => ['gallery'],
+                'Galeria'               => ['local_gallery'],
             ],
             'Wydajność chłodzenia' => [
                 'Parametry chłodzenia' => ['max_cooling_power', 'min_cooling_power', 'max_area_cooling'],
@@ -138,7 +138,7 @@ final class ProductFormStructure
                 'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
                 'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
                 'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                'Galeria'               => ['gallery'],
+                'Galeria'               => ['local_gallery'],
             ],
             'Wydajność osuszania' => [
                 'Parametry osuszania' => ['max_dehumidification_efficiency', 'max_area'],
@@ -154,7 +154,7 @@ final class ProductFormStructure
                 'Oceny i ranking'       => ['capability_points', 'profitability_points', 'popularity'],
                 'Linki partnerskie'     => ['partner_link_url', 'partner_link_rel_2'],
                 'Linki Ceneo'           => ['ceneo_url', 'ceneo_link_rel_2'],
-                'Galeria'               => ['gallery'],
+                'Galeria'               => ['local_gallery'],
             ],
             'Moc i wydajność' => [
                 'Parametry ssania' => ['suction_power', 'motor_type'],

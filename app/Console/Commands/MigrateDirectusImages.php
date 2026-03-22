@@ -93,7 +93,15 @@ final class MigrateDirectusImages extends Command
         $this->newLine();
         $this->components->info("Done! Downloaded: {$this->downloaded}, Skipped: {$this->skipped}, Failed: {$this->failed}");
 
-        return $this->failed > 0 ? self::FAILURE : self::SUCCESS;
+        if ($this->failed > 0 && $this->downloaded === 0) {
+            return self::FAILURE;
+        }
+
+        if ($this->failed > 0) {
+            $this->components->warn("Some images failed. Run again with --overwrite to retry failed ones.");
+        }
+
+        return self::SUCCESS;
     }
 
     private function processTable(string $table, array $config): void
@@ -270,6 +278,7 @@ final class MigrateDirectusImages extends Command
 
             Storage::disk($this->disk)->put($storagePath, $response->body());
             $this->downloaded++;
+            $this->info("  ✓ {$id} → {$storagePath}");
 
             return $storagePath;
         } catch (\Throwable $e) {
@@ -302,6 +311,15 @@ final class MigrateDirectusImages extends Command
 
         // Replace directory separators and null bytes
         $filename = str_replace(['/', '\\', "\0"], '-', $filename);
+
+        // Transliterate non-ASCII characters for S3/R2 compatibility
+        // e.g. GÖTZE → GOTZE, ą → a, ź → z
+        if (function_exists('transliterator_transliterate')) {
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $name = pathinfo($filename, PATHINFO_FILENAME);
+            $name = transliterator_transliterate('Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove', $name);
+            $filename = $name . '.' . $ext;
+        }
 
         // Keep the filename reasonable
         if (mb_strlen($filename) > 200) {

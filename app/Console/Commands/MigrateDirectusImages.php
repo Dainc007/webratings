@@ -108,14 +108,13 @@ final class MigrateDirectusImages extends Command
     {
         $this->components->info("Processing {$table}...");
 
-        $selectColumns = ['id'];
+        $selectColumns = ['id', 'local_gallery'];
         if ($config['image']) {
             $selectColumns[] = 'image';
             $selectColumns[] = 'local_image';
         }
         if ($config['gallery']) {
             $selectColumns[] = 'gallery';
-            $selectColumns[] = 'local_gallery';
         }
 
         $records = DB::table($table)->select($selectColumns)->get();
@@ -132,18 +131,27 @@ final class MigrateDirectusImages extends Command
         foreach ($records as $record) {
             $updates = [];
 
+            $imagePath = null;
+
             if ($config['image']) {
-                $result = $this->processImageField($record->image, $record->local_image, $config['dir']);
-                if ($result !== null) {
-                    $updates['local_image'] = $result;
+                $imagePath = $this->processImageField($record->image, $record->local_image, $config['dir']);
+                if ($imagePath !== null) {
+                    $updates['local_image'] = $imagePath;
                 }
             }
 
-            if ($config['gallery'] && ! ! $this->option('gallery')) {
+            if ($config['gallery'] && $this->option('gallery')) {
                 $result = $this->processGalleryField($record->gallery, $record->local_gallery, $config['dir']);
                 if ($result !== null) {
                     $updates['local_gallery'] = $result;
                 }
+            }
+
+            // Populate local_gallery with the main image if no gallery data exists
+            if ($imagePath !== null && empty($record->local_gallery)) {
+                $updates['local_gallery'] = json_encode([$imagePath]);
+            } elseif ($imagePath === null && ! empty($record->local_image) && empty($record->local_gallery)) {
+                $updates['local_gallery'] = json_encode([$record->local_image]);
             }
 
             if (! empty($updates) && ! $this->dryRun) {

@@ -170,6 +170,8 @@ final class AirHumidifierResource extends Resource
                                             ->reorderable()
                                             ->appendFiles()
                                             ->openable()
+                                            ->downloadable()
+                                            ->imageEditor()
                                             ->visibility('public')
                                             ->columnSpanFull(),
                                     ])

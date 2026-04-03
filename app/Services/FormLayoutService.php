@@ -292,7 +292,12 @@ final class FormLayoutService
 
         try {
             self::$cache[$tableName] = FormLayoutItem::where('table_name', $tableName)->get();
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('FormLayoutService::loadLayout failed', [
+                'table' => $tableName,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             self::$cache[$tableName] = collect();
         }
 

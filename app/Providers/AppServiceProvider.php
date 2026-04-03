@@ -122,7 +122,10 @@ final class AppServiceProvider extends ServiceProvider
                 $resource = $livewire::getResource();
                 return (new ($resource::getModel()))->getTable();
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('AppServiceProvider::getResourceTableName failed', [
+                'exception' => $e->getMessage(),
+            ]);
         }
 
         return null;

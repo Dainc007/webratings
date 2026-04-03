@@ -83,7 +83,12 @@ final class LabelService
                 'labels' => $labels,
                 'sort_orders' => $sortOrders,
             ];
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('LabelService::loadOverrides failed', [
+                'table' => $tableName,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             self::$cache[$tableName] = ['labels' => [], 'sort_orders' => []];
         }
 

@@ -60,18 +60,40 @@ class FilamentCrudBrowserTest extends DuskTestCase
     }
 
     /**
-     * Set a Filament Select field value via JS (works with native selects).
+     * Set a Filament Select field value via Livewire's component API.
      */
     protected function setSelectValue(Browser $browser, string $fieldName, string $value): void
     {
         $browser->script("
-            const select = document.querySelector('select[id*=\"{$fieldName}\"]');
-            if (select) {
-                select.value = '{$value}';
-                select.dispatchEvent(new Event('change', { bubbles: true }));
+            const wireEl = document.querySelector('[wire\\\\:id]');
+            if (wireEl) {
+                const component = Livewire.find(wireEl.getAttribute('wire:id'));
+                if (component) {
+                    component.\$set('data.{$fieldName}', '{$value}');
+                }
             }
         ");
         $browser->pause(1000);
+    }
+
+    /**
+     * Fill a Filament searchable Select by typing a search term and clicking the first result.
+     */
+    protected function fillSearchableSelect(Browser $browser, string $fieldName, string $value): void
+    {
+        $escapedValue = addslashes($value);
+
+        // Set the value directly via Livewire's component API
+        $browser->script("
+            const wireEl = document.querySelector('[wire\\\\:id]');
+            if (wireEl) {
+                const component = Livewire.find(wireEl.getAttribute('wire:id'));
+                if (component) {
+                    component.\$set('data.{$fieldName}', '{$escapedValue}');
+                }
+            }
+        ");
+        $browser->pause(1500);
     }
 
     /**
@@ -243,7 +265,9 @@ class FilamentCrudBrowserTest extends DuskTestCase
 
         // Fill required text fields using JS for reliable Livewire integration
         $this->fillField($browser, 'model', $createModel);
-        $this->fillField($browser, 'brand_name', self::TEST_PREFIX . ' Brand');
+
+        // brand_name is a searchable Select — set value directly via Livewire
+        $this->fillSearchableSelect($browser, 'brand_name', 'Klarta');
 
         // Submit the form (scroll to button first, then click via JS for reliability)
         $this->submitForm($browser);
